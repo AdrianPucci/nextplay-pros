@@ -1,0 +1,1033 @@
+[
+  {
+    "id": "ath_001",
+    "name": "Marcus Hale",
+    "sport": "Football",
+    "level": "Former Pro",
+    "career": "Linebacker, 6 NFL seasons; 2 knee reconstructions",
+    "city": "Denver",
+    "state": "CO",
+    "lat": 39.74,
+    "lon": -104.99,
+    "categories": [
+      "speaking",
+      "appearance",
+      "mentoring"
+    ],
+    "topics": [
+      "resilience",
+      "comebacks",
+      "leadership"
+    ],
+    "story": "Cut twice and told his career was over after his second ACL tear, Marcus rehabbed for 14 months and played four more seasons. Now he coaches sales teams on bouncing back from rejection.",
+    "fee_min": 2500,
+    "fee_max": 6000,
+    "virtual_ok": true,
+    "travel_miles": 500
+  },
+  {
+    "id": "ath_002",
+    "name": "Tasha Reyes",
+    "sport": "Soccer",
+    "level": "Former Pro",
+    "career": "NWSL midfielder, 5 seasons; youth national team",
+    "city": "Denver",
+    "state": "CO",
+    "lat": 39.74,
+    "lon": -104.99,
+    "categories": [
+      "speaking",
+      "clinic",
+      "mentoring"
+    ],
+    "topics": [
+      "women in leadership",
+      "teamwork",
+      "youth development"
+    ],
+    "story": "First in her family to go to college, Tasha captained her pro team while finishing an MBA at night. She runs girls' leadership camps across the Front Range.",
+    "fee_min": 1500,
+    "fee_max": 4000,
+    "virtual_ok": true,
+    "travel_miles": 300
+  },
+  {
+    "id": "ath_003",
+    "name": "Jordan Okafor",
+    "sport": "Basketball",
+    "level": "Former College",
+    "career": "D-I guard, 4 years; 1,400 career points",
+    "city": "Englewood",
+    "state": "CO",
+    "lat": 39.65,
+    "lon": -104.99,
+    "categories": [
+      "speaking",
+      "clinic",
+      "appearance"
+    ],
+    "topics": [
+      "discipline",
+      "student success",
+      "first-gen college"
+    ],
+    "story": "Grew up in foster care and walked on at a D-I program, earning a scholarship by his sophomore year. Jordan now speaks to high schools and youth nonprofits about building your own support system.",
+    "fee_min": 600,
+    "fee_max": 1500,
+    "virtual_ok": true,
+    "travel_miles": 150
+  },
+  {
+    "id": "ath_004",
+    "name": "Kenji Mori",
+    "sport": "Skiing",
+    "level": "Olympian",
+    "career": "Two-time Winter Olympian, moguls",
+    "city": "Boulder",
+    "state": "CO",
+    "lat": 40.01,
+    "lon": -105.27,
+    "categories": [
+      "speaking",
+      "appearance",
+      "endorsement"
+    ],
+    "topics": [
+      "fear and focus",
+      "high performance",
+      "mental health"
+    ],
+    "story": "Kenji crashed out of his first Olympics on live TV, opened up about the panic attacks that followed, and returned four years later to finish fifth. He talks candidly about performance anxiety.",
+    "fee_min": 3000,
+    "fee_max": 8000,
+    "virtual_ok": true,
+    "travel_miles": 2000
+  },
+  {
+    "id": "ath_005",
+    "name": "Brianna Cole",
+    "sport": "Track & Field",
+    "level": "Rising (College)",
+    "career": "D-I 400m runner, conference champion, senior",
+    "city": "Fort Collins",
+    "state": "CO",
+    "lat": 40.59,
+    "lon": -105.08,
+    "categories": [
+      "appearance",
+      "endorsement",
+      "mentoring"
+    ],
+    "topics": [
+      "goal setting",
+      "balancing school and sport"
+    ],
+    "story": "A conference champion working 20 hours a week to cover rent, Brianna is open to NIL appearances and local business partnerships while she chases an Olympic Trials qualifier.",
+    "fee_min": 200,
+    "fee_max": 800,
+    "virtual_ok": true,
+    "travel_miles": 100
+  },
+  {
+    "id": "ath_006",
+    "name": "Danny \"Deke\" Kowalski",
+    "sport": "Hockey",
+    "level": "Former Pro",
+    "career": "AHL/ECHL winger, 9 seasons",
+    "city": "Colorado Springs",
+    "state": "CO",
+    "lat": 38.83,
+    "lon": -104.82,
+    "categories": [
+      "appearance",
+      "comedy_entertainment",
+      "clinic"
+    ],
+    "topics": [
+      "minor-league life",
+      "team culture",
+      "humor"
+    ],
+    "story": "Nine seasons, seven cities, and one legendary bus breakdown in a blizzard. Deke's stand-up set about minor-league hockey life is a hit at banquets and golf outings.",
+    "fee_min": 800,
+    "fee_max": 2500,
+    "virtual_ok": false,
+    "travel_miles": 400
+  },
+  {
+    "id": "ath_007",
+    "name": "Luis Navarro",
+    "sport": "Baseball",
+    "level": "Former Pro",
+    "career": "MLB pitcher, 3 seasons; 7 years in the minors",
+    "city": "Phoenix",
+    "state": "AZ",
+    "lat": 33.45,
+    "lon": -112.07,
+    "categories": [
+      "speaking",
+      "clinic",
+      "appearance"
+    ],
+    "topics": [
+      "persistence",
+      "bilingual leadership",
+      "the long road"
+    ],
+    "story": "Luis spent seven years in the minors and was called up at 29. He gives talks in English and Spanish about patience, and runs pitching clinics for Little Leagues.",
+    "fee_min": 2000,
+    "fee_max": 5000,
+    "virtual_ok": true,
+    "travel_miles": 800
+  },
+  {
+    "id": "ath_008",
+    "name": "Aaliyah Brooks",
+    "sport": "Basketball",
+    "level": "Former Pro",
+    "career": "WNBA guard, 4 seasons; overseas in Turkey and Spain",
+    "city": "Atlanta",
+    "state": "GA",
+    "lat": 33.75,
+    "lon": -84.39,
+    "categories": [
+      "speaking",
+      "appearance",
+      "mentoring"
+    ],
+    "topics": [
+      "women in sport",
+      "adapting to change",
+      "financial literacy"
+    ],
+    "story": "After her WNBA salary barely covered living costs, Aaliyah played five winters overseas and taught herself investing. She now speaks on money skills for young professionals.",
+    "fee_min": 2500,
+    "fee_max": 6000,
+    "virtual_ok": true,
+    "travel_miles": 1000
+  },
+  {
+    "id": "ath_009",
+    "name": "Sam Whitfield",
+    "sport": "Swimming",
+    "level": "Paralympian",
+    "career": "Paralympic bronze medalist, 100m butterfly S9",
+    "city": "San Diego",
+    "state": "CA",
+    "lat": 32.72,
+    "lon": -117.16,
+    "categories": [
+      "speaking",
+      "appearance",
+      "endorsement"
+    ],
+    "topics": [
+      "adaptability",
+      "disability inclusion",
+      "resilience"
+    ],
+    "story": "Sam lost his lower left leg in a boating accident at 15 and was racing internationally three years later. He works with companies on accessibility and inclusive teams.",
+    "fee_min": 3000,
+    "fee_max": 7500,
+    "virtual_ok": true,
+    "travel_miles": 2000
+  },
+  {
+    "id": "ath_010",
+    "name": "Riley Chen",
+    "sport": "Esports",
+    "level": "Current Pro",
+    "career": "Pro Valorant player, 2 seasons",
+    "city": "Los Angeles",
+    "state": "CA",
+    "lat": 34.05,
+    "lon": -118.24,
+    "categories": [
+      "appearance",
+      "endorsement",
+      "comedy_entertainment"
+    ],
+    "topics": [
+      "gaming careers",
+      "online community",
+      "teamwork"
+    ],
+    "story": "Riley went from streaming in a dorm room to a pro roster in 18 months. Great for youth events, gaming nights, and brands trying to reach Gen Z.",
+    "fee_min": 700,
+    "fee_max": 2000,
+    "virtual_ok": true,
+    "travel_miles": 300
+  },
+  {
+    "id": "ath_011",
+    "name": "Grace Delaney",
+    "sport": "Volleyball",
+    "level": "Former College",
+    "career": "D-I outside hitter, 2x All-American",
+    "city": "Minneapolis",
+    "state": "MN",
+    "lat": 44.98,
+    "lon": -93.27,
+    "categories": [
+      "speaking",
+      "clinic",
+      "mentoring"
+    ],
+    "topics": [
+      "confidence",
+      "team chemistry",
+      "coaching"
+    ],
+    "story": "Two-time All-American turned high-school coach, Grace built a losing program into a state finalist in three years. She speaks on building team culture from scratch.",
+    "fee_min": 500,
+    "fee_max": 1500,
+    "virtual_ok": true,
+    "travel_miles": 300
+  },
+  {
+    "id": "ath_012",
+    "name": "Terrell \"T-Bone\" Jackson",
+    "sport": "Football",
+    "level": "Former Pro",
+    "career": "NFL running back, 3 seasons; Canadian league 4 seasons",
+    "city": "Dallas",
+    "state": "TX",
+    "lat": 32.78,
+    "lon": -96.8,
+    "categories": [
+      "comedy_entertainment",
+      "appearance",
+      "speaking"
+    ],
+    "topics": [
+      "humor",
+      "life after football",
+      "career change"
+    ],
+    "story": "T-Bone traded the end zone for comedy clubs. His set about the CFL, cold weather, and Texas BBQ fits corporate parties and charity roasts.",
+    "fee_min": 1500,
+    "fee_max": 4000,
+    "virtual_ok": false,
+    "travel_miles": 600
+  },
+  {
+    "id": "ath_013",
+    "name": "Elena Petrova",
+    "sport": "Figure Skating",
+    "level": "Former Pro",
+    "career": "National champion; 6 years touring with an ice show",
+    "city": "Chicago",
+    "state": "IL",
+    "lat": 41.88,
+    "lon": -87.63,
+    "categories": [
+      "speaking",
+      "appearance",
+      "clinic"
+    ],
+    "topics": [
+      "perfectionism",
+      "immigrant story",
+      "grace under pressure"
+    ],
+    "story": "Elena came to the U.S. at 12 speaking no English and won a national title at 19. She speaks on perfectionism and burnout, especially to women's networks.",
+    "fee_min": 2000,
+    "fee_max": 5000,
+    "virtual_ok": true,
+    "travel_miles": 1000
+  },
+  {
+    "id": "ath_014",
+    "name": "Mike Brennan",
+    "sport": "Golf",
+    "level": "Former Pro",
+    "career": "Korn Ferry Tour, 5 seasons",
+    "city": "Phoenix",
+    "state": "AZ",
+    "lat": 33.45,
+    "lon": -112.07,
+    "categories": [
+      "appearance",
+      "clinic",
+      "comedy_entertainment"
+    ],
+    "topics": [
+      "focus",
+      "golf outings",
+      "storytelling"
+    ],
+    "story": "A five-year grinder on the developmental tour, Mike is the ideal celebrity host for a charity golf outing: clinic in the morning, funny stories at the dinner.",
+    "fee_min": 1200,
+    "fee_max": 3000,
+    "virtual_ok": false,
+    "travel_miles": 1000
+  },
+  {
+    "id": "ath_015",
+    "name": "Destiny Morales",
+    "sport": "Boxing",
+    "level": "Current Pro",
+    "career": "Pro boxer, 14-1; former Golden Gloves champion",
+    "city": "Houston",
+    "state": "TX",
+    "lat": 29.76,
+    "lon": -95.37,
+    "categories": [
+      "speaking",
+      "appearance",
+      "mentoring"
+    ],
+    "topics": [
+      "overcoming adversity",
+      "self-defense",
+      "youth outreach"
+    ],
+    "story": "Destiny started boxing at a community gym to stay out of trouble and is now ranked nationally. She returns to that gym every week to mentor teens.",
+    "fee_min": 800,
+    "fee_max": 2500,
+    "virtual_ok": true,
+    "travel_miles": 400
+  },
+  {
+    "id": "ath_016",
+    "name": "Owen Gallagher",
+    "sport": "Lacrosse",
+    "level": "Former Pro",
+    "career": "Pro lacrosse defenseman, 6 seasons",
+    "city": "Boston",
+    "state": "MA",
+    "lat": 42.36,
+    "lon": -71.06,
+    "categories": [
+      "clinic",
+      "appearance",
+      "speaking"
+    ],
+    "topics": [
+      "work ethic",
+      "leadership",
+      "sports business"
+    ],
+    "story": "Owen played pro lacrosse for $15K a season while working full time in finance. He talks about doing two careers at once and runs youth clinics around New England.",
+    "fee_min": 800,
+    "fee_max": 2000,
+    "virtual_ok": true,
+    "travel_miles": 300
+  },
+  {
+    "id": "ath_017",
+    "name": "Priya Nair",
+    "sport": "Tennis",
+    "level": "Former College",
+    "career": "D-I singles player; now sports-medicine physician",
+    "city": "New Haven",
+    "state": "CT",
+    "lat": 41.31,
+    "lon": -72.92,
+    "categories": [
+      "speaking",
+      "mentoring"
+    ],
+    "topics": [
+      "injury prevention",
+      "women in medicine",
+      "student-athletes"
+    ],
+    "story": "A former D-I tennis player who is now a sports-medicine doctor. Priya speaks to schools and clinics about keeping young athletes healthy.",
+    "fee_min": 700,
+    "fee_max": 1800,
+    "virtual_ok": true,
+    "travel_miles": 200
+  },
+  {
+    "id": "ath_018",
+    "name": "Calvin Wright",
+    "sport": "Basketball",
+    "level": "Former Pro",
+    "career": "NBA journeyman, 6 teams in 8 seasons; G League",
+    "city": "Hartford",
+    "state": "CT",
+    "lat": 41.76,
+    "lon": -72.69,
+    "categories": [
+      "speaking",
+      "appearance",
+      "comedy_entertainment",
+      "clinic"
+    ],
+    "topics": [
+      "handling change",
+      "role players",
+      "humor"
+    ],
+    "story": "Traded five times in eight years, Calvin is an expert at showing up somewhere new and fitting in fast. His talk on being a great role player lands with corporate teams.",
+    "fee_min": 4000,
+    "fee_max": 9000,
+    "virtual_ok": true,
+    "travel_miles": 1500
+  },
+  {
+    "id": "ath_019",
+    "name": "Hannah Svensson",
+    "sport": "Cross-Country Skiing",
+    "level": "Rising (College)",
+    "career": "D-I Nordic skier, junior; World Juniors team",
+    "city": "Salt Lake City",
+    "state": "UT",
+    "lat": 40.76,
+    "lon": -111.89,
+    "categories": [
+      "appearance",
+      "endorsement",
+      "mentoring"
+    ],
+    "topics": [
+      "outdoors",
+      "endurance",
+      "climate and snow sports"
+    ],
+    "story": "A World Juniors skier studying environmental science, Hannah is looking for outdoor-brand partners and school talks about climate and winter sports.",
+    "fee_min": 200,
+    "fee_max": 700,
+    "virtual_ok": true,
+    "travel_miles": 200
+  },
+  {
+    "id": "ath_020",
+    "name": "Andre Lewis",
+    "sport": "Football",
+    "level": "Former College",
+    "career": "D-II quarterback; Army veteran",
+    "city": "Colorado Springs",
+    "state": "CO",
+    "lat": 38.83,
+    "lon": -104.82,
+    "categories": [
+      "speaking",
+      "mentoring",
+      "appearance"
+    ],
+    "topics": [
+      "veterans",
+      "leadership under pressure",
+      "discipline"
+    ],
+    "story": "Andre played D-II quarterback, then served two tours as an Army officer. He blends military leadership and locker-room lessons for corporate and veteran groups.",
+    "fee_min": 1000,
+    "fee_max": 3000,
+    "virtual_ok": true,
+    "travel_miles": 600
+  },
+  {
+    "id": "ath_021",
+    "name": "Mia Thompson",
+    "sport": "Gymnastics",
+    "level": "Former College",
+    "career": "D-I gymnast; NCAA event finalist",
+    "city": "Nashville",
+    "state": "TN",
+    "lat": 36.16,
+    "lon": -86.78,
+    "categories": [
+      "speaking",
+      "clinic",
+      "mentoring"
+    ],
+    "topics": [
+      "mental health",
+      "body image",
+      "athlete wellbeing"
+    ],
+    "story": "Mia stepped away from gymnastics for a year for her mental health and came back to make an NCAA final. She speaks to schools and parent groups about pressure on young athletes.",
+    "fee_min": 800,
+    "fee_max": 2200,
+    "virtual_ok": true,
+    "travel_miles": 500
+  },
+  {
+    "id": "ath_022",
+    "name": "Big Lou Fontaine",
+    "sport": "Wrestling",
+    "level": "Former Pro",
+    "career": "Pro wrestler, 12 years on the independent circuit",
+    "city": "Kansas City",
+    "state": "MO",
+    "lat": 39.1,
+    "lon": -94.58,
+    "categories": [
+      "comedy_entertainment",
+      "appearance"
+    ],
+    "topics": [
+      "showmanship",
+      "humor",
+      "crowd work"
+    ],
+    "story": "Twelve years of body slams in high-school gyms and county fairs. Big Lou is a crowd-pleasing emcee for fundraisers, car-dealership events, and grand openings.",
+    "fee_min": 700,
+    "fee_max": 2000,
+    "virtual_ok": false,
+    "travel_miles": 500
+  },
+  {
+    "id": "ath_023",
+    "name": "Sofia Alvarez",
+    "sport": "Softball",
+    "level": "Olympian",
+    "career": "Olympic softball silver medalist, catcher",
+    "city": "Austin",
+    "state": "TX",
+    "lat": 30.27,
+    "lon": -97.74,
+    "categories": [
+      "speaking",
+      "clinic",
+      "endorsement"
+    ],
+    "topics": [
+      "communication",
+      "team leadership",
+      "women in sport"
+    ],
+    "story": "As a catcher, Sofia called every pitch for an Olympic silver-medal team. She uses that to teach managers how to communicate under pressure.",
+    "fee_min": 3500,
+    "fee_max": 8000,
+    "virtual_ok": true,
+    "travel_miles": 1500
+  },
+  {
+    "id": "ath_024",
+    "name": "Jamal Peters",
+    "sport": "Track & Field",
+    "level": "Former Pro",
+    "career": "Pro sprinter; 2x U.S. championship finalist",
+    "city": "Charlotte",
+    "state": "NC",
+    "lat": 35.23,
+    "lon": -80.84,
+    "categories": [
+      "speaking",
+      "clinic",
+      "appearance"
+    ],
+    "topics": [
+      "speed of execution",
+      "small margins",
+      "faith and sport"
+    ],
+    "story": "Jamal missed an Olympic team by 0.02 seconds. His talk on how tiny margins decide outcomes is popular with sales and operations teams.",
+    "fee_min": 1500,
+    "fee_max": 4000,
+    "virtual_ok": true,
+    "travel_miles": 800
+  },
+  {
+    "id": "ath_025",
+    "name": "Nora Fitzgerald",
+    "sport": "Rowing",
+    "level": "Former College",
+    "career": "D-I rower; now nonprofit founder",
+    "city": "Philadelphia",
+    "state": "PA",
+    "lat": 39.95,
+    "lon": -75.17,
+    "categories": [
+      "speaking",
+      "mentoring"
+    ],
+    "topics": [
+      "teamwork",
+      "nonprofits",
+      "access to sport"
+    ],
+    "story": "Nora founded a nonprofit that brings rowing to city kids who'd never been on the water. She speaks on teamwork and building community programs.",
+    "fee_min": 500,
+    "fee_max": 1500,
+    "virtual_ok": true,
+    "travel_miles": 300
+  },
+  {
+    "id": "ath_026",
+    "name": "Ty Whitehorse",
+    "sport": "Rodeo",
+    "level": "Current Pro",
+    "career": "Pro bull rider, national finals qualifier",
+    "city": "Fort Collins",
+    "state": "CO",
+    "lat": 40.59,
+    "lon": -105.08,
+    "categories": [
+      "appearance",
+      "speaking",
+      "endorsement"
+    ],
+    "topics": [
+      "courage",
+      "Native American youth",
+      "rural communities"
+    ],
+    "story": "A Lakota bull rider who made the national finals, Ty visits reservation schools and rural communities and is a natural for western-wear brands.",
+    "fee_min": 1000,
+    "fee_max": 3000,
+    "virtual_ok": false,
+    "travel_miles": 800
+  },
+  {
+    "id": "ath_027",
+    "name": "Chris Donovan",
+    "sport": "Baseball",
+    "level": "Rising (Minor League)",
+    "career": "Single-A outfielder, 2nd season",
+    "city": "Denver",
+    "state": "CO",
+    "lat": 39.74,
+    "lon": -104.99,
+    "categories": [
+      "appearance",
+      "clinic",
+      "endorsement"
+    ],
+    "topics": [
+      "chasing a dream",
+      "youth baseball"
+    ],
+    "story": "Drafted in the 14th round and making about $1,500 a month, Chris runs off-season hitting clinics and is open to local business appearances.",
+    "fee_min": 150,
+    "fee_max": 600,
+    "virtual_ok": true,
+    "travel_miles": 100
+  },
+  {
+    "id": "ath_028",
+    "name": "Ava Kim",
+    "sport": "Climbing",
+    "level": "Current Pro",
+    "career": "National team sport climber",
+    "city": "Boulder",
+    "state": "CO",
+    "lat": 40.01,
+    "lon": -105.27,
+    "categories": [
+      "speaking",
+      "appearance",
+      "endorsement"
+    ],
+    "topics": [
+      "problem solving",
+      "risk",
+      "outdoor industry"
+    ],
+    "story": "Ava treats every climbing route like a puzzle to solve. Her talk on breaking big problems into small moves works for engineering and product teams.",
+    "fee_min": 1500,
+    "fee_max": 4000,
+    "virtual_ok": true,
+    "travel_miles": 1000
+  },
+  {
+    "id": "ath_029",
+    "name": "Rob \"Rocket\" Martinez",
+    "sport": "Soccer",
+    "level": "Former Pro",
+    "career": "MLS forward, 7 seasons",
+    "city": "Seattle",
+    "state": "WA",
+    "lat": 47.61,
+    "lon": -122.33,
+    "categories": [
+      "appearance",
+      "clinic",
+      "speaking"
+    ],
+    "topics": [
+      "teamwork",
+      "Latino youth",
+      "community"
+    ],
+    "story": "Rocket scored 40 MLS goals and never forgot the public field where he learned the game. He runs free clinics and speaks at community events in Spanish and English.",
+    "fee_min": 2000,
+    "fee_max": 5000,
+    "virtual_ok": true,
+    "travel_miles": 800
+  },
+  {
+    "id": "ath_030",
+    "name": "Leah Goldberg",
+    "sport": "Fencing",
+    "level": "Olympian",
+    "career": "Olympic fencer, \u00e9p\u00e9e",
+    "city": "New York",
+    "state": "NY",
+    "lat": 40.71,
+    "lon": -74.01,
+    "categories": [
+      "speaking",
+      "appearance"
+    ],
+    "topics": [
+      "strategy",
+      "negotiation",
+      "reading opponents"
+    ],
+    "story": "An Olympic fencer turned corporate negotiator, Leah teaches how to read the other side and pick the right moment to act.",
+    "fee_min": 3000,
+    "fee_max": 7000,
+    "virtual_ok": true,
+    "travel_miles": 1000
+  },
+  {
+    "id": "ath_031",
+    "name": "Dwayne Carter Jr.",
+    "sport": "Football",
+    "level": "Rising (College)",
+    "career": "D-I offensive lineman, senior; team captain",
+    "city": "Columbus",
+    "state": "OH",
+    "lat": 39.96,
+    "lon": -83.0,
+    "categories": [
+      "appearance",
+      "endorsement",
+      "mentoring"
+    ],
+    "topics": [
+      "leadership",
+      "community service"
+    ],
+    "story": "Team captain and a three-time community-service award winner, Dwayne is open to NIL deals with local businesses and youth mentoring.",
+    "fee_min": 300,
+    "fee_max": 1200,
+    "virtual_ok": true,
+    "travel_miles": 150
+  },
+  {
+    "id": "ath_032",
+    "name": "Kelsey Moore",
+    "sport": "Triathlon",
+    "level": "Former Pro",
+    "career": "Pro triathlete; 3 Ironman wins",
+    "city": "Boulder",
+    "state": "CO",
+    "lat": 40.01,
+    "lon": -105.27,
+    "categories": [
+      "speaking",
+      "clinic",
+      "endorsement"
+    ],
+    "topics": [
+      "endurance",
+      "time management",
+      "health and wellness"
+    ],
+    "story": "Kelsey trained 25 hours a week while raising two kids. Her talk on time management fits wellness weeks and working-parent groups.",
+    "fee_min": 1800,
+    "fee_max": 4500,
+    "virtual_ok": true,
+    "travel_miles": 1000
+  },
+  {
+    "id": "ath_033",
+    "name": "Victor Santos",
+    "sport": "MMA",
+    "level": "Former Pro",
+    "career": "Pro MMA fighter, 18-6",
+    "city": "Las Vegas",
+    "state": "NV",
+    "lat": 36.17,
+    "lon": -115.14,
+    "categories": [
+      "speaking",
+      "appearance",
+      "comedy_entertainment"
+    ],
+    "topics": [
+      "discipline",
+      "comebacks",
+      "humor"
+    ],
+    "story": "Victor lost three straight fights, nearly quit, and then won seven in a row. Equal parts motivational and funny, he's a strong emcee for Vegas corporate events.",
+    "fee_min": 1500,
+    "fee_max": 4000,
+    "virtual_ok": true,
+    "travel_miles": 600
+  },
+  {
+    "id": "ath_034",
+    "name": "Jasmine Patel",
+    "sport": "Cricket",
+    "level": "Current Pro",
+    "career": "U.S. national women's cricket team",
+    "city": "Dallas",
+    "state": "TX",
+    "lat": 32.78,
+    "lon": -96.8,
+    "categories": [
+      "speaking",
+      "clinic",
+      "appearance"
+    ],
+    "topics": [
+      "growing a new sport",
+      "South Asian community",
+      "women in sport"
+    ],
+    "story": "Jasmine is helping grow cricket in America. She's a great fit for cultural festivals, schools, and companies with South Asian employee groups.",
+    "fee_min": 600,
+    "fee_max": 1800,
+    "virtual_ok": true,
+    "travel_miles": 1000
+  },
+  {
+    "id": "ath_035",
+    "name": "Ben Archer",
+    "sport": "Hockey",
+    "level": "Former College",
+    "career": "D-I goalie; now high-school teacher",
+    "city": "Minneapolis",
+    "state": "MN",
+    "lat": 44.98,
+    "lon": -93.27,
+    "categories": [
+      "speaking",
+      "clinic",
+      "mentoring"
+    ],
+    "topics": [
+      "handling pressure",
+      "education",
+      "mistakes"
+    ],
+    "story": "A goalie learns to let a bad goal go in seconds. Ben teaches students and teams how to recover from mistakes fast.",
+    "fee_min": 400,
+    "fee_max": 1200,
+    "virtual_ok": true,
+    "travel_miles": 200
+  },
+  {
+    "id": "ath_036",
+    "name": "Gina Russo",
+    "sport": "Bowling",
+    "level": "Former Pro",
+    "career": "PWBA tour, 6 titles",
+    "city": "Chicago",
+    "state": "IL",
+    "lat": 41.88,
+    "lon": -87.63,
+    "categories": [
+      "appearance",
+      "comedy_entertainment",
+      "clinic"
+    ],
+    "topics": [
+      "fun team events",
+      "consistency"
+    ],
+    "story": "Six-time pro bowling champ and a natural host. Gina runs team-building bowling nights with mini-lessons and plenty of trash talk.",
+    "fee_min": 500,
+    "fee_max": 1500,
+    "virtual_ok": false,
+    "travel_miles": 300
+  },
+  {
+    "id": "ath_037",
+    "name": "Isaiah Grant",
+    "sport": "Basketball",
+    "level": "Rising (College)",
+    "career": "D-II forward, junior; 3.9 GPA",
+    "city": "Kansas City",
+    "state": "MO",
+    "lat": 39.1,
+    "lon": -94.58,
+    "categories": [
+      "appearance",
+      "mentoring",
+      "speaking"
+    ],
+    "topics": [
+      "academics and athletics",
+      "first-gen college"
+    ],
+    "story": "A first-gen college student with a 3.9 GPA in engineering, Isaiah speaks to middle schools about STEM and sports and is open to local NIL deals.",
+    "fee_min": 150,
+    "fee_max": 500,
+    "virtual_ok": true,
+    "travel_miles": 100
+  },
+  {
+    "id": "ath_038",
+    "name": "Megan O'Leary",
+    "sport": "Snowboarding",
+    "level": "Former Pro",
+    "career": "X Games medalist, slopestyle",
+    "city": "Denver",
+    "state": "CO",
+    "lat": 39.74,
+    "lon": -104.99,
+    "categories": [
+      "appearance",
+      "speaking",
+      "endorsement"
+    ],
+    "topics": [
+      "risk and creativity",
+      "outdoor brands",
+      "recovery from injury"
+    ],
+    "story": "An X Games medalist who broke her back and learned to walk again, Megan now designs boards and talks about creativity and calculated risk.",
+    "fee_min": 2500,
+    "fee_max": 6000,
+    "virtual_ok": true,
+    "travel_miles": 1500
+  },
+  {
+    "id": "ath_039",
+    "name": "Coach Ray Dunbar",
+    "sport": "Football",
+    "level": "Former Pro",
+    "career": "NFL special teams, 5 seasons; 20 years coaching",
+    "city": "Tampa",
+    "state": "FL",
+    "lat": 27.95,
+    "lon": -82.46,
+    "categories": [
+      "speaking",
+      "comedy_entertainment",
+      "mentoring"
+    ],
+    "topics": [
+      "leadership",
+      "coaching",
+      "humor"
+    ],
+    "story": "Forty years in football and a story for every one. Ray's mix of coaching wisdom and dad jokes plays well at banquets and leadership retreats.",
+    "fee_min": 1500,
+    "fee_max": 3500,
+    "virtual_ok": true,
+    "travel_miles": 800
+  },
+  {
+    "id": "ath_040",
+    "name": "Zoe Martin",
+    "sport": "Skateboarding",
+    "level": "Rising (Pro-Am)",
+    "career": "Pro-am street skater, 19",
+    "city": "Portland",
+    "state": "OR",
+    "lat": 45.52,
+    "lon": -122.68,
+    "categories": [
+      "appearance",
+      "endorsement",
+      "comedy_entertainment"
+    ],
+    "topics": [
+      "creativity",
+      "youth culture"
+    ],
+    "story": "Zoe's skate videos have 200K followers. She's looking for local brand partners, demos at events, and youth outreach.",
+    "fee_min": 300,
+    "fee_max": 1000,
+    "virtual_ok": true,
+    "travel_miles": 200
+  }
+]
