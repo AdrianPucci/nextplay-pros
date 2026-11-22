@@ -81,3 +81,8 @@ Contact details live in a separate vault table that no agent can read. They reac
 - **Old demo data**: delete `data/app.db` and restart.
 
 *All people in the demo data are fictional. Next Play is a class project, not a live service.*
+
+## Credits
+
+- About page photo of Mehmet Okur: Stephanie Young Merzel, [CC BY 2.0](https://commons.wikimedia.org/wiki/File:Mehmet_Okur_(cropped).jpg) via Wikimedia Commons.
+- About page facts are cited on the page itself.

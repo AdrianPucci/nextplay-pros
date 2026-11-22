@@ -85,8 +85,8 @@ function athleteCard(a, extra = "") {
 
 // ---------------------------------------------------------------- tabs
 const TABS = {
-  booker: [["find", "Find talent (AI Scout)"], ["browse", "Browse roster"], ["mine", "My requests"], ["board", "Opportunity board"], ["behind", "Behind the scenes"]],
-  athlete: [["inbox", "My inbox"], ["build", "Build my profile (AI)"], ["board", "Opportunity board"], ["behind", "Behind the scenes"]],
+  booker: [["find", "Find talent (AI Scout)"], ["browse", "Browse roster"], ["mine", "My requests"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["about", "About"]],
+  athlete: [["inbox", "My inbox"], ["build", "Build my profile (AI)"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["about", "About"]],
 };
 function renderTabs() {
   $("#tabs").innerHTML = TABS[state.role].map(([k, l]) => `<button data-tab="${k}" class="${state.tab === k ? "active" : ""}">${l}</button>`).join("");
@@ -325,7 +325,65 @@ async function viewBehind() {
       ${u.runs.map((r) => `<tr><td>${esc(r.time.replace("T", " ").slice(0, 19))}</td><td>${esc(r.agent)}</td><td class="num">${r.requests}</td><td class="num">${r.tool_calls}</td><td class="num">${r.input_tokens}</td><td class="num">${r.cached_input_tokens}</td><td class="num">${r.output_tokens}</td><td class="num">$${r.cost_usd.toFixed(6)}</td></tr>`).join("")}</table></div></div>`;
 }
 
-const VIEWS = { find: viewFind, browse: viewBrowse, mine: viewMine, board: viewBoard, behind: viewBehind, inbox: viewInbox, build: viewBuild };
+
+// ---------------------------------------------------------------- about
+// Two real athletes from the founder's own circle, shown to illustrate who Next Play is for.
+// Facts come from the public sources listed on the page. They are NOT in the demo roster (no fees, no contacts).
+const FEATURED = [
+  { name: "MG Vellinga", alt: "Maryguenn Vellinga", role: "Professional boxer · Park City, Utah", photo: "/static/img/mg.jpg", initials: "MG", hue: 330,
+    facts: [
+      "Started boxing at 28 and climbed to No. 2 nationally in the Elite Female 112-lb division at the 2017 USA Boxing National Championships [1]",
+      "Competed for Utah at the 2018 National Golden Gloves, part of the first full Utah women's team sent to the tournament [2]",
+      "Co-founded RISE Boxing in Park City, including therapeutic boxing classes for people living with Parkinson's disease [3]",
+      "Runs Mountain Mettle, a charity boxing night that funds youth scholarships through the RISE Strong Foundation [4]",
+    ],
+    why: "A late starter who became a national contender, then built a business and a charity around the sport. That story fits keynotes on grit and second acts, women-in-sport panels, and hands-on clinics, and she is exactly the kind of athlete bookers don't know how to find." },
+  { name: "Mehmet “Memo” Okur", alt: "Mehmet Okur", role: "Former NBA center · Utah Jazz 2004–2011", photo: "/static/img/okur.jpg", initials: "MO", hue: 210,
+    credit: 'Photo: Stephanie Young Merzel, <a href="https://commons.wikimedia.org/wiki/File:Mehmet_Okur_(cropped).jpg" target="_blank" rel="noopener">CC BY 2.0</a>',
+    facts: [
+      "NBA champion with the 2004 Detroit Pistons, then signed with the Utah Jazz in July 2004 and played seven seasons in Salt Lake City [5]",
+      "2007 NBA All-Star [5]",
+      "Named a Utah Jazz team ambassador after his playing career [6]",
+    ],
+    why: "A champion and All-Star whose name still means something in Utah and in Turkey, now well past his playing days. Next Play would put him in front of community events, youth clinics, and Turkish-American groups that would love to book him but have no idea how to reach him." },
+];
+function viewAbout() {
+  const card = (a) => `<article class="feature">
+    <div class="feature-photo" style="--h:${a.hue}">
+      <img src="${a.photo}" alt="${esc(a.alt)}" onerror="this.remove()">
+      <span>${esc(a.initials)}</span>
+    </div>
+    <div class="feature-body">
+      <h2>${esc(a.name)}</h2><div class="meta">${esc(a.role)}</div>
+      <ul>${a.facts.map((f) => `<li>${esc(f)}</li>`).join("")}</ul>
+      <div class="why"><b>Why Next Play:</b> ${esc(a.why)}</div>
+      ${a.credit ? `<div class="credit">${a.credit}</div>` : ""}
+    </div></article>`;
+  $("#view").innerHTML = `
+  <section class="hero about-hero">
+    <div class="about-crew">${bot("scout", "happy", 70)}${bot("story_builder", "classic", 70)}${bot("gatekeeper", "classic", 70)}</div>
+    <h1>Every athlete's story deserves an audience</h1>
+    <p>Next Play connects former, current, and rising athletes with the schools, companies, nonprofits, and local businesses that want them for talks, appearances, clinics, and events. AI does the matching, the writing, and the scam screening. The athlete decides who gets their contact details.</p>
+  </section>
+  <div class="panel founder">
+    <h2>Why I'm building this</h2>
+    <p>I spent years doing design work alongside sports and event teams in Utah. Over and over I met athletes with incredible stories who were past their playing days, not household names, or still on the rise, and the businesses and events that would have loved to book them had no idea how to reach them. Next Play is the bridge I kept wishing existed.</p>
+    <p class="meta">Adrian Pucci · Yale SOM · MGT 409 final project</p>
+  </div>
+  <h2 class="about-h">The athletes who inspired it</h2>
+  <p class="sub">Two people from my own circle, and exactly who Next Play is for. They are shown here to illustrate the idea; they are not part of the demo roster, and no fees or contact details are listed.</p>
+  <div class="grid">${FEATURED.map(card).join("")}</div>
+  <div class="panel sources"><b>Sources</b><ol>
+    <li><a href="https://www.sltrib.com/sports/2017/12/04/park-citys-maryguenn-vellinga-is-utahs-best-hope-for-glory-as-salt-palace-hosts-usa-boxing-national-championships-this-week" target="_blank" rel="noopener">Salt Lake Tribune, Dec 2017</a></li>
+    <li><a href="https://www.sltrib.com/sports/2018/05/13/for-the-first-time-utah-is-sending-a-full-womens-team-to-the-national-golden-gloves-boxing-tournament" target="_blank" rel="noopener">Salt Lake Tribune, May 2018</a></li>
+    <li><a href="https://www.kpcw.org/show/mountain-money/2024-10-28/local-boxing-gym-punches-back-against-parkinsons-disease" target="_blank" rel="noopener">KPCW, Oct 2024</a></li>
+    <li><a href="https://townlift.com/2026/08/mountain-mettle-returns-aug-22-with-focus-on-youth-scholarships/" target="_blank" rel="noopener">TownLift, Aug 2026</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Mehmet_Okur" target="_blank" rel="noopener">Wikipedia: Mehmet Okur</a></li>
+    <li><a href="https://www.deseret.com/2014/9/28/20549451/mehmet-okur-named-team-ambassador-for-utah-jazz" target="_blank" rel="noopener">Deseret News, Sep 2014</a></li>
+  </ol></div>`;
+}
+
+const VIEWS = { about: viewAbout, find: viewFind, browse: viewBrowse, mine: viewMine, board: viewBoard, behind: viewBehind, inbox: viewInbox, build: viewBuild };
 
 async function loadRoster() { state.athletes = await api("/api/athletes"); }
 (async () => { [state.cities] = await Promise.all([api("/api/cities"), loadRoster()]); render(); })();
