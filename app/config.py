@@ -28,7 +28,9 @@ PRICES = json.loads((DATA / "prices.json").read_text(encoding="utf-8"))[MODEL_NA
 # Safety limits (can be changed in .env)
 DAILY_SPEND_CAP_USD = float(os.getenv("DAILY_SPEND_CAP_USD", "2.00"))
 MAX_INPUT_CHARS = int(os.getenv("MAX_INPUT_CHARS", "2000"))
-DEMO_MODE = os.getenv("NEXTPLAY_DATA", "demo")  # "demo" = the 40-athlete fictional roster
+# Which roster to load. Default: the 40-athlete fictional test set in data/. To use other data, point
+# NEXTPLAY_DATA_DIR at a folder with athletes.json + contacts.json (+ optional opportunities.json) in the same format.
+DATA_DIR = Path(os.getenv("NEXTPLAY_DATA_DIR", "").strip() or DATA).resolve()
 
 
 def build_model():
@@ -37,6 +39,14 @@ def build_model():
     from pydantic_ai.models.openai import OpenAIResponsesModel
     from pydantic_ai.providers.openai import OpenAIProvider
 
+    # Default: the course Portkey key. Fallback (course rules allow it, at your own cost): your own OpenAI key,
+    # same model, used when MODEL_PROVIDER=openai or when no Portkey key is set.
+    provider = os.getenv("MODEL_PROVIDER", "").strip().lower()
+    openai_key = os.getenv("OPENAI_API_KEY", "").strip()
+    if provider == "openai" or (not os.getenv("PORTKEY_API_KEY", "").strip() and openai_key):
+        if not openai_key:
+            raise RuntimeError("MODEL_PROVIDER=openai but OPENAI_API_KEY is not set.")
+        return OpenAIResponsesModel(MODEL_NAME, provider=OpenAIProvider(openai_client=AsyncOpenAI(api_key=openai_key)))
     api_key = os.getenv("PORTKEY_API_KEY", "").strip()
     if not api_key:
         raise RuntimeError("PORTKEY_API_KEY is not set. Put it in .env (this folder or the one above it).")

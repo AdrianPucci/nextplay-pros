@@ -11,9 +11,9 @@ import threading
 import uuid
 from datetime import datetime, timezone
 
-from .config import DATA
+from .config import DATA, DATA_DIR
 
-DB_PATH = DATA / "app.db"
+DB_PATH = DATA_DIR / "app.db"  # one database per roster folder
 _lock = threading.Lock()
 CITIES = json.loads((DATA / "cities.json").read_text(encoding="utf-8"))
 
@@ -42,8 +42,8 @@ def init_db(reset: bool = False) -> None:
                 status TEXT NOT NULL, screening TEXT, created TEXT, decided TEXT);
         """)
         if c.execute("SELECT COUNT(*) FROM athletes").fetchone()[0] == 0:
-            athletes = json.loads((DATA / "athletes.json").read_text(encoding="utf-8"))
-            contacts = json.loads((DATA / "contacts.json").read_text(encoding="utf-8"))
+            athletes = json.loads((DATA_DIR / "athletes.json").read_text(encoding="utf-8"))
+            contacts = json.loads((DATA_DIR / "contacts.json").read_text(encoding="utf-8"))
             for a in athletes:
                 c.execute("INSERT INTO athletes VALUES (?, ?, 'seed')", (a["id"], json.dumps(a)))
                 ct = contacts[a["id"]]

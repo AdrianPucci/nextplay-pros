@@ -219,9 +219,12 @@ async def main(offline: bool):
         rec.update(passed=bool(passed), detail=detail, seconds=round(time.perf_counter() - start, 2), time=guards.now())
         out.append(rec)
         print(f"{'PASS' if passed else 'FAIL'}  {t['id']:3} {t['name']}\n       {detail}", flush=True)
-    RESULTS.write_text(json.dumps(out, indent=2), encoding="utf-8")
+    target = RESULTS.with_name("safety_tests_offline.json") if offline else RESULTS  # never overwrite the full run
+    if not offline and not all(r["passed"] or "401" not in r["detail"] for r in out):
+        target = RESULTS.with_name("safety_tests_failed_run.json")  # an auth/network failure must not replace good results
+    target.write_text(json.dumps(out, indent=2), encoding="utf-8")
     n = sum(r["passed"] for r in out)
-    print(f"\n{n}/{len(out)} passed. Saved to {RESULTS.relative_to(ROOT)}")
+    print(f"\n{n}/{len(out)} passed. Saved to {target.relative_to(ROOT)}")
     return out
 
 

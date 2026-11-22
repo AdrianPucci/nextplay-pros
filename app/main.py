@@ -95,7 +95,10 @@ def cities():
 
 @app.get("/api/opportunities")
 def opportunities():
-    return json.loads((store.DATA / "opportunities.json").read_text(encoding="utf-8"))
+    path = store.DATA_DIR / "opportunities.json"
+    if not path.exists():
+        path = store.DATA / "opportunities.json"
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 # ------------------------------------------------------------------ agents
