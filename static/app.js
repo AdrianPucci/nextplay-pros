@@ -115,7 +115,7 @@ document.addEventListener("click", (e) => { const r = e.target.closest("[data-re
 document.addEventListener("click", (e) => { if (e.target.closest("[data-story]")) openStory(); });
 function openStory() {
   const o = document.createElement("div"); o.className = "story-overlay";
-  o.innerHTML = `<iframe src="/static/story.html?autoplay=1&v=12" title="NextPlay Pros 25-second story" allow="autoplay"></iframe>`;
+  o.innerHTML = `<iframe src="/static/story.html?autoplay=1&v=12" title="NextPlay Pros 20-second story" allow="autoplay"></iframe>`;
   document.body.appendChild(o);
   const close = () => { o.remove(); window.removeEventListener("message", onMsg); document.removeEventListener("keydown", onKey); };
   const onMsg = (m) => { if (m.data === "close-story") close(); };
@@ -133,7 +133,8 @@ const EXAMPLES = [
   "Virtual fireside chat on women in leadership for a business school club, budget $3,000.",
 ];
 // ---------------------------------------------------------------- intro banner (home): crossfading athletes + tagline
-const INTRO_SLIDES = [
+const INTRO_SLIDES = [  // two photos per athlete where we have them: action shot first
+  ["mg2.jpg", "MG Vellinga", "Pro boxer · Park City"],
   ["mg.jpg", "MG Vellinga", "Pro boxer · Park City"],
   ["okur.jpg", "Mehmet Okur", "NBA champion · Utah Jazz"],
   ["bloom.jpg", "Jeremy Bloom", "Olympic skier · NFL draft pick"],
@@ -141,15 +142,18 @@ const INTRO_SLIDES = [
   ["dauwalter.jpg", "Courtney Dauwalter", "Ultrarunner · former teacher"],
 ];
 function introBanner() {
-  const n = INTRO_SLIDES.length, step = 4;  // seconds per athlete
-  return `<section class="intro" style="--n:${n};--cycle:${n * step}s" aria-label="NextPlay Pros">
+  const n = INTRO_SLIDES.length, step = 3;  // seconds per photo (faster, more action)
+  const on = 100 / n, fade = Math.min(4, on / 3);  // keyframes scale with the number of photos
+  const kf = `@keyframes introFade{0%{opacity:0}${fade.toFixed(2)}%{opacity:1}${on.toFixed(2)}%{opacity:1}${(on + fade).toFixed(2)}%{opacity:0}100%{opacity:0}}
+    @keyframes introZoom{0%{transform:scale(1.12)}${(on + fade).toFixed(2)}%{transform:scale(1)}100%{transform:scale(1)}}`;
+  return `<style>${kf}</style><section class="intro" style="--n:${n};--cycle:${n * step}s" aria-label="NextPlay Pros">
     <div class="intro-pics" aria-hidden="true">${INTRO_SLIDES.map(([img, name, role], i) =>
       `<figure style="animation-delay:${i * step - n * step}s"><img src="/static/img/${img}" alt=""><figcaption><b>${esc(name)}</b>${esc(role)}</figcaption></figure>`).join("")}</div>
     <div class="intro-copy">
       <h1>You were a star, <span>or you're becoming one.</span></h1>
       <p>Let us help you connect with your community, get paid, and inspire through your story.</p>
       <p class="intro-ask">They're waiting… are you ready?</p>
-      <div class="intro-cta"><button class="btn" data-go-athlete>I'm ready: build my profile</button><button class="story-btn" data-story>▶ Watch our 25-second story</button></div>
+      <div class="intro-cta"><button class="btn" data-go-athlete>I'm ready: build my profile</button><button class="story-btn" data-story>▶ Watch our 20-second story</button></div>
     </div>
   </section>`;
 }
@@ -208,6 +212,7 @@ function howItWorks() {
 
 function viewFind() {
   $("#view").innerHTML = `${introBanner()}${whoFor()}
+  <div class="band" role="img" aria-label="Silhouettes of a basketball player, a golfer, a dancer, and a women's soccer player racing across the page"></div>
   <section class="hero" id="find-hero">
     <h1>Who do you want at your event?</h1>
     <p>Describe it like you'd tell a friend. Scout searches the roster, keeps you under budget, and explains every match.</p>
@@ -254,7 +259,7 @@ function scoutResults(r) {
 // ---------------------------------------------------------------- booker: browse
 function viewBrowse() {
   const sports = [...new Set(state.athletes.map((a) => a.sport))].sort();
-  $("#view").innerHTML = `<h1>The roster</h1><p class="sub">${state.athletes.length} athletes. All demo profiles are fictional.</p>
+  $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div><h1>The roster</h1><p class="sub">${state.athletes.length} athletes. All demo profiles are fictional.</p>
     <div class="panel" style="margin-bottom:16px"><div class="row">
       <div><label>Sport</label><select id="f-sport"><option value="">Any</option>${sports.map((s) => `<option>${esc(s)}</option>`).join("")}</select></div>
       <div><label>Type</label><select id="f-cat"><option value="">Any</option>${Object.entries(CAT).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select></div>
@@ -334,7 +339,7 @@ function requestModal(athleteId) {
 }
 
 async function viewMine() {
-  $("#view").innerHTML = `<h1>My requests</h1><p class="sub">Contact details unlock only after an athlete accepts.</p><div id="list" class="grid"><div class="thinking"><span class="spinner"></span>Loading…</div></div>`;
+  $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div><h1>My requests</h1><p class="sub">Contact details unlock only after an athlete accepts.</p><div id="list" class="grid"><div class="thinking"><span class="spinner"></span>Loading…</div></div>`;
   const list = await api(`/api/requests/booker/${state.bookerId}`);
   $("#list").innerHTML = list.length ? list.map((r) => `<div class="req">
     <div class="req-top"><div><b>${esc(r.athlete_name)}</b> · <span class="meta">${esc(CAT[r.event_type] || r.event_type)} · ${esc(r.event_date || "date TBD")} · ${money(r.budget)}</span></div><span class="status ${r.status}">${r.status}</span></div>
@@ -349,7 +354,7 @@ async function viewMine() {
 // ---------------------------------------------------------------- athlete: inbox
 async function viewInbox() {
   const opts = state.athletes.map((a) => `<option value="${a.id}" ${a.id === state.athleteId ? "selected" : ""}>${esc(a.name)} (${esc(a.sport)})</option>`).join("");
-  $("#view").innerHTML = `<div class="row" style="margin-bottom:16px"><div><h1>My inbox</h1><p class="sub" style="margin:0">Every request is screened by Gatekeeper first. You decide who gets your contact info.</p></div>
+  $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div><div class="row" style="margin-bottom:16px"><div><h1>My inbox</h1><p class="sub" style="margin:0">Every request is screened by Gatekeeper first. You decide who gets your contact info.</p></div>
     <div style="flex:0 1 280px"><label>Demo sign-in: viewing as</label><select id="who">${opts}</select></div></div><div id="inbox" class="grid"></div>`;
   $("#who").onchange = () => { state.athleteId = $("#who").value; localSet("np_athlete", state.athleteId); drawInbox(); };
   drawInbox();
@@ -383,7 +388,7 @@ async function drawInbox() {
 // ---------------------------------------------------------------- athlete: Story Builder
 function viewBuild() {
   const levels = ["Former Pro", "Former College", "Olympian", "Paralympian", "Current Pro", "Rising (College)", "Rising (Minor League)", "Rising (Pro-Am)"];
-  $("#view").innerHTML = `<h1>Build my profile</h1><p class="sub">No agent? No problem. Tell your story in your own words and Story Builder turns it into a profile bookers want to hire.</p>
+  $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div><h1>Build my profile</h1><p class="sub">No agent? No problem. Tell your story in your own words and Story Builder turns it into a profile bookers want to hire.</p>
   <div class="grid two"><div class="panel form">
     <div class="row"><div><label>Name</label><input id="s-name"></div><div><label>Sport</label><input id="s-sport"></div></div>
     <div class="row"><div><label>Level</label><select id="s-level">${levels.map((l) => `<option>${l}</option>`).join("")}</select></div>
@@ -432,7 +437,7 @@ function drawDraft() {
 // ---------------------------------------------------------------- opportunity board
 async function viewBoard() {
   const list = await api("/api/opportunities");
-  $("#view").innerHTML = `<h1>Opportunity board</h1><p class="sub">Open gigs posted by local businesses, schools, and nonprofits.</p>
+  $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div><h1>Opportunity board</h1><p class="sub">Open gigs posted by local businesses, schools, and nonprofits.</p>
     <div class="grid two">${list.map((o) => `<div class="card"><div class="req-top"><b>${esc(o.title)}</b><span class="pill cat">${CAT[o.type]}</span></div>
       <div class="meta">${esc(o.org)} · ${esc(o.city)} · ${esc(o.date)}</div><p class="story">${esc(o.details)}</p>
       <div class="card-foot"><span class="fee">Up to ${money(o.budget_max)}</span>
@@ -523,11 +528,11 @@ function viewAbout() {
       <div class="why"><b>Why NextPlay Pros:</b> ${esc(a.why)}</div>
       ${a.credit ? `<div class="credit">${a.credit}</div>` : ""}
     </div></article>`;
-  $("#view").innerHTML = `
+  $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div>
   <section class="hero about-hero">
     <div class="about-crew">${bot("scout", "happy", 96)}${bot("story_builder", "happy", 96)}${bot("gatekeeper", "happy", 96)}</div>
     <h1>Every athlete's story deserves an audience</h1>
-    <button class="story-btn" data-story>▶ Watch our 25-second story</button>
+    <button class="story-btn" data-story>▶ Watch our 20-second story</button>
     <p>NextPlay Pros connects former, current, and rising athletes with the schools, companies, nonprofits, and local businesses that want them for talks, appearances, clinics, and events. We do the matching, the writing, and the scam screening. The athlete decides who gets their contact details.</p>
   </section>
   <h2 class="about-h">Meet your team</h2>
@@ -600,7 +605,7 @@ function riderBlock(a) {
 }
 function viewRider() {
   const opts = state.athletes.map((a) => `<option value="${a.id}" ${a.id === state.athleteId ? "selected" : ""}>${esc(a.name)} (${esc(a.sport)})</option>`).join("");
-  $("#view").innerHTML = `<div class="row" style="margin-bottom:16px"><div><h1>My event rider</h1><p class="sub" style="margin:0">Your rules for every booking. Bookers must agree to them before they can send you a request, and Gatekeeper flags any request that breaks them.</p></div>
+  $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div><div class="row" style="margin-bottom:16px"><div><h1>My event rider</h1><p class="sub" style="margin:0">Your rules for every booking. Bookers must agree to them before they can send you a request, and Gatekeeper flags any request that breaks them.</p></div>
     <div style="flex:0 1 280px"><label>Demo sign-in: viewing as</label><select id="who">${opts}</select></div></div><div id="rider-form"></div>`;
   $("#who").onchange = () => { state.athleteId = $("#who").value; localSet("np_athlete", state.athleteId); drawRiderForm(); };
   drawRiderForm();
@@ -651,7 +656,7 @@ function drawRiderForm() {
 
 // ---------------------------------------------------------------- Terms & Safety
 function viewTerms() {
-  $("#view").innerHTML = `<h1>Terms &amp; Safety</h1>
+  $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div><h1>Terms &amp; Safety</h1>
   <p class="sub">Plain-English rules for everyone on NextPlay Pros. <b>Class-project draft:</b> these terms illustrate how the service would work and are not legal advice; a real launch would have them reviewed by a lawyer.</p>
   <div class="grid two">
     <div class="panel"><h2>For bookers</h2><ul class="terms">

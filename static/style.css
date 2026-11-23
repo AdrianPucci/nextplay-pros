@@ -344,3 +344,22 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
   .brand { font-size: 26px; gap: 10px; }
   .brand .logo { width: 38px; height: 38px; }
 }
+
+/* Even bigger brand */
+.topbar { padding: 18px 28px; }
+.brand { font-size: 46px; gap: 14px; letter-spacing: -.03em; line-height: 1; }
+.brand .logo { width: 62px; height: 62px; border-radius: 14px; }
+.brand .tag { font-size: 15px; margin-bottom: 8px; }
+@media (max-width: 900px) { .brand .tag { display: none; } }
+@media (max-width: 640px) {
+  .brand { font-size: 34px; gap: 10px; }
+  .brand .logo { width: 46px; height: 46px; border-radius: 11px; }
+}
+
+/* Full-width athlete silhouette band (generated art, tone on tone) */
+.band { width: 100vw; margin: 4px 0 22px calc(50% - 50vw); height: clamp(150px, 26vw, 360px);
+        background: #0f1b2d url("/static/img/athletes-band.jpg") center / cover no-repeat; }
+@media (max-width: 640px) { .band { height: 170px; background-size: auto 100%; background-position: 30% center; } }
+
+.band.slim { height: clamp(96px, 12vw, 160px); margin: -24px 0 22px calc(50% - 50vw); background-position: center 58%; }
+@media (max-width: 640px) { .band.slim { margin-top: -16px; height: 96px; } }

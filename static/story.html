@@ -10,7 +10,7 @@
   * { box-sizing: border-box; margin: 0; }
   html, body { height: 100%; background: var(--navy); color: var(--ink); font-family: Inter, "Segoe UI", Arial, sans-serif; overflow: hidden; }
   .stage { position: fixed; inset: 0; background: radial-gradient(900px 500px at 20% 0%, rgba(159,220,236,.14), transparent), linear-gradient(180deg, #13223a, var(--navy)); }
-  .scene { position: absolute; inset: 0; display: grid; place-items: center; padding: 6vh 6vw 16vh; opacity: 0; transition: opacity .7s ease; pointer-events: none; }
+  .scene { position: absolute; inset: 0; display: grid; place-items: center; padding: 6vh 6vw 16vh; opacity: 0; transition: opacity .45s ease; pointer-events: none; }
   .scene.on { opacity: 1; }
   .kicker { color: var(--orange); font-weight: 800; letter-spacing: .2em; text-transform: uppercase; font-size: clamp(12px, 1.6vw, 16px); text-align: center; }
   h1 { font-size: clamp(30px, 6.2vw, 76px); letter-spacing: -.03em; line-height: 1.05; text-align: center; }
@@ -24,11 +24,36 @@
   .on .pcard { transform: none; opacity: 1; }
   .on .pcard:nth-child(2) { transition-delay: .25s; } .on .pcard:nth-child(3) { transition-delay: .5s; } .on .pcard:nth-child(4) { transition-delay: .75s; } .on .pcard:nth-child(5) { transition-delay: 1s; } .on .pcard:nth-child(6) { transition-delay: 1.25s; }
   .pcard img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .pcard.two img.alt { position: absolute; inset: 0; opacity: 0; transition: opacity .6s ease 1.9s; }
+  .on .pcard.two img.alt { opacity: 1; }
   .pcard .init { position: absolute; inset: 0; display: grid; place-items: center; font-size: clamp(28px, 4vw, 52px); font-weight: 800; color: rgba(255,255,255,.9); }
   .pcard .tag { position: absolute; left: 8px; bottom: 8px; right: 8px; font-size: clamp(9px, 1.1vw, 13px); font-weight: 700; background: rgba(15,27,45,.8); border-radius: 8px; padding: 4px 6px; }
 
   /* scene 2/3: community dots + question marks */
   .town { position: relative; width: min(80vw, 760px); height: min(34vh, 300px); margin-top: 2vh; }
+  /* city grid behind the community dots: draws in fast, slow zoom */
+  .town .city { position: absolute; inset: -8% -6%; width: 112%; height: 116%; z-index: 0; opacity: 0; transform: scale(1.12); transition: opacity .5s, transform 5s ease-out;
+                -webkit-mask-image: radial-gradient(ellipse at center, #000 45%, transparent 78%); mask-image: radial-gradient(ellipse at center, #000 45%, transparent 78%); }
+  .on .town .city { opacity: 1; transform: scale(1); }
+  .city path, .city rect, .city circle { fill: none; }
+  .city .minor path { stroke: #22364f; stroke-width: 1.5; }
+  .city .major path { stroke: #2f4a6e; stroke-width: 4; }
+  .city .diag { stroke: #3b5a85; stroke-width: 6; }
+  .city .river { stroke: #1f4f66; stroke-width: 14; stroke-linecap: round; opacity: .8; }
+  .city .park { fill: #173a33; }
+  .city .canals circle { stroke: #1f4f66; stroke-width: 7; opacity: .85; }
+  .city .plaza { fill: #1a2b45; stroke: #3b5a85; stroke-width: 3; }
+  .city .blocks rect { fill: #1a2b45; }
+  .city .minor path, .city .major path, .city .minor circle, .city .canals circle { stroke-dasharray: 1900; stroke-dashoffset: 1900; }
+  .city .minor circle { stroke: #22364f; stroke-width: 1.5; }
+  .on .city .minor circle { animation: draw 1.2s ease-out forwards; }
+  .on .city .canals circle { animation: draw 1s ease-out .1s forwards; }
+  .on .city .minor path { animation: draw 1.1s ease-out forwards; }
+  .on .city .major path { animation: draw .9s ease-out .15s forwards; filter: drop-shadow(0 0 5px rgba(159,220,236,.3)); }
+  .on .city .diag { animation: draw 1s ease-out .35s forwards; filter: drop-shadow(0 0 6px rgba(159,220,236,.35)); }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .town .dot, .town .q { z-index: 1; }
+
   .dot { position: absolute; width: 18px; height: 18px; border-radius: 50%; background: var(--ice); box-shadow: 0 0 0 0 rgba(159,220,236,.6); animation: ping 1.8s infinite; }
   .dot.me { width: 30px; height: 30px; background: var(--orange); box-shadow: 0 0 0 0 rgba(255,90,31,.6); left: 46%; top: 40%; }
   .q { position: absolute; font-size: clamp(22px, 3.4vw, 44px); font-weight: 800; color: var(--gold); opacity: 0; transition: opacity .6s; }
@@ -54,6 +79,18 @@
   .gig .p { font-size: clamp(20px, 2.6vw, 32px); font-weight: 800; color: #12865b; }
   .cta { margin-top: 4vh; display: inline-block; background: var(--orange); color: #fff; font-weight: 800; padding: 14px 26px; border-radius: 999px; font-size: clamp(15px, 1.8vw, 22px); opacity: 0; transition: opacity .6s 1.4s; }
   .on .cta { opacity: 1; }
+
+
+  /* opening shot: the silhouette band pans across, wordmark streaks in */
+  #s0 { padding: 0; }
+  .s0-band { position: absolute; inset: 0; background: #0f1b2d url("img/athletes-band.jpg") 0% center / cover no-repeat; transform: scale(1.06); }
+  #s0.on .s0-band { animation: s0pan 2.8s ease-out forwards; }
+  @keyframes s0pan { from { background-position: 0% center; transform: scale(1.16); } to { background-position: 100% center; transform: scale(1.04); } }
+  .s0-word { position: relative; font-size: clamp(34px, 7vw, 96px); font-weight: 800; letter-spacing: -.03em; color: #fff; text-shadow: 0 6px 30px rgba(0,0,0,.6);
+             opacity: 0; transform: translateX(-40px); transition: all .6s ease .5s; }
+  .s0-word span { color: var(--orange); }
+  #s0.on .s0-word { opacity: 1; transform: none; }
+  @media (orientation: portrait) { .s0-band { background-size: auto 100%; } .s0-word { font-size: 13vw; } }
 
   /* subtitles */
   .subs { position: fixed; left: 50%; bottom: 7vh; transform: translateX(-50%); width: min(92vw, 1000px); text-align: center; font-size: clamp(16px, 2.3vw, 28px); font-weight: 700; line-height: 1.3; }
@@ -97,10 +134,12 @@
 </head>
 <body>
 <div class="stage">
+  <section class="scene" id="s0"><div class="s0-band"></div><div class="s0-word">NextPlay <span>Pros</span></div></section>
+
   <section class="scene" id="s1"><div>
     <div class="kicker">Rising athletes · Retired pros · Local heroes</div>
     <div class="row">
-      <div class="pcard"><img src="img/mg.jpg" alt="MG Vellinga"><div class="tag">Pro boxer · Park City</div></div>
+      <div class="pcard two"><img src="img/mg.jpg" alt="MG Vellinga"><img class="alt" src="img/mg2.jpg" alt=""><div class="tag">Pro boxer · Park City</div></div>
       <div class="pcard"><img src="img/okur.jpg" alt="Mehmet Okur"><div class="tag">NBA champ · Utah Jazz</div></div>
       <div class="pcard"><img src="img/bloom.jpg" alt="Jeremy Bloom"><div class="tag">Olympic skier · NFL draft</div></div>
       <div class="pcard"><img src="img/clark.jpg" alt="Wyndham Clark"><div class="tag">2x U.S. Open champ</div></div>
@@ -112,6 +151,13 @@
   <section class="scene" id="s2"><div style="width:100%">
     <div class="big">Your community wants you.</div>
     <div class="town" style="margin-left:auto;margin-right:auto">
+      <svg class="city ring" viewBox="0 0 760 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <path class="river" d="M-10 40 C 160 70, 260 150, 350 153 S 560 230, 770 300"/>
+        <g class="canals"><circle cx="380" cy="165" r="70"/><circle cx="380" cy="165" r="120"/><circle cx="380" cy="165" r="170"/></g>
+        <g class="minor"><circle cx="380" cy="165" r="45"/><circle cx="380" cy="165" r="95"/><circle cx="380" cy="165" r="145"/><circle cx="380" cy="165" r="200"/><circle cx="380" cy="165" r="240"/><circle cx="380" cy="165" r="285"/><path d="M424.9 168.1 L799.0 194.3"/><path d="M469.8 195.9 L777.1 301.7"/><path d="M417.3 190.2 L728.2 399.9"/><path d="M442.3 236.7 L655.5 482.0"/><path d="M399.7 205.4 L564.1 542.5"/><path d="M398.1 258.3 L460.1 577.3"/><path d="M376.9 209.9 L350.7 584.0"/><path d="M349.1 254.8 L243.3 562.1"/><path d="M354.8 202.3 L145.1 513.2"/><path d="M308.3 227.3 L63.0 440.5"/><path d="M339.6 184.7 L2.5 349.1"/><path d="M286.7 183.1 L-32.3 245.1"/><path d="M335.1 161.9 L-39.0 135.7"/><path d="M290.2 134.1 L-17.1 28.3"/><path d="M342.7 139.8 L31.8 -69.9"/><path d="M317.7 93.3 L104.5 -152.0"/><path d="M360.3 124.6 L195.9 -212.5"/><path d="M361.9 71.7 L299.9 -247.3"/><path d="M383.1 120.1 L409.3 -254.0"/><path d="M410.9 75.2 L516.7 -232.1"/><path d="M405.2 127.7 L614.9 -183.2"/><path d="M451.7 102.7 L697.0 -110.5"/><path d="M420.4 145.3 L757.5 -19.1"/><path d="M473.3 146.9 L792.3 84.9"/></g>
+        <g class="major"><path d="M387.8 120.7 L452.9 -248.6"/><path d="M420.8 184.0 L760.6 342.5"/><path d="M341.0 187.5 L16.3 375.0"/><path d="M339.2 146.0 L-0.6 -12.5"/></g>
+        <circle class="plaza" cx="380" cy="165" r="22"/>
+      </svg>
       <div class="dot" style="left:8%;top:20%"></div><div class="dot" style="left:22%;top:70%"></div><div class="dot" style="left:78%;top:18%"></div>
       <div class="dot" style="left:88%;top:66%"></div><div class="dot" style="left:64%;top:80%"></div><div class="dot" style="left:30%;top:8%"></div>
       <div class="dot me"></div>
@@ -146,17 +192,18 @@
 <div class="subs" aria-live="polite"><span id="sub"></span></div>
 <div class="bar" id="bar"></div>
 <div class="ctrl"><button id="replay">↺ Replay</button><button id="close">✕ Close</button></div>
-<div class="start" id="start"><button id="play">▶ Play the 25-second story</button></div>
+<div class="start" id="start"><button id="play">▶ Play the 20-second story</button></div>
 
 <script src="bots.js?v=14"></script>
 <script>
 // [scene id, seconds on screen, subtitle]
 const SCRIPT = [
-  ["s1", 5, "Rising athletes. Retired pros. Local heroes. This is for you."],
-  ["s2", 5, "Your community wants you… but doesn't know you're available."],
-  ["s3", 4, "And they don't know how to reach you."],
-  ["s4", 6, "NextPlay Pros connects you to your community, with a team in your corner."],
-  ["s5", 5, "Paid opportunities to show up, give back, and be seen. Your next play starts here."],
+  ["s0", 2.5, ""],
+  ["s1", 3.5, "Rising athletes. Retired pros. Local heroes. This is for you."],
+  ["s2", 3.5, "Your community wants you… but doesn't know you're available."],
+  ["s3", 2.5, "And they don't know how to reach you."],
+  ["s4", 4.5, "NextPlay Pros connects you to your community, with a team in your corner."],
+  ["s5", 3.5, "Paid opportunities to show up, give back, and be seen. Your next play starts here."],
 ];
 const TOTAL = SCRIPT.reduce((n, s) => n + s[1], 0);
 document.getElementById("m1").innerHTML = bot("scout", "happy", 150) + "<b>Scout</b><span>finds the gigs</span>";
@@ -165,7 +212,7 @@ document.getElementById("m3").innerHTML = bot("gatekeeper", "happy", 150) + "<b>
 
 let timers = [], t0 = 0, raf = 0;
 function show(id) { document.querySelectorAll(".scene").forEach((s) => s.classList.toggle("on", s.id === id)); }
-function sub(text) { document.getElementById("sub").textContent = text; }
+function sub(text) { const el = document.getElementById("sub"); el.textContent = text; el.parentElement.style.visibility = text ? "visible" : "hidden"; }
 function tick() { const p = Math.min(1, (performance.now() - t0) / (TOTAL * 1000)); document.getElementById("bar").style.width = p * 100 + "%"; if (p < 1) raf = requestAnimationFrame(tick); }
 function play() {
   timers.forEach(clearTimeout); timers = []; cancelAnimationFrame(raf);
@@ -180,7 +227,7 @@ document.getElementById("close").onclick = () => parent.postMessage("close-story
 // ?autoplay=1 starts right away (used by the in-app button and the video recorder); ?rec=1 hides the controls
 const q = new URLSearchParams(location.search);
 if (q.get("rec")) document.body.classList.add("rec");
-if (q.get("autoplay")) play(); else { show("s1"); sub("Rising athletes. Retired pros. Local heroes."); }
+if (q.get("autoplay")) play(); else { show("s0"); sub(""); }
 </script>
 </body>
 </html>
