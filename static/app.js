@@ -136,7 +136,6 @@ const EXAMPLES = [
 const INTRO_SLIDES = [  // two photos per athlete where we have them: action shot first
   ["mg2.jpg", "MG Vellinga", "Pro boxer · Park City"],
   ["mg.jpg", "MG Vellinga", "Pro boxer · Park City"],
-  ["okur.jpg", "Mehmet Okur", "NBA champion · Utah Jazz"],
   ["bloom2.jpg", "Jeremy Bloom", "Olympic skier · NFL draft pick"],
   ["bloom.jpg", "Jeremy Bloom", "Olympic skier · NFL draft pick"],
   ["clark.jpg", "Wyndham Clark", "2x U.S. Open champion"],
@@ -521,8 +520,7 @@ const FEATURED = [
       "Runs Mountain Mettle, a charity boxing night that funds youth scholarships through the RISE Strong Foundation [4]",
     ],
     why: "A late starter who became a national contender, then built a business and a charity around the sport. That story fits keynotes on grit and second acts, women-in-sport panels, and hands-on clinics, and she is exactly the kind of athlete bookers don't know how to find." },
-  { name: "Mehmet “Memo” Okur", alt: "Mehmet Okur", role: "Former NBA center · Utah Jazz 2004–2011", photo: "/static/img/okur.jpg", initials: "MO", hue: 210,
-    credit: 'Photo: Lordcolus (Flickr), <a href="https://commons.wikimedia.org/wiki/File:Mehmo.jpg" target="_blank" rel="noopener">CC BY 2.0</a>',
+  { name: "Mehmet “Memo” Okur", alt: "Mehmet Okur", role: "Former NBA center · Utah Jazz 2004–2011", photo: null, initials: "MO", hue: 210,
     facts: [
       "NBA champion with the 2004 Detroit Pistons, then signed with the Utah Jazz in July 2004 and played seven seasons in Salt Lake City [5]",
       "2007 NBA All-Star [5]",
