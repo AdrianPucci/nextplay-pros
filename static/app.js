@@ -44,7 +44,7 @@ function usageLine(g, open = false) {
   const name = BOT_NAMES[g.agent] || g.agent;
   const trace = `<ol class="trace">${(g.trace || []).map((t) => `<li class="${t.kind}"><span>${STEP_ICON[t.kind] || "•"}</span>${esc(t.text)}</li>`).join("")}</ol>`;
   if (g.blocked) {
-    return `<details class="glass" ${open ? "open" : ""}><summary>${bot(g.agent, "classic", 26)}<b>Glass box</b> · blocked before the AI · 0 tokens · $0</summary><div class="glass-body">${trace}</div></details>`;
+    return `<details class="glass" ${open ? "open" : ""}><summary>${bot(g.agent, "classic", 26)}<b>Glass box</b> · blocked by our rules · 0 tokens · $0</summary><div class="glass-body">${trace}</div></details>`;
   }
   const fresh = Math.max(g.input_tokens - g.cached_input_tokens, 0), total = g.input_tokens + g.output_tokens;
   const pct = (n) => (total ? (100 * n) / total : 0);
@@ -100,8 +100,8 @@ function athleteCard(a, extra = "") {
 
 // ---------------------------------------------------------------- tabs
 const TABS = {
-  booker: [["find", "Find talent (AI Scout)"], ["browse", "Browse roster"], ["mine", "My requests"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
-  athlete: [["inbox", "My inbox"], ["rider", "My profile & rider"], ["build", "Build my profile (AI)"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
+  booker: [["find", "Find talent"], ["browse", "Browse roster"], ["mine", "My requests"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
+  athlete: [["inbox", "My inbox"], ["rider", "My profile & rider"], ["build", "Build my profile"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
 };
 const STAFF = new URLSearchParams(location.search).has("staff");  // ?staff=1 shows "Behind the scenes" (for grading)
 function renderTabs() {
@@ -195,11 +195,11 @@ function howItWorks() {
     <div class="how-kicker">How it works</div>
     <h2>The team every pro has, now for every athlete</h2>
     <div class="how-steps">
-      ${step(1, "scout", "happy", "Scouts", "Scout · AI talent scout",
+      ${step(1, "scout", "happy", "Scouts", "Scout · your talent scout",
         "Reads what a school, team, business, or charity is planning and finds athletes whose story, city, budget, and schedule fit. Every match comes with a reason.")}
-      ${step(2, "gatekeeper", "classic", "Booking agents &amp; protectors", "Gatekeeper · AI appearance guardrails",
-        "Screens every request for scams and AI tricks, checks it against the athlete's rider, schedule, and NIL rules, and protects both sides with escrow, check-in, and refunds.")}
-      ${step(3, "story_builder", "happy", "Promoters", "Story Builder · AI publicist",
+      ${step(2, "gatekeeper", "classic", "Booking agents &amp; protectors", "Gatekeeper · your appearance guardrails",
+        "We screen every request for scams and tricks, check it against the athlete's rider, schedule, and NIL rules, and protect both sides with escrow, check-in, and refunds.")}
+      ${step(3, "story_builder", "happy", "Promoters", "Story Builder · your publicist",
         "Turns an athlete's rough notes into a profile that sells, using only their own facts, so rising athletes and local heroes get noticed like the pros.")}
     </div>
     <div class="how-foot">You stay in charge: your contact details unlock only when you say yes.</div>
@@ -414,7 +414,7 @@ function drawDraft() {
       ${d.claims_to_verify.length ? `<div class="note"><b>✔ Before going live, we'll verify:</b><ul style="margin:6px 0 0;padding-left:18px">${d.claims_to_verify.map((c) => `<li>${esc(c)}</li>`).join("")}</ul></div>` : ""}
       <div class="row"><div><label>Min fee ($)</label><input id="d-min" type="number" step="50" value="500"></div><div><label>Max fee ($)</label><input id="d-max" type="number" step="50" value="1500"></div></div>
       <div class="row"><div><label>Private email (vault)</label><input id="d-email" type="email"></div><div><label>Private phone (vault)</label><input id="d-phone"></div></div>
-      <div class="meta">🔒 Email and phone go into the private vault. No AI ever reads them; bookers see them only after you accept.</div>
+      <div class="meta">🔒 Email and phone go into the private vault. Nobody sees them, not even our team, until you accept a booking.</div>
       <button class="btn good" id="d-pub">Publish profile</button>
     </div>`;
   $("#d-pub").onclick = async () => {
@@ -528,14 +528,14 @@ function viewAbout() {
     <div class="about-crew">${bot("scout", "happy", 96)}${bot("story_builder", "happy", 96)}${bot("gatekeeper", "happy", 96)}</div>
     <h1>Every athlete's story deserves an audience</h1>
     <button class="story-btn" data-story>▶ Watch our 25-second story</button>
-    <p>NextPlay Pros connects former, current, and rising athletes with the schools, companies, nonprofits, and local businesses that want them for talks, appearances, clinics, and events. AI does the matching, the writing, and the scam screening. The athlete decides who gets their contact details.</p>
+    <p>NextPlay Pros connects former, current, and rising athletes with the schools, companies, nonprofits, and local businesses that want them for talks, appearances, clinics, and events. We do the matching, the writing, and the scam screening. The athlete decides who gets their contact details.</p>
   </section>
   <h2 class="about-h">Meet your team</h2>
-  <p class="sub">Every pro has a team: a scout, a publicist, security. Most athletes never get one. NextPlay Pros gives every athlete three AI teammates.</p>
+  <p class="sub">Every pro has a team: a scout, a publicist, security. Most athletes never get one. NextPlay Pros gives every athlete a team of three.</p>
   <div class="grid three team">
     <div class="card team-card">${bot("scout", "happy", 140)}<div><h3>Scout</h3><div class="role">Your talent scout</div><p>Reads what a booker is planning, searches the roster, and puts you forward when your story fits: the theme, the city, the budget, and the day you're free.</p></div></div>
     <div class="card team-card">${bot("story_builder", "happy", 140)}<div><h3>Story Builder</h3><div class="role">Your publicist</div><p>Turns your rough notes into a profile bookers want to hire, using only your facts, and flags every claim to verify before it goes live.</p></div></div>
-    <div class="card team-card">${bot("gatekeeper", "happy", 140)}<div><h3>Gatekeeper</h3><div class="role">Your appearance guardrails</div><p>Checks every request against your rider, your schedule, and your safety rules before you see it, and stops scams, AI tricks, and NIL problems.</p></div></div>
+    <div class="card team-card">${bot("gatekeeper", "happy", 140)}<div><h3>Gatekeeper</h3><div class="role">Your appearance guardrails</div><p>Checks every request against your rider, your schedule, and your safety rules before you see it, and stops scams, tricks, and NIL problems.</p></div></div>
   </div>
   <h2 class="about-h">Who it serves</h2>
   <div class="grid three serve">
@@ -547,7 +547,7 @@ function viewAbout() {
   <ol class="story-steps">
     <li><b>The gap.</b> Only about 1–2% of college athletes reach a major pro league, and pro careers are short. Thousands of great stories never find an audience.</li>
     <li><b>The problem.</b> Bookers don't know how to reach these athletes, and athletes don't know the gigs exist. Bureaus serve the famous few and take 20–30%.</li>
-    <li><b>The fix.</b> Describe your event in plain English. AI finds athletes who fit the story, city, and budget, screens every request for scams, and unlocks contact details only when the athlete says yes.</li>
+    <li><b>The fix.</b> Describe your event in plain English. We find athletes who fit the story, city, and budget, screen every request for scams, and unlock contact details only when the athlete says yes.</li>
     <li><b>Why it matters.</b> Athletes earn from their story on their own terms, with their own rules for safety and travel. Bookers get the right person in minutes.</li>
   </ol>
   <div class="panel founder">
@@ -663,7 +663,7 @@ function viewTerms() {
     </ul></div>
     <div class="panel"><h2>For athletes</h2><ul class="terms">
       <li><b>Independent contractor.</b> You work for yourself, not for NextPlay Pros. You set your fees and your rider.</li>
-      <li><b>Accurate profile.</b> Your stats, teams, and titles must be true. AI-written profiles flag every claim to verify before going live.</li>
+      <li><b>Accurate profile.</b> Your stats, teams, and titles must be true. Profiles we write for you flag every claim to verify before going live.</li>
       <li><b>Show up.</b> Accepting a request is a commitment. No-shows lose standing on the platform; real emergencies are handled case by case.</li>
       <li><b>Your safety comes first.</b> You can decline any request for any reason, and you can leave any event where you feel unsafe or your rider is not honored.</li>
       <li><b>Your contact details are yours.</b> They stay in a private vault and are shared only with a booker whose request you accept.</li>
