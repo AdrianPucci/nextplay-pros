@@ -187,6 +187,25 @@ document.addEventListener("click", (e) => {
   if (e.target.closest("[data-go-find]")) { const h = document.getElementById("find-hero"); if (h) h.scrollIntoView({ behavior: "smooth", block: "start" }); setTimeout(() => { const q = document.getElementById("q"); if (q) q.focus({ preventScroll: true }); }, 450); }
 });
 
+function howItWorks() {
+  const step = (n, b, mood, title, who, text) => `<div class="how-step">
+      <div class="how-num">${n}</div>${bot(b, mood, 120)}
+      <h3>${title}</h3><div class="how-who">${who}</div><p>${text}</p></div>`;
+  return `<section class="how" aria-label="How NextPlay Pros works">
+    <div class="how-kicker">How it works</div>
+    <h2>The team every pro has, now for every athlete</h2>
+    <div class="how-steps">
+      ${step(1, "scout", "happy", "Scouts", "Scout · AI talent scout",
+        "Reads what a school, team, business, or charity is planning and finds athletes whose story, city, budget, and schedule fit. Every match comes with a reason.")}
+      ${step(2, "gatekeeper", "classic", "Booking agents &amp; protectors", "Gatekeeper · AI appearance guardrails",
+        "Screens every request for scams and AI tricks, checks it against the athlete's rider, schedule, and NIL rules, and protects both sides with escrow, check-in, and refunds.")}
+      ${step(3, "story_builder", "happy", "Promoters", "Story Builder · AI publicist",
+        "Turns an athlete's rough notes into a profile that sells, using only their own facts, so rising athletes and local heroes get noticed like the pros.")}
+    </div>
+    <div class="how-foot">You stay in charge: your contact details unlock only when you say yes.</div>
+  </section>`;
+}
+
 function viewFind() {
   $("#view").innerHTML = `${introBanner()}${whoFor()}
   <section class="hero" id="find-hero">
@@ -200,7 +219,8 @@ function viewFind() {
     </div>
     <div class="chips">${EXAMPLES.map((x, i) => `<button class="chip" data-ex="${i}">${esc(x.slice(0, 48))}…</button>`).join("")}</div>
   </section>
-  <section id="results">${state.lastScout ? scoutResults(state.lastScout) : ""}</section>`;
+  <section id="results">${state.lastScout ? scoutResults(state.lastScout) : ""}</section>
+  ${howItWorks()}`;
   document.querySelectorAll("[data-ex]").forEach((c) => (c.onclick = () => { $("#q").value = EXAMPLES[c.dataset.ex]; $("#budget").value = ""; }));
   $("#go").onclick = runScout;
   $("#q").onkeydown = (e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) runScout(); };
