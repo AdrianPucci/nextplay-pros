@@ -254,8 +254,11 @@ are estimates built from sourced industry figures and the app's measured speed, 
       <text x="100" y="178" text-anchor="middle" font-family="Inter,Arial" font-weight="800" font-size="22" fill="#ff5a1f">NP</text>
       <rect x="88" y="116" width="24" height="12" rx="3" fill="#b7c2d6"/>
       <rect x="58" y="62" width="84" height="58" rx="18" fill="#dfe5ee" stroke="#b7c2d6" stroke-width="2"/>
-      ${eyes(m, 84, 116, 88)}${mouth(m, 106)}
-      <circle cx="68" cy="102" r="4" fill="#f2a6a0" opacity=".7"/><circle cx="132" cy="102" r="4" fill="#f2a6a0" opacity=".7"/>
+      <path d="M62 84 Q100 76 138 84 L136 94 Q124 100 108 94 L100 90 L92 94 Q76 100 64 94 Z" fill="#0b1630"/>
+      <path d="M68 86 Q80 83 92 86 L90 91 Q78 95 70 91 Z" fill="#ff7a45" opacity=".85"/><path d="M108 86 Q120 83 132 86 L130 91 Q122 95 110 91 Z" fill="#ff7a45" opacity=".85"/>
+      <path d="M72 86 L80 85" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>
+      ${m === "thinking" ? `<path d="M92 108 L110 106" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`
+        : `<path d="M88 106 Q102 112 114 102" fill="none" stroke="${INK}" stroke-width="3.5" stroke-linecap="round"/>`}
       <path d="M56 66 Q58 30 100 30 Q142 30 144 66 Z" fill="#ff5a1f"/>
       <path d="M100 66 L172 66 Q176 72 168 76 L100 74 Z" fill="#d9440f"/>
       <circle cx="100" cy="31" r="5" fill="#d9440f"/>
@@ -281,11 +284,10 @@ are estimates built from sourced industry figures and the app's measured speed, 
       <rect x="58" y="62" width="84" height="58" rx="22" fill="#6b4026" stroke="#53301c" stroke-width="2"/>
       <path d="M58 84 Q56 56 100 56 Q144 56 142 84 Q130 66 100 66 Q70 66 58 84 Z" fill="#1a110c"/>
       <circle cx="59" cy="104" r="5" fill="none" stroke="#e6c27a" stroke-width="2.5"/><circle cx="141" cy="104" r="5" fill="none" stroke="#e6c27a" stroke-width="2.5"/>
-      ${m === "thinking"
-        ? `<rect x="68" y="${78 + 6}" width="28" height="15" rx="7" fill="#0b1630"/><rect x="104" y="84" width="28" height="15" rx="7" fill="#0b1630"/>`
-        : `<rect x="68" y="80" width="28" height="15" rx="7" fill="#0b1630"/><rect x="104" y="80" width="28" height="15" rx="7" fill="#0b1630"/>`}
-      <rect x="94" y="84" width="12" height="3" fill="#0b1630"/><path d="M68 84 L60 82 M132 84 L140 82" stroke="#0b1630" stroke-width="3" stroke-linecap="round"/>
-      <path d="M72 84 L82 84" stroke="#ff8a3d" stroke-width="3" stroke-linecap="round" opacity=".85"/><path d="M108 84 L118 84" stroke="#ff8a3d" stroke-width="3" stroke-linecap="round" opacity=".85"/>
+      <path d="M64 80 Q80 76 96 80 L94 90 Q82 98 70 92 Q64 88 64 80 Z" fill="#0b1630"/><path d="M104 80 Q120 76 136 80 Q136 88 130 92 Q118 98 106 90 Z" fill="#0b1630"/>
+      <path d="M64 80 L58 74 M136 80 L142 74" stroke="#0b1630" stroke-width="4" stroke-linecap="round"/>
+      <rect x="94" y="81" width="12" height="3" fill="#0b1630"/>
+      <path d="M70 83 Q80 81 90 83 L89 88 Q80 93 72 89 Z" fill="#c2185b" opacity=".55"/><path d="M110 83 Q120 81 130 83 Q129 88 126 89 Q118 93 111 88 Z" fill="#c2185b" opacity=".55"/>
       <path d="M72 75 Q82 72 92 75" fill="none" stroke="#120c09" stroke-width="3" stroke-linecap="round"/>
       <path d="M108 74 Q117 65 127 71" fill="none" stroke="#120c09" stroke-width="3" stroke-linecap="round"/>
       ${m === "thinking" ? `<path d="M92 107 L110 105" stroke="#120c09" stroke-width="3" stroke-linecap="round"/>`
@@ -307,10 +309,10 @@ are estimates built from sourced industry figures and the app's measured speed, 
       <rect x="88" y="118" width="24" height="12" rx="2" fill="#9aa7bf"/>
       <rect x="52" y="56" width="96" height="66" rx="6" fill="#c9d3e3" stroke="#9aa7bf" stroke-width="2"/>
       <rect x="52" y="52" width="96" height="12" rx="3" fill="#232836"/>
-      ${m === "happy" ? eyes(m, 82, 118, 86) : `<rect x="62" y="78" width="34" height="18" rx="6" fill="#0b1630"/><rect x="104" y="78" width="34" height="18" rx="6" fill="#0b1630"/>
+      ${`<rect x="62" y="78" width="34" height="18" rx="6" fill="#0b1630"/><rect x="104" y="78" width="34" height="18" rx="6" fill="#0b1630"/>
       <line x1="96" y1="85" x2="104" y2="85" stroke="#0b1630" stroke-width="4"/>
       <rect x="${m === "thinking" ? 70 : 66}" y="82" width="10" height="4" rx="2" fill="#9fdcec" opacity=".8"/><rect x="${m === "thinking" ? 112 : 108}" y="82" width="10" height="4" rx="2" fill="#9fdcec" opacity=".8"/>`}
-      ${m === "happy" ? `<path d="M86 104 Q100 116 114 104" fill="${INK}"/>` : `<line x1="88" y1="108" x2="112" y2="108" stroke="${INK}" stroke-width="3.5" stroke-linecap="round"/>`}
+      ${m === "happy" ? `<path d="M88 106 Q100 112 112 106" fill="none" stroke="${INK}" stroke-width="3.5" stroke-linecap="round"/>` : `<line x1="88" y1="108" x2="112" y2="108" stroke="${INK}" stroke-width="3.5" stroke-linecap="round"/>`}
       <path d="M150 74 Q160 80 156 96 Q154 106 146 112" fill="none" stroke="#232836" stroke-width="2.5"/>
       <circle cx="150" cy="76" r="5" fill="#232836"/>
       <path d="M50 146 Q36 156 44 176" fill="none" stroke="#9aa7bf" stroke-width="11" stroke-linecap="round"/>
@@ -318,9 +320,9 @@ are estimates built from sourced industry figures and the app's measured speed, 
       <rect x="168" y="150" width="8" height="66" rx="3" fill="#e6c27a"/><circle cx="172" cy="148" r="7" fill="#e6c27a"/>
       <path d="M172 160 Q190 176 200 168" fill="none" stroke="#c62828" stroke-width="6" stroke-linecap="round"/>`,
   };
-  const LABEL = { scout: "Scout, a talent-scout robot in an orange ball cap with binoculars and a clipboard",
+  const LABEL = { scout: "Scout, a talent-scout robot in an orange ball cap and sport shades, with binoculars and a clipboard",
     story_builder: "Story Builder, a confident African American promoter robot with an afro puff, sunglasses, gold hoops, a headset, an orange blazer, and a megaphone",
-    gatekeeper: "Gatekeeper, a square bouncer robot in sunglasses with an earpiece, a shield badge and a velvet rope" };
+    gatekeeper: "Gatekeeper, a square bouncer robot in black sunglasses with an earpiece, a shield badge and a velvet rope" };
   // Finish: brushed-metal heads, shaded bodies, soft drop shadow, so the robots read as polished at any size.
   let uid = 0;
   const FINISH = [
