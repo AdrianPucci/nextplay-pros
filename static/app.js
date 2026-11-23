@@ -101,7 +101,7 @@ function athleteCard(a, extra = "") {
 // ---------------------------------------------------------------- tabs
 const TABS = {
   booker: [["find", "Find talent"], ["browse", "Browse roster"], ["mine", "My requests"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
-  athlete: [["inbox", "My inbox"], ["rider", "My profile & rider"], ["build", "Build my profile"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
+  athlete: [["board", "Opportunity board"], ["build", "Build my profile"], ["rider", "My profile & rider"], ["inbox", "My inbox"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
 };
 const STAFF = new URLSearchParams(location.search).has("staff");
 { const go = new URLSearchParams(location.search).get("go");  // links from the story video's end card
