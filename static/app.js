@@ -255,7 +255,7 @@ function howItWorks() {
       ${step(1, "scout", "happy", "Scouts", "Scout · your talent scout",
         "Reads what a school, team, business, or charity is planning and finds athletes whose story, city, budget, and schedule fit. Every match comes with a reason.")}
       ${step(2, "gatekeeper", "classic", "Booking agents &amp; protectors", "Gatekeeper · your appearance guardrails",
-        "We screen every request for scams and tricks, check it against the athlete's rider, schedule, and NIL rules, and protect both sides with escrow, check-in, and refunds.")}
+        "We screen every request for scams and tricks, check it against the athlete's rider, schedule, and Name, Image &amp; Likeness (NIL) rules for college athletes, and protect both sides with escrow, check-in, and refunds.")}
       ${step(3, "story_builder", "happy", "Promoters", "Story Builder · your promoter",
         "She turns an athlete's rough notes into a profile that sells and puts it in front of the right bookers, using only their own facts, so rising athletes and local heroes get noticed like the pros.")}
     </div>
@@ -460,7 +460,7 @@ function requestModal(athleteId) {
         <option value="Pick-up and drop-off provided">Pick-up and drop-off provided</option>
         <option value="Mileage reimbursed">Mileage reimbursed</option>
         <option value="Athlete arranges own transportation">Athlete arranges own transportation</option></select></div>
-      ${isCollege(a) ? `<div class="nil-box"><b>🎓 ${esc(a.name.split(" ")[0])} is a current college athlete. NIL rules apply.</b>
+      ${isCollege(a) ? `<div class="nil-box"><b>🎓 ${esc(a.name.split(" ")[0])} is a current college athlete. Name, Image &amp; Likeness (NIL) rules apply.</b>
         <ul><li>No offer can depend on enrolling at, transferring to, or staying at a school, or on game performance.</li>
         <li>No school logos, uniforms, or trademarks without the school's permission.</li>
         <li>Pay must match real work. Larger deals may need to be reported by the athlete (for Division I: NIL Go, $600+).</li></ul>
@@ -832,7 +832,7 @@ function riderChips(a) {
   if (r.security.includes("escort")) chips.push("🛡️ Security escort");
   if (r.wont_do.length) chips.push(`⛔ ${r.wont_do.length + (r.wont_do_other ? 1 : 0)} won't-do`);
   chips.push(`⏱ ${r.max_hours} hr max`);
-  if (isCollege(a)) chips.unshift("🎓 NIL rules apply");
+  if (isCollege(a)) chips.unshift("🎓 Name, Image & Likeness (NIL) rules apply");
   return `<div class="rider-chips">${chips.map((c) => `<span>${c}</span>`).join("")}</div>`;
 }
 function riderBlock(a) {
@@ -926,7 +926,18 @@ function viewTerms() {
     <li><b>No-show.</b> The booker gets <b>100% back</b>, the athlete gets nothing and a strike. Two strikes in 12 months pauses the account for 90 days. Real emergencies are reviewed case by case.</li>
     <li><b>Payout.</b> Released to the athlete 48 hours after the event unless the booker opens a dispute.</li>
   </ul></div>
-  <div class="panel" style="margin-top:16px"><h2>🎓 NIL rules for college athletes</h2><ul class="terms">
+  <div class="panel deposit" style="margin-top:16px"><h2>${uiIcon("lock", 20)} How deposits are held <span class="pill">Proposed for launch</span></h2>
+    <p class="sub">Both sides should feel safe: athletes know the money is real before they travel, and bookers know they don't pay for a no-show.</p><ul class="terms">
+    <li><b>A licensed processor holds the money, not us.</b> Fees sit in a separate escrow account at a licensed payment processor (for example, Stripe Connect). NextPlay Pros can't spend it; it can only be released to the athlete or refunded to the booker under these rules.</li>
+    <li><b>Talk first, then pay.</b> Nothing is charged for a request or a prep call. The booker's full fee is collected only when the athlete accepts.</li>
+    <li><b>Both sides see it's secured.</b> The booking shows "Funds secured" to the booker and "Your fee is secured" to the athlete before anyone travels.</li>
+    <li><b>If the booker cancels:</b> 14+ days before the event, a full refund. 3 to 13 days before, 50% goes to the athlete for holding the date. Under 72 hours, 100% goes to the athlete.</li>
+    <li><b>If the athlete cancels:</b> the booker gets 100% back right away, plus help finding a replacement. Cancelling under 72 hours counts as a strike, the same as a no-show.</li>
+    <li><b>Weather or emergencies:</b> the event can be rescheduled within 90 days or fully refunded, with no strike for either side.</li>
+    <li><b>Release:</b> after the athlete checks in and the event happens, a 48-hour window lets the booker raise a problem; then the payout goes out automatically (5% or 10% platform fee, per the rules above).</li>
+    <li><b>Disputes:</b> the money stays frozen while both sides share the check-in record and any photos or messages. We decide within five business days.</li>
+  </ul><p class="meta">Today the app runs this math as a demo; no real money moves. The payment processor is the next build.</p></div>
+  <div class="panel" style="margin-top:16px"><h2>🎓 Name, Image &amp; Likeness (NIL) rules for college athletes</h2><p class="sub">NIL means college athletes can be paid for the use of their name, image, and likeness: appearances, talks, autographs, and promotions. These rules keep those deals legal and keep athletes eligible.</p><ul class="terms">
     <li><b>18 and over only.</b> NextPlay Pros does not list high school or minor athletes.</li>
     <li><b>Your school's rules come first.</b> College athletes must follow their school, conference, and NCAA rules and tell their compliance office about NIL deals the way their school requires.</li>
     <li><b>Reporting.</b> Division I athletes must report third-party NIL deals worth $600 or more through NIL Go (College Sports Commission), within five business days of signing. Rules change often, so confirm with your compliance office.</li>
