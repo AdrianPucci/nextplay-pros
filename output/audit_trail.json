@@ -5289,5 +5289,79 @@
       ],
       "note": "I searched Colorado first and found only one local match under the budget, so I widened the search to Dallas and beyond. None of the profiles confirms clean-only material; please confirm that requirement, and let me know if the event is in the evening, since the listed Sunday availability for T-Bone and Deke is mornings/afternoons."
     }
+  },
+  {
+    "run_id": "b7a713bd8f",
+    "time": "2026-11-23T21:35:47+00:00",
+    "agent": "story_builder",
+    "input": "Athlete basics: <untrusted source=\"athlete form\"> Name: Maryguenn Vellinga Sport: Boxing Level: Current Pro City: Salt Lake City </untrusted> Athlete notes: <untrusted source=\"athlete notes\"> I am a 44 year old professional boxer. I started late at age 28. I have gone on to win two National Championships, was ranked #2 by USA Boxing for two years, and am now the #5 ranked professional in the USA at flyweight. I\u2019ve grown a business, raised a child with health needs, and become a top ranked professional athlete all after being told I was too late. The question isn\u2019t ever is the timing right, it\u2019s am I willing to do what it takes to get it done? </untrusted>",
+    "tool_calls": [],
+    "reasoning": [],
+    "output": {
+      "headline": "Told She Was Too Late, She Became a Top-Ranked Boxer",
+      "bio": "After being told she was too late to begin, Maryguenn Vellinga started boxing at 28 and built a professional career. At 44, the Salt Lake City boxer has won two National Championships, earned a #2 USA Boxing ranking for two years, and is now ranked #5 among U.S. professional flyweights. Along the way, she has grown a business and raised a child with health needs. She speaks about persistence, timing, and doing the work to pursue a goal at any age.",
+      "story": "Told she was too late to start boxing, Maryguenn Vellinga began at 28 and went on to win two National Championships and earn top rankings in amateur and professional boxing. The Salt Lake City professional boxer also grew a business and raised a child with health needs, and shares what it takes to pursue an ambition when the timing is far from perfect.",
+      "topics": [
+        "Starting Later in Life",
+        "Pursuing Goals on Your Timeline",
+        "Building Through Setbacks",
+        "Balancing Ambition and Caregiving"
+      ],
+      "best_fit_events": [
+        "women\u2019s leadership and empowerment gatherings",
+        "career-change and adult-learning conferences",
+        "school assemblies on perseverance and goal-setting",
+        "Salt Lake City community and business events"
+      ],
+      "categories": [
+        "speaking"
+      ],
+      "claims_to_verify": [
+        "Maryguenn Vellinga is a 44-year-old professional boxer based in Salt Lake City.",
+        "She started boxing at age 28.",
+        "She won two National Championships.",
+        "She was ranked #2 by USA Boxing for two years.",
+        "She is currently ranked #5 among professional boxers in the USA at flyweight.",
+        "She has grown a business.",
+        "She raised a child with health needs."
+      ]
+    }
+  },
+  {
+    "run_id": "a3329be21e",
+    "time": "2026-11-23T21:39:46+00:00",
+    "agent": "story_builder",
+    "input": "Athlete basics: <untrusted source=\"athlete form\"> Name: Maryguenn Vellinga Sport: Boxing Level: Current Pro City: Salt Lake City </untrusted> Athlete notes: <untrusted source=\"athlete notes\"> I am a 44 year old professional boxer. I started late at age 28. I have gone on to win two National Championships, was ranked #2 by USA Boxing for two years, and am now the #5 ranked professional in the USA at flyweight. I\u2019ve grown a business, raised a child with health needs, and become a top ranked professional athlete all after being told I was too late. I\u2019ve opened a gym to share my passion with others and started a non profit to eliminate barriers and share boxings therapeutic affects with people who benefit. I\u2019ve found boxing to be a tool to do much bigger work and allowed me to chase dreams that opened up many doors for me. The question isn\u2019t ever is the timing right, it\u2019s am I willing to do what it takes to get it done? </untrusted>",
+    "tool_calls": [],
+    "reasoning": [
+      "**Checking title claims**\n\nI\u2019m verifying the claims of two national titles and rankings, along with age and start details. It sounds like I need to check if they\u2019re accurate, especially for the current pro and flyweight categories. Are all the facts in line? Maybe it\u2019s worth looking into \u201cbusiness\u201d to see if there\u2019s any need for verification there. Overall, I\u2019m thinking about how to proceed and whether to make a call for more info."
+    ],
+    "output": {
+      "headline": "Told She Was Too Late, She Started Boxing at 28",
+      "bio": "After being told she was too late to begin, Maryguenn Vellinga started boxing at 28 and went on to build a professional career. At 44, the Salt Lake City boxer has also grown a business, raised a child with health needs, opened a gym, and started a nonprofit to reduce barriers and share boxing\u2019s therapeutic benefits. She sees boxing as a tool for work beyond the ring and speaks to the question that has shaped her path: \u201cAm I willing to do what it takes?\u201d",
+      "story": "Told she was too late, Maryguenn Vellinga began boxing at 28 and built a professional career while growing a business and raising a child with health needs. Now she has opened a gym and started a nonprofit to make boxing\u2019s therapeutic benefits more accessible, sharing a message about persistence and taking action on a dream.",
+      "topics": [
+        "Starting Later, Still Going for It",
+        "Boxing Beyond the Ring",
+        "Making Space for More People",
+        "Turning Setbacks Into Action"
+      ],
+      "best_fit_events": [
+        "women\u2019s career-change and entrepreneurship gatherings",
+        "school assemblies on persistence and pursuing goals",
+        "community nonprofit events focused on access and wellness",
+        "boxing gym community nights in Salt Lake City"
+      ],
+      "categories": [
+        "speaking"
+      ],
+      "claims_to_verify": [
+        "Maryguenn Vellinga is a 44-year-old professional boxer competing at flyweight",
+        "Started boxing at age 28",
+        "Won two National Championships",
+        "Ranked #2 by USA Boxing for two years",
+        "Ranked #5 professional boxer in the USA at flyweight"
+      ]
+    }
   }
 ]

@@ -99,19 +99,26 @@ function athleteCard(a, extra = "") {
 }
 
 // ---------------------------------------------------------------- tabs
+// Layered menus: "My dashboard" (signed in) -> numbered steps -> "more" tabs on the right.
 const TABS = {
-  booker: [["find", "Find talent"], ["browse", "Browse roster"], ["mine", "My requests"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
-  athlete: [["board", "Opportunity board"], ["build", "Build my profile"], ["rider", "My profile & rider"], ["inbox", "My inbox"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
+  booker: [["home", "My dashboard"], ["find", "1 · Find talent"], ["mine", "2 · Requests & bookings"], ["|"], ["browse", "Browse roster"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
+  athlete: [["home", "My dashboard"], ["board", "1 · Find gigs"], ["build", "2 · Build my profile"], ["rider", "3 · Rider & availability"], ["inbox", "4 · Requests & bookings"], ["|"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
 };
+const firstTab = (role) => (state.user ? "home" : TABS[role][1][0]);
+const tabLabel = (l) => { const m = /^(\d) · (.*)$/.exec(l); return m ? `<i>${m[1]}</i>${m[2]}` : l; };
 const STAFF = new URLSearchParams(location.search).has("staff");
 { const go = new URLSearchParams(location.search).get("go");  // links from the story video's end card
   if (go === "build") { state.role = "athlete"; state.tab = "build"; } else if (go === "find") { state.role = "booker"; state.tab = "find"; state.bookingHero = true; }
   if (go) history.replaceState(null, "", location.pathname + location.search.replace(/[?&]go=[^&]*/, "").replace(/^&/, "?") + location.hash); }  // ?staff=1 shows "Behind the scenes" (for grading)
 function renderTabs() {
-  $("#tabs").innerHTML = TABS[state.role].filter(([k]) => STAFF || k !== "behind").map(([k, l]) => `<button data-tab="${k}" class="${state.tab === k ? "active" : ""}">${l}</button>`).join("");
+  $("#tabs").innerHTML = TABS[state.role].filter(([k]) => (STAFF || k !== "behind") && (k !== "home" || state.user))
+    .map(([k, l]) => k === "|" ? `<span class="tab-sep" aria-hidden="true"></span>`
+      : `<button data-tab="${k}" class="${state.tab === k ? "active" : ""} ${/^\d/.test(l) ? "step-tab" : ""}">${tabLabel(l)}</button>`).join("");
   document.querySelectorAll(".role-switch button").forEach((b) => b.classList.toggle("active", b.dataset.role === state.role));
+  const tabsEl = document.getElementById("tabs"), at = tabsEl.querySelector(".active");  // keep the current tab in view on phones
+  if (at) tabsEl.scrollLeft = at.offsetLeft - tabsEl.clientWidth / 2 + at.clientWidth / 2;
 }
-document.querySelectorAll(".role-switch button").forEach((b) => (b.onclick = () => { state.role = b.dataset.role; state.tab = TABS[state.role][0][0]; render(); }));
+document.querySelectorAll(".role-switch button").forEach((b) => (b.onclick = () => { state.role = b.dataset.role; state.tab = firstTab(state.role); render(); }));
 $("#tabs").onclick = (e) => { const t = e.target.closest("[data-tab]"); if (t) { state.tab = t.dataset.tab; render(); } };
 document.addEventListener("click", (e) => { const r = e.target.closest("[data-request]"); if (r) requestModal(r.dataset.request); });
 // The 25-second story: full-screen, like a video, with subtitles
@@ -127,7 +134,76 @@ function openStory() {
 }
 
 function drawFooter() { const f = $("#foot"); if (f && !f.innerHTML) f.innerHTML = `<div class="foot-brand">${XO(56)}<div><b>NextPlay <span>Pros</span></b><small>Get booked. Get paid. Inspire.</small></div></div>${playbook(false)}<div class="foot-fine">MGT 409 · Yale SOM · Adrian Vellinga · All roster profiles are fictional demo data.</div>`; }
-function render() { drawFooter(); if ($("#acct")) drawAcct(); renderTabs(); (VIEWS[state.tab] || VIEWS.find)(); }
+function render() { drawFooter(); if ($("#acct")) drawAcct(); renderTabs(); drawStepper(); (VIEWS[state.tab] || VIEWS.find)(); }
+
+// ---------------------------------------------------------------- step guide + dashboard
+const STEPS = {
+  booker: [["find", "Describe your event", "Scout finds athletes who fit"], ["find", "Send a request", "Agree to their rider"],
+           ["mine", "Prep call", "Optional: talk before committing"], ["mine", "Athlete accepts", "Your fee is held in escrow"], ["mine", "Event day", "Athlete checks in early"]],
+  athlete: [["board", "Find gigs", "See what organizations need"], ["build", "Build your profile", "We write it from your story"],
+            ["rider", "Set your rules", "Rider, fees, and availability"], ["inbox", "Answer requests", "Prep call, then accept"], ["inbox", "Show up, get paid", "Check in 60 minutes early"]],
+};
+async function loadProgress() {
+  try {
+    const list = state.role === "athlete" ? await api(`/api/requests/athlete/${state.athleteId}`) : await api(`/api/requests/booker/${state.bookerId}`);
+    state.progress = { role: state.role, list };
+  } catch { state.progress = { role: state.role, list: [] }; }
+  return state.progress;
+}
+function stepsDone(role, list) {
+  const any = (f) => list.some(f);
+  const acc = any((r) => r.status === "accepted"), chk = any((r) => r.checked_in), prep = any((r) => r.prep_status === "scheduled");
+  if (role === "booker") { const sent = list.length > 0; return [sent || !!state.lastScout, sent, prep || acc, acc, chk]; }
+  return [!!localGet("np_seen_board"), !!localGet("np_published"), !!localGet("np_rider_saved"), acc, chk];
+}
+async function drawStepper() {
+  const el = $("#stepper"); if (!el) return;
+  const role = state.role, tab = state.tab;
+  if (!STEPS[role].some(([t]) => t === tab)) { el.innerHTML = ""; return; }
+  if (tab === "board") localSet("np_seen_board", "1");
+  const { list } = (state.progress && state.progress.role === role) ? state.progress : await loadProgress();
+  if (state.role !== role || state.tab !== tab) return;  // user moved on while loading
+  const done = stepsDone(role, list), next = done.indexOf(false);
+  el.innerHTML = `<div class="stepper" role="list" aria-label="Your steps">${STEPS[role].map(([t, title, hint], i) =>
+    `<button role="listitem" class="step ${done[i] ? "done" : ""} ${i === next ? "next" : ""} ${tab === t ? "here" : ""}" data-step-tab="${t}">
+      <span class="num">${done[i] ? "✓" : i + 1}</span><span class="txt"><b>${title}</b><small>${i === next ? "Next: " : ""}${hint}</small></span></button>`).join('<span class="step-line" aria-hidden="true"></span>')}</div>`;
+  el.querySelectorAll("[data-step-tab]").forEach((b) => (b.onclick = () => { state.tab = b.dataset.stepTab; render(); window.scrollTo(0, 0); }));
+  const here = el.querySelector(".step.here"), bar = el.querySelector(".stepper");  // keep the current step in view on phones
+  if (here && bar) bar.scrollLeft = here.offsetLeft - bar.clientWidth / 2 + here.clientWidth / 2;
+  loadProgress();  // refresh quietly for next time
+}
+async function viewHome() {
+  if (!state.user) { state.tab = firstTab(state.role); return render(); }
+  const u = state.user, role = state.role;
+  $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div><h1>Welcome back, ${esc(u.name.split(" ")[0])}</h1>
+    <p class="sub">${role === "athlete" ? "Here's what needs you as an athlete." : esc(u.org ? `Booking for ${u.org}. Here's what needs you.` : "Here's what needs you.")} Every step is also in the tabs above.</p>
+    <div id="dash" class="grid"><div class="thinking"><span class="spinner"></span>Loading…</div></div>`;
+  const { list } = await loadProgress();
+  const done = stepsDone(role, list), next = done.indexOf(false);
+  const card = (icon, n, title, text, tab, btn) => `<div class="dash-card ${n ? "hot" : ""}"><span class="ic-badge">${uiIcon(icon)}</span><div>${n === null ? "" : `<div class="dash-n">${n}</div>`}<b>${title}</b><p>${text}</p></div><button class="btn small ${n ? "" : "ghost"}" data-dash-tab="${tab}">${btn}</button></div>`;
+  const pending = list.filter((r) => ["pending", "flagged"].includes(r.status));
+  const prepToPick = list.filter((r) => r.prep_status === "requested" && r.prep_by !== role);
+  const prepSet = list.filter((r) => r.prep_status === "scheduled");
+  const booked = list.filter((r) => r.status === "accepted");
+  const t = role === "athlete" ? "inbox" : "mine";
+  const cards = role === "athlete" ? [
+    card("mic", pending.length, "New requests", "Read Gatekeeper's summary, ask for a prep call, then accept or decline.", t, "Open requests"),
+    card("target", prepToPick.length, "Prep calls to schedule", "A booker offered times. Pick one and you both get the video link.", t, "Pick a time"),
+    card("shield", booked.length, "Upcoming bookings", "Fee secured in escrow. Check in 60 minutes early to keep 95%.", t, "See bookings"),
+    card("pen", null, "Your profile & rider", "Keep your story, fees, and availability current so the right gigs find you.", "rider", "Edit"),
+  ] : [
+    card("search", pending.length, "Waiting on athletes", "Requests the athlete hasn't answered yet.", t, "See requests"),
+    card("target", prepToPick.length, "Prep calls to schedule", "An athlete asked to talk first. Pick a time.", t, "Pick a time"),
+    card("shield", booked.length, "Confirmed bookings", "Funds secured in escrow; contact details unlocked.", t, "See bookings"),
+    card("tag", null, "Book another athlete", "Describe your next event and Scout will match you.", "find", "Find talent"),
+  ];
+  $("#dash").innerHTML = `${next >= 0
+      ? `<div class="dash-next">${uiIcon("star", 18)} <b>Your next step:</b> ${STEPS[role][next][1]} <span class="meta">· ${STEPS[role][next][2]}</span> <button class="btn small" data-dash-tab="${STEPS[role][next][0]}">Go</button></div>`
+      : `<div class="dash-next">${uiIcon("star", 18)} <b>You're all set.</b> Nice work.</div>`}
+    <div class="dash-grid">${cards.join("")}</div>
+    ${prepSet.length ? `<div class="panel"><h2>Prep calls on the calendar</h2>${prepSet.map((r) => `<div class="prep-on">${uiIcon("mic", 16)} ${esc(fmtTime(r.prep_time))} · ${esc(role === "athlete" ? r.org : r.athlete_name)} · <a href="${esc(r.prep_link)}" target="_blank" rel="noopener">Join video call</a></div>`).join("")}</div>` : ""}`;
+  document.querySelectorAll("[data-dash-tab]").forEach((b) => (b.onclick = () => { state.tab = b.dataset.dashTab; render(); window.scrollTo(0, 0); }));
+}
 
 // ---------------------------------------------------------------- booker: Scout
 const EXAMPLES = [
@@ -363,13 +439,13 @@ function signIn(opts = {}) {
       localSet("np_user", JSON.stringify(state.user));
       if (r === "booker") { state.bookerName = n; localSet("np_booker_name", n); }
       $("#modal").hidden = true; drawAcct();
-      if (state.role !== r) { state.role = r; state.tab = TABS[r][0][0]; }
+      state.role = r; state.tab = "home";
       render(); toast(`Welcome, ${n.split(" ")[0]}! You're signed in.`);
     };
   };
 }
 document.addEventListener("click", (e) => {
-  if (e.target.closest("[data-signout]")) { state.user = null; try { localStorage.removeItem("np_user"); } catch {} $("#modal").hidden = true; drawAcct(); render(); toast("Signed out."); }
+  if (e.target.closest("[data-signout]")) { state.user = null; try { localStorage.removeItem("np_user"); } catch {} $("#modal").hidden = true; if (state.tab === "home") state.tab = firstTab(state.role); drawAcct(); render(); toast("Signed out."); }
   if (e.target.closest("[data-acct-go]")) { $("#modal").hidden = true; state.role = state.user.role; state.tab = state.role === "athlete" ? "inbox" : "mine"; render(); }
   if (e.target.closest("[data-signin]")) signIn();
 });
@@ -652,7 +728,7 @@ function drawDraft() {
       draft: { ...d, headline: $("#d-headline").value, bio: $("#d-bio").value, story: $("#d-story").value },
       fee_min: Number($("#d-min").value), fee_max: Number($("#d-max").value), email: $("#d-email").value.trim(), phone: $("#d-phone").value.trim() };
     if (!body.email) return toast("Add a private email so bookers can reach you after you accept.");
-    try { const a = await api("/api/athletes", { method: "POST", body }); await loadRoster(); state.athleteId = a.id; localSet("np_athlete", a.id);
+    try { const a = await api("/api/athletes", { method: "POST", body }); await loadRoster(); state.athleteId = a.id; localSet("np_athlete", a.id); localSet("np_published", "1");
       toast(`Published! ${a.name} is now on the roster.`); state.tab = "inbox"; render(); askToSave("athlete", a.name);
     } catch (err) { toast(err.message); }
   };
@@ -908,7 +984,7 @@ function drawRiderForm() {
     try {
       await api(`/api/athletes/${a.id}/rider`, { method: "PUT", body: { athlete_id: a.id, rider } });
       await api(`/api/athletes/${a.id}/availability`, { method: "PUT", body: { athlete_id: a.id, availability } });
-      await loadRoster(); toast("Saved. Bookers will see your availability and rider before they can send a request."); }
+      await loadRoster(); localSet("np_rider_saved", "1"); toast("Saved. Bookers will see your availability and rider before they can send a request."); }
     catch (err) { toast(err.message); }
   };
 }
@@ -1009,7 +1085,7 @@ function availWarnings(a, date, time) {
   return out;
 }
 
-const VIEWS = { rider: viewRider, terms: viewTerms, about: viewAbout, find: viewFind, browse: viewBrowse, mine: viewMine, board: viewBoard, behind: viewBehind, inbox: viewInbox, build: viewBuild };
+const VIEWS = { home: viewHome, rider: viewRider, terms: viewTerms, about: viewAbout, find: viewFind, browse: viewBrowse, mine: viewMine, board: viewBoard, behind: viewBehind, inbox: viewInbox, build: viewBuild };
 
 async function loadRoster() { state.athletes = await api("/api/athletes"); }
 (async () => { const soft = (pr) => pr.catch(() => null);

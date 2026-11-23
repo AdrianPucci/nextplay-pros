@@ -2292,5 +2292,35 @@
     "reasoning_tokens": 428,
     "cost_usd": 0.00095891,
     "seconds": 14.34
+  },
+  {
+    "run_id": "b7a713bd8f",
+    "time": "2026-11-23T21:35:47+00:00",
+    "agent": "story_builder",
+    "model": "gpt-6-luna",
+    "requests": 1,
+    "tool_calls": 0,
+    "input_tokens": 1464,
+    "cached_input_tokens": 0,
+    "cache_write_tokens": 1338,
+    "output_tokens": 670,
+    "reasoning_tokens": 303,
+    "cost_usd": 0.00051485,
+    "seconds": 8.16
+  },
+  {
+    "run_id": "a3329be21e",
+    "time": "2026-11-23T21:39:46+00:00",
+    "agent": "story_builder",
+    "model": "gpt-6-luna",
+    "requests": 1,
+    "tool_calls": 0,
+    "input_tokens": 1521,
+    "cached_input_tokens": 1171,
+    "cache_write_tokens": 224,
+    "output_tokens": 756,
+    "reasoning_tokens": 416,
+    "cost_usd": 0.00043031,
+    "seconds": 7.45
   }
 ]
