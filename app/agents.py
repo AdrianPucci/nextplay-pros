@@ -1,4 +1,4 @@
-"""The three Next Play agents, all on gpt-6-luna through Portkey.
+"""The three NextPlay Pros agents, all on gpt-6-luna through Portkey.
 
   Scout          booker's plain-English request -> searches the roster with a tool -> ranked matches
   Story Builder  athlete's rough notes -> a polished public profile (no tools)
@@ -118,7 +118,7 @@ def scout_agent() -> Agent:
             return json.dumps(rows) if rows else "No athletes matched. Try fewer filters."
 
         search_athletes.__doc__ = (
-            "Search the Next Play roster. Returns up to 12 athletes with public profile fields "
+            "Search the NextPlay Pros roster. Returns up to 12 athletes with public profile fields "
             "(never contact details). near_city must be one of: " + ", ".join(store.CITIES) + ".")
         agent.tool(search_athletes)
         _agents["scout"] = agent
@@ -162,7 +162,7 @@ async def _run(agent: Agent, agent_name: str, prompt: str, deps=None) -> tuple:
     start = time.perf_counter()
     # Explicit cache breakpoint right after the fixed instructions: every run shares that prefix, so later
     # runs read it from cache at 1/10 the price. Everything that changes per run comes after the breakpoint.
-    content = [f"Next Play {agent_name} task.", CachePoint(), prompt]
+    content = [f"NextPlay Pros {agent_name} task.", CachePoint(), prompt]
     result = await agent.run(content, deps=deps, usage_limits=LIMITS,
                              model_settings={"openai_prompt_cache_key": f"nextplay-{agent_name}",
                                              "openai_reasoning_summary": "detailed"})
@@ -214,7 +214,7 @@ async def scout(request_text: str, budget: int | None = None) -> dict:
         return {"blocked": True, "flags": flags, "matches": [], "brief": None,
                 "glass": {"agent": "scout", "blocked": True, "trace": [
                     {"kind": "block", "text": f"Python rules caught: {', '.join(flags)}. The model was never called (0 tokens)."}]},
-                "note": "This request was blocked: Next Play never shares athlete contact details, "
+                "note": "This request was blocked: NextPlay Pros never shares athlete contact details, "
                         "and it does not take instructions that try to change how the assistant works."}
 
     deps = ScoutDeps(budget_cap=budget)

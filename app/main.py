@@ -1,4 +1,4 @@
-"""Next Play web server. Run with:  python run.py   (then open http://127.0.0.1:8000)
+"""NextPlay Pros web server. Run with:  python run.py   (then open http://127.0.0.1:8000)
 
 Demo sign-in is a simple picker (choose a booker name, or "sign in as" an athlete). Real accounts are a
 next step; the access rules (who can see a request, when contacts unlock) are enforced here on the server.
@@ -14,7 +14,7 @@ from . import agents, rider as riders, store
 from .config import DAILY_SPEND_CAP_USD, STATIC
 from .guards import SAFETY_LOG, USAGE_LOG, redact_contacts, spent_today
 
-app = FastAPI(title="Next Play")
+app = FastAPI(title="NextPlay Pros")
 store.init_db()
 
 

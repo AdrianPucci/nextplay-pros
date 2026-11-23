@@ -185,3 +185,10 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .conflict { background: var(--warn-soft); color: #6b4300; border-radius: 8px; padding: 6px 10px; margin: 4px 0 6px; font-weight: 600; }
 .terms li { margin: 8px 0; font-size: 14px; }
 @media (max-width: 640px) { .rider-cols { grid-template-columns: 1fr; } }
+
+.serve .card h3 { margin: 4px 0 2px; }
+.serve .card p { margin: 0; font-size: 14px; }
+.serve-ico { font-size: 28px; }
+.story-steps { counter-reset: st; list-style: none; padding: 0; display: grid; gap: 10px; margin: 0 0 24px; }
+.story-steps li { counter-increment: st; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px 12px 52px; position: relative; font-size: 15px; }
+.story-steps li::before { content: counter(st); position: absolute; left: 14px; top: 12px; width: 26px; height: 26px; border-radius: 50%; background: var(--brand); color: #fff; font-weight: 800; display: grid; place-items: center; font-size: 13px; }

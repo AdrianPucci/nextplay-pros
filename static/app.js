@@ -1,4 +1,4 @@
-// Next Play front end: plain JS, no build step.
+// NextPlay Pros front end: plain JS, no build step.
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const money = (n) => (n == null ? "-" : "$" + Number(n).toLocaleString());
@@ -339,7 +339,7 @@ async function viewBehind() {
 
 
 // ---------------------------------------------------------------- about
-// Two real athletes from the founder's own circle, shown to illustrate who Next Play is for.
+// Two real athletes from the founder's own circle, shown to illustrate who NextPlay Pros is for.
 // Facts come from the public sources listed on the page. They are NOT in the demo roster (no fees, no contacts).
 const FEATURED = [
   { name: "MG Vellinga", alt: "Maryguenn Vellinga", role: "Professional boxer · Park City, Utah", photo: "/static/img/mg.jpg", initials: "MG", hue: 330,
@@ -357,7 +357,7 @@ const FEATURED = [
       "2007 NBA All-Star [5]",
       "Named a Utah Jazz team ambassador after his playing career [6]",
     ],
-    why: "A champion and All-Star whose name still means something in Utah and in Turkey, now well past his playing days. Next Play would put him in front of community events, youth clinics, and Turkish-American groups that would love to book him but have no idea how to reach him." },
+    why: "A champion and All-Star whose name still means something in Utah and in Turkey, now well past his playing days. NextPlay Pros would put him in front of community events, youth clinics, and Turkish-American groups that would love to book him but have no idea how to reach him." },
 ];
 function viewAbout() {
   const card = (a) => `<article class="feature">
@@ -368,22 +368,35 @@ function viewAbout() {
     <div class="feature-body">
       <h2>${esc(a.name)}</h2><div class="meta">${esc(a.role)}</div>
       <ul>${a.facts.map((f) => `<li>${esc(f)}</li>`).join("")}</ul>
-      <div class="why"><b>Why Next Play:</b> ${esc(a.why)}</div>
+      <div class="why"><b>Why NextPlay Pros:</b> ${esc(a.why)}</div>
       ${a.credit ? `<div class="credit">${a.credit}</div>` : ""}
     </div></article>`;
   $("#view").innerHTML = `
   <section class="hero about-hero">
     <div class="about-crew">${bot("scout", "happy", 70)}${bot("story_builder", "classic", 70)}${bot("gatekeeper", "classic", 70)}</div>
     <h1>Every athlete's story deserves an audience</h1>
-    <p>Next Play connects former, current, and rising athletes with the schools, companies, nonprofits, and local businesses that want them for talks, appearances, clinics, and events. AI does the matching, the writing, and the scam screening. The athlete decides who gets their contact details.</p>
+    <p>NextPlay Pros connects former, current, and rising athletes with the schools, companies, nonprofits, and local businesses that want them for talks, appearances, clinics, and events. AI does the matching, the writing, and the scam screening. The athlete decides who gets their contact details.</p>
   </section>
+  <h2 class="about-h">Who it serves</h2>
+  <div class="grid three serve">
+    <div class="card"><div class="serve-ico">🏅</div><h3>Athletes</h3><p>Retired pros, college standouts, Olympians in smaller sports, and rising players with real stories and <b>no agent</b>. NextPlay Pros writes their profile, brings them paid gigs, and keeps them in control.</p></div>
+    <div class="card"><div class="serve-ico">🏢</div><h3>Bookers</h3><p>Schools, companies, nonprofits, and local businesses that want a relatable athlete <b>nearby and in budget</b>, not a celebrity with a five-figure fee and a bureau in the middle.</p></div>
+    <div class="card"><div class="serve-ico">🤝</div><h3>Communities</h3><p>Kids hear from someone who's been there, employees get a story that sticks, and local athletes stay connected to the places that cheered for them.</p></div>
+  </div>
+  <h2 class="about-h">The story in 30 seconds</h2>
+  <ol class="story-steps">
+    <li><b>The gap.</b> Only about 1–2% of college athletes reach a major pro league, and pro careers are short. Thousands of great stories never find an audience.</li>
+    <li><b>The problem.</b> Bookers don't know how to reach these athletes, and athletes don't know the gigs exist. Bureaus serve the famous few and take 20–30%.</li>
+    <li><b>The fix.</b> Describe your event in plain English. AI finds athletes who fit the story, city, and budget, screens every request for scams, and unlocks contact details only when the athlete says yes.</li>
+    <li><b>Why it matters.</b> Athletes earn from their story on their own terms, with their own rules for safety and travel. Bookers get the right person in minutes.</li>
+  </ol>
   <div class="panel founder">
     <h2>Why I'm building this</h2>
-    <p>I spent years doing design work alongside sports and event teams in Utah. Over and over I met athletes with incredible stories who were past their playing days, not household names, or still on the rise, and the businesses and events that would have loved to book them had no idea how to reach them. Next Play is the bridge I kept wishing existed.</p>
+    <p>I spent years doing design work alongside sports and event teams in Utah. Over and over I met athletes with incredible stories who were past their playing days, not household names, or still on the rise, and the businesses and events that would have loved to book them had no idea how to reach them. NextPlay Pros is the bridge I kept wishing existed.</p>
     <p class="meta">Adrian Pucci · Yale SOM · MGT 409 final project</p>
   </div>
   <h2 class="about-h">The athletes who inspired it</h2>
-  <p class="sub">Two people from my own circle, and exactly who Next Play is for. They are shown here to illustrate the idea; they are not part of the demo roster, and no fees or contact details are listed.</p>
+  <p class="sub">Two people from my own circle, and exactly who NextPlay Pros is for. They are shown here to illustrate the idea; they are not part of the demo roster, and no fees or contact details are listed.</p>
   <div class="grid">${FEATURED.map(card).join("")}</div>
   <div class="panel sources"><b>Sources</b><ol>
     <li><a href="https://www.sltrib.com/sports/2017/12/04/park-citys-maryguenn-vellinga-is-utahs-best-hope-for-glory-as-salt-palace-hosts-usa-boxing-national-championships-this-week" target="_blank" rel="noopener">Salt Lake Tribune, Dec 2017</a></li>

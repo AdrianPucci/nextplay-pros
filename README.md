@@ -1,4 +1,4 @@
-# Next Play
+# NextPlay Pros
 
 **An AI booking desk that gets overlooked athletes (retired, mid-level, and rising) paid speaking, appearance, clinic, and entertainment gigs with the businesses, schools, and events that want them, with the athlete in control of who can reach them.**
 
@@ -80,7 +80,7 @@ Contact details live in a separate vault table that no agent can read. They reac
 - **Port 8000 in use**: `python run.py --port 8010`.
 - **Old demo data**: delete `data/app.db` and restart.
 
-*All people in the demo data are fictional. Next Play is a class project, not a live service.*
+*All people in the demo data are fictional. NextPlay Pros is a class project, not a live service.*
 
 ## Credits
 

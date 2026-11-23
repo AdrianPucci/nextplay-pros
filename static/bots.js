@@ -1,4 +1,4 @@
-// The three Next Play agents as little robots (same family as Lex and Max from HW 6).
+// The three NextPlay Pros agents as little robots (same family as Lex and Max from HW 6).
 // bot(name, mood, size): name = scout | story_builder | gatekeeper; mood = classic | happy | thinking.
 (function () {
   const INK = "#1b2440";
