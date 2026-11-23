@@ -619,13 +619,15 @@ const FEATURED = [
       "Runs Mountain Mettle, a charity boxing night that funds youth scholarships through the RISE Strong Foundation [4]",
     ],
     why: "A late starter who became a national contender, then built a business and a charity around the sport. That story fits keynotes on grit and second acts, women-in-sport panels, and hands-on clinics, and she is exactly the kind of athlete bookers don't know how to find." },
-  { name: "Mehmet “Memo” Okur", alt: "Mehmet Okur", role: "Former NBA center · Utah Jazz 2004–2011", photo: null, initials: "MO", hue: 210,
+  { name: "Lafayette “Fat” Lever", alt: "Fat Lever", role: "Former Denver Nuggets guard · 2x NBA All-Star · Denver", photo: "/static/img/lever.jpg", initials: "FL", hue: 210,
+    credit: 'Photo: Portland Trail Blazers, 1983, <a href="https://commons.wikimedia.org/wiki/File:Fat_Lever.jpg" target="_blank" rel="noopener">public domain</a> via Wikimedia Commons',
     facts: [
-      "NBA champion with the 2004 Detroit Pistons, then signed with the Utah Jazz in July 2004 and played seven seasons in Salt Lake City [5]",
-      "2007 NBA All-Star [5]",
-      "Named a Utah Jazz team ambassador after his playing career [6]",
+      "Played six seasons for the Denver Nuggets, 1984–1990 [5]",
+      "Two-time NBA All-Star (1988, 1990) and All-NBA Second Team (1987) [5]",
+      "The Nuggets retired his No. 12, and he is still the franchise's all-time leader in steals [5]",
+      "43 career triple-doubles, 13th in NBA history: of the top 13, the only eligible player not in the Hall of Fame [5]",
     ],
-    why: "A champion and All-Star whose name still means something in Utah and in Turkey, now well past his playing days. NextPlay Pros would put him in front of community events, youth clinics, and Turkish-American groups that would love to book him but have no idea how to reach him." },
+    why: "A Denver legend with a retired number, still a name to Nuggets fans of a certain age, but younger fans and most local organizers would never know how to reach him. NextPlay Pros would put him in front of schools, youth basketball clinics, and community events across the Front Range." },
   { name: "Jeremy Bloom", alt: "Jeremy Bloom", role: "Two-time Olympic skier · NFL draft pick · Colorado", photo: "/static/img/bloom.jpg", initials: "JB", hue: 200,
     credit: 'Photo: Web Summit / Sportsfile, <a href="https://commons.wikimedia.org/wiki/File:Sportsfile_(Web_Summit)_(15090782254).jpg" target="_blank" rel="noopener">CC BY 2.0</a>',
     facts: [
@@ -661,7 +663,7 @@ const FEATURED = [
     why: "A small-mountain-town kid who became a world champion. Every Colorado high school track team, running club, and girls-in-sports program would love an hour with her. That's exactly the local pull NextPlay Pros is built for." },
 ];
 const FACES = [  // About hero: face shots that scroll right to left
-  ["mg.jpg", "MG Vellinga", "center 20%"], ["bloom.jpg", "Jeremy Bloom", "center 20%"], ["clark.jpg", "Wyndham Clark", "center 20%"],
+  ["mg.jpg", "MG Vellinga", "center 20%"], ["lever.jpg", "Fat Lever", "center 15%"], ["bloom.jpg", "Jeremy Bloom", "center 20%"], ["clark.jpg", "Wyndham Clark", "center 20%"],
   ["mg2.jpg", "MG Vellinga", "center 20%"], ["dauwalter.jpg", "Courtney Dauwalter", "center 20%"], ["coburn.jpg", "Emma Coburn", "center 20%"],
   ["bloom2.jpg", "Jeremy Bloom", "center 20%"], ["clark2.jpg", "Wyndham Clark", "center 20%"],
 ];
@@ -711,15 +713,15 @@ function viewAbout() {
     <p class="meta">Adrian Vellinga · Yale SOM · MGT 409 final project</p>
   </div>
   <h2 class="about-h">Athletes who show why</h2>
-  <p class="sub">Real athletes who show who NextPlay Pros is for. MG and Memo are from my own circle; Jeremy, Wyndham, Courtney, and Emma are Colorado stories everyone here knows. They are shown to illustrate the idea, not as members: they are not in the demo roster, and no fees or contact details are listed.</p>
+  <p class="sub">Real athletes who show who NextPlay Pros is for. MG is from my own circle; Fat Lever, Jeremy, Wyndham, Courtney, and Emma are Colorado stories everyone here knows. They are shown to illustrate the idea, not as members: they are not in the demo roster, and no fees or contact details are listed.</p>
   <div class="grid">${FEATURED.map(card).join("")}</div>
   <div class="panel sources"><b>Sources</b><ol>
     <li><a href="https://www.sltrib.com/sports/2017/12/04/park-citys-maryguenn-vellinga-is-utahs-best-hope-for-glory-as-salt-palace-hosts-usa-boxing-national-championships-this-week" target="_blank" rel="noopener">Salt Lake Tribune, Dec 2017</a></li>
     <li><a href="https://www.sltrib.com/sports/2018/05/13/for-the-first-time-utah-is-sending-a-full-womens-team-to-the-national-golden-gloves-boxing-tournament" target="_blank" rel="noopener">Salt Lake Tribune, May 2018</a></li>
     <li><a href="https://www.kpcw.org/show/mountain-money/2024-10-28/local-boxing-gym-punches-back-against-parkinsons-disease" target="_blank" rel="noopener">KPCW, Oct 2024</a></li>
     <li><a href="https://townlift.com/2026/08/mountain-mettle-returns-aug-22-with-focus-on-youth-scholarships/" target="_blank" rel="noopener">TownLift, Aug 2026</a></li>
-    <li><a href="https://en.wikipedia.org/wiki/Mehmet_Okur" target="_blank" rel="noopener">Wikipedia: Mehmet Okur</a></li>
-    <li><a href="https://www.deseret.com/2014/9/28/20549451/mehmet-okur-named-team-ambassador-for-utah-jazz" target="_blank" rel="noopener">Deseret News, Sep 2014</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Fat_Lever" target="_blank" rel="noopener">Wikipedia: Fat Lever</a></li>
+    <li><a href="https://commons.wikimedia.org/wiki/File:Fat_Lever.jpg" target="_blank" rel="noopener">Wikimedia Commons: Fat Lever photo (public domain)</a></li>
     <li><a href="https://en.wikipedia.org/wiki/Jeremy_Bloom" target="_blank" rel="noopener">Wikipedia: Jeremy Bloom</a></li>
     <li><a href="https://en.wikipedia.org/wiki/Wyndham_Clark" target="_blank" rel="noopener">Wikipedia: Wyndham Clark</a></li>
     <li><a href="https://www.cbsnews.com/news/wyndham-clark-u-s-open-2026-golf/" target="_blank" rel="noopener">CBS News, Jun 2026</a></li>

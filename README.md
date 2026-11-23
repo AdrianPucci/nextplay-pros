@@ -85,7 +85,7 @@ Contact details live in a separate vault table that no agent can read. They reac
 
 ## Credits
 
-- Photo of Mehmet Okur: Lordcolus (Flickr), [CC BY 2.0](https://commons.wikimedia.org/wiki/File:Mehmo.jpg) via Wikimedia Commons.
+- Photo of Fat Lever: Portland Trail Blazers (1983), [public domain](https://commons.wikimedia.org/wiki/File:Fat_Lever.jpg) via Wikimedia Commons.
 - About page photo of MG Vellinga: courtesy of MG Vellinga.
 - Photo of Jeremy Bloom: Web Summit / Sportsfile, [CC BY 2.0](https://commons.wikimedia.org/wiki/File:Sportsfile_(Web_Summit)_(15090782254).jpg).
 - Photos of Wyndham Clark: Titleist, [CC BY 3.0](https://commons.wikimedia.org/wiki/File:Wyndham_Clark_2023_01.png) and [CC BY 3.0](https://commons.wikimedia.org/wiki/File:Wyndham_Clark_2023_02.png).

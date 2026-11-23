@@ -5206,5 +5206,88 @@
         "Based in Denver"
       ]
     }
+  },
+  {
+    "run_id": "30b7588260",
+    "time": "2026-11-23T18:42:35+00:00",
+    "agent": "scout",
+    "input": "Booking request: <untrusted source=\"booker\"> Emcee / comedy set for charity gala for Lone Star Children's Hospital Gala in Dallas on 2027-03-14. Host the live auction and do a 15-minute set. Clean material only. </untrusted> The booker's maximum budget is $4,000 (set in the app form). The booker chose to start local: Colorado. Search there first (use state='CO'). Only widen the search if fewer than 3 local athletes fit, and say so in note.",
+    "tool_calls": [
+      {
+        "tool": "search_athletes",
+        "arguments": {
+          "categories": [
+            "comedy_entertainment"
+          ],
+          "near_city": "Denver",
+          "radius_miles": 100,
+          "max_fee": 4000,
+          "keywords": [
+            "clean comedy",
+            "emcee",
+            "gala",
+            "auction"
+          ],
+          "day": "sun"
+        },
+        "result": "[{\"id\": \"ath_006\", \"name\": \"Danny \\\"Deke\\\" Kowalski\", \"sport\": \"Hockey\", \"level\": \"Former Pro\", \"city\": \"Colorado Springs\", \"state\": \"CO\", \"distance_miles\": 64, \"categories\": [\"appearance\", \"comedy_en..."
+      },
+      {
+        "tool": "search_athletes",
+        "arguments": {
+          "categories": [
+            "comedy_entertainment"
+          ],
+          "near_city": "Dallas",
+          "max_fee": 4000,
+          "keywords": [
+            "clean comedy",
+            "emcee",
+            "gala",
+            "auction"
+          ],
+          "day": "sun"
+        },
+        "result": "[{\"id\": \"ath_022\", \"name\": \"Big Lou Fontaine\", \"sport\": \"Wrestling\", \"level\": \"Former Pro\", \"city\": \"Kansas City\", \"state\": \"MO\", \"distance_miles\": 454, \"categories\": [\"comedy_entertainment\", \"appeara..."
+      }
+    ],
+    "reasoning": [
+      "**Researching local events**\n\nI'm thinking about expanding my search for clean comedy events in Dallas because it seems requested. I want to include a wider area beyond just Colorado. I should definitely focus on finding options for Sunday and use keywords like \"clean comedy\" to narrow it down. Widening the search will hopefully give me a better chance of finding what the user is looking for!",
+      "**Finding clean comedians**\n\nI need to finalize a brief regarding comedians and ensure they fit the criteria of being clean. For potential candidates, I'm considering Deke, who has a humorous set and is available Sunday morning/afternoon, and T-Bone, who performs local comedy and participates in charity roasts but doesn't guarantee clean material. Big Lou is another option as an emcee for fundraisers, though I'm unsure about his comedy set's cleanliness. I\u2019ll follow up to confirm material and widen the search since I only found one local comedian so far.",
+      "**Confirming details for the gala**\n\nI need to clarify that T-Bone is available on Sunday mornings and afternoons. The gala is likely in the evening, but I haven\u2019t confirmed that, and if it is, availability could change. I should consider that when reviewing the search results. Additionally, I need to make sure to state the location found in the search before finalizing everything. It\u2019s crucial to have all details ironed out!"
+    ],
+    "output": {
+      "brief": {
+        "event_type": "charity gala emcee and 15-minute comedy set / live auction host",
+        "city": "Dallas",
+        "audience": "Lone Star Children's Hospital Gala attendees and donors",
+        "themes": [
+          "clean comedy",
+          "fundraising",
+          "live auction hosting"
+        ],
+        "budget_max": 4000,
+        "date": "2027-03-14",
+        "virtual_ok": false
+      },
+      "matches": [
+        {
+          "athlete_id": "ath_012",
+          "fit_score": 9,
+          "why": "Dallas-based T-Bone traded football for comedy clubs, and his set about the CFL, cold weather, and Texas BBQ is described as fitting charity roasts\u2014strong local fit for the gala and its 15-minute set. His profile does not confirm clean material or auction-hosting experience."
+        },
+        {
+          "athlete_id": "ath_006",
+          "fit_score": 8,
+          "why": "Deke's stand-up about minor-league hockey life has been a hit at banquets, and his humor-focused profile fits gala entertainment; he's also in Colorado Springs. His profile does not confirm clean material or live-auction hosting."
+        },
+        {
+          "athlete_id": "ath_022",
+          "fit_score": 7,
+          "why": "Big Lou is specifically described as a crowd-pleasing emcee for fundraisers, making him a solid match to host the live auction. His profile does not establish a 15-minute comedy set or confirm clean material."
+        }
+      ],
+      "note": "I searched Colorado first and found only one local match under the budget, so I widened the search to Dallas and beyond. None of the profiles confirms clean-only material; please confirm that requirement, and let me know if the event is in the evening, since the listed Sunday availability for T-Bone and Deke is mornings/afternoons."
+    }
   }
 ]
