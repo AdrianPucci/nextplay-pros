@@ -463,3 +463,12 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .status.demo { background: #eef2f8; color: #5d6675; }
 
 .budget-hint { display: block; font-size: 12px; color: #9fb0c8; margin-top: 4px; }
+
+/* Opportunity board: activity filters */
+.board-filters { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 16px; }
+.chip-f { border: 1px solid var(--line); background: #fff; color: var(--ink); border-radius: 999px; padding: 8px 14px; font-weight: 600; cursor: pointer; }
+.chip-f span { color: var(--muted); font-weight: 700; margin-left: 2px; }
+.chip-f.on { background: var(--navy); color: #fff; border-color: var(--navy); }
+.chip-f.on span { color: #ff8a5c; }
+.pill.charity { background: #fff1e6; color: #b3400f; }
+@media (max-width: 640px) { .board-filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; } .chip-f { flex: none; } }

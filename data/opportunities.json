@@ -7,7 +7,8 @@
     "title": "Keynote for 250-person all-staff meeting",
     "budget_max": 5000,
     "date": "2027-01-22",
-    "details": "Theme is 'bouncing back.' 30-minute talk plus Q&A. Prefer someone local to Colorado."
+    "details": "Theme is 'bouncing back.' 30-minute talk plus Q&A. Prefer someone local to Colorado.",
+    "charitable": false
   },
   {
     "id": "opp_002",
@@ -17,7 +18,8 @@
     "title": "Saturday basketball clinic for ages 10-14",
     "budget_max": 800,
     "date": "2026-12-12",
-    "details": "Two-hour clinic, about 60 kids. Nonprofit budget."
+    "details": "Two-hour clinic, about 60 kids. Nonprofit budget.",
+    "charitable": true
   },
   {
     "id": "opp_003",
@@ -27,7 +29,8 @@
     "title": "Grand-opening meet and greet",
     "budget_max": 2500,
     "date": "2026-12-05",
-    "details": "Three hours signing autographs and taking photos. Football or hockey preferred."
+    "details": "Three hours signing autographs and taking photos. Football or hockey preferred.",
+    "charitable": false
   },
   {
     "id": "opp_004",
@@ -37,7 +40,8 @@
     "title": "Fireside chat on women in leadership",
     "budget_max": 3000,
     "date": "2027-02-10",
-    "details": "45-minute fireside chat; virtual is fine."
+    "details": "45-minute fireside chat; virtual is fine.",
+    "charitable": false
   },
   {
     "id": "opp_005",
@@ -47,7 +51,8 @@
     "title": "Emcee / comedy set for charity gala",
     "budget_max": 4000,
     "date": "2027-03-14",
-    "details": "Host the live auction and do a 15-minute set. Clean material only."
+    "details": "Host the live auction and do a 15-minute set. Clean material only.",
+    "charitable": true
   },
   {
     "id": "opp_006",
@@ -57,6 +62,95 @@
     "title": "Local ambassador for a new trail-running shoe",
     "budget_max": 1500,
     "date": "2027-01-05",
-    "details": "Six social posts and two store events over three months."
+    "details": "Six social posts and two store events over three months.",
+    "charitable": false
+  },
+  {
+    "id": "opp_007",
+    "org": "Aurora Food Bank Run",
+    "type": "appearance",
+    "charitable": true,
+    "city": "Aurora",
+    "title": "Start the 5K and sign autographs",
+    "budget_max": 0,
+    "date": "2027-04-17",
+    "details": "Volunteer appearance: fire the starting horn, then 90 minutes of photos and autographs at the finish. All proceeds go to the food bank."
+  },
+  {
+    "id": "opp_008",
+    "org": "Lakewood Middle School",
+    "type": "speaking",
+    "charitable": false,
+    "city": "Lakewood",
+    "title": "Career-day talk: life after sports",
+    "budget_max": 600,
+    "date": "2027-02-26",
+    "details": "Two 25-minute sessions for 7th and 8th graders about goals, setbacks, and what comes after playing."
+  },
+  {
+    "id": "opp_009",
+    "org": "Front Range Hope Foundation",
+    "type": "speaking",
+    "charitable": true,
+    "city": "Colorado Springs",
+    "title": "Your story at our hope luncheon",
+    "budget_max": 1500,
+    "date": "2027-03-05",
+    "details": "20-minute personal story about overcoming adversity for 300 donors. Nonprofit budget."
+  },
+  {
+    "id": "opp_010",
+    "org": "Summit Sporting Goods",
+    "type": "appearance",
+    "charitable": false,
+    "city": "Fort Collins",
+    "title": "10-year anniversary autograph signing",
+    "budget_max": 1800,
+    "date": "2027-01-30",
+    "details": "Two hours signing autographs and taking photos with customers. Any sport welcome."
+  },
+  {
+    "id": "opp_011",
+    "org": "Mile High Youth Soccer",
+    "type": "clinic",
+    "charitable": true,
+    "city": "Denver",
+    "title": "Girls' soccer clinic and Q&A",
+    "budget_max": 700,
+    "date": "2027-04-03",
+    "details": "Ninety-minute skills clinic for 50 girls ages 8-12, then a short Q&A with parents."
+  },
+  {
+    "id": "opp_012",
+    "org": "Cherry Creek Rotary",
+    "type": "speaking",
+    "charitable": false,
+    "city": "Denver",
+    "title": "Lunch speaker: teamwork in business",
+    "budget_max": 500,
+    "date": "2027-02-09",
+    "details": "20-minute talk plus questions at our weekly lunch meeting, about 60 members."
+  },
+  {
+    "id": "opp_013",
+    "org": "Boulder Hospital Kids Wing",
+    "type": "appearance",
+    "charitable": true,
+    "city": "Boulder",
+    "title": "Holiday visit with young patients",
+    "budget_max": 0,
+    "date": "2026-12-18",
+    "details": "Volunteer visit: an hour with kids and families, signed photos provided. Background check required."
+  },
+  {
+    "id": "opp_014",
+    "org": "Rocky Mountain Tech Summit",
+    "type": "speaking",
+    "charitable": false,
+    "city": "Denver",
+    "title": "Keynote: performing under pressure",
+    "budget_max": 7500,
+    "date": "2027-05-12",
+    "details": "35-minute keynote for 900 attendees on pressure, preparation, and resilience."
   }
 ]

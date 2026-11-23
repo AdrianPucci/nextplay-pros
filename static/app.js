@@ -572,18 +572,37 @@ function drawDraft() {
 }
 
 // ---------------------------------------------------------------- opportunity board
+const BOARD_FILTERS = [  // activity types on the Opportunity board
+  ["all", "All", "", () => true],
+  ["charity", "Charitable", "💛", (o) => o.charitable],
+  ["story", "Story & speaking", "🎤", (o) => ["speaking", "mentoring"].includes(o.type)],
+  ["appear", "Appearances & autographs", "✍️", (o) => ["appearance", "endorsement"].includes(o.type)],
+  ["clinic", "Clinics & camps", "🏀", (o) => o.type === "clinic"],
+  ["fun", "Entertainment", "🎭", (o) => o.type === "comedy_entertainment"],
+];
 async function viewBoard() {
   const list = await api("/api/opportunities");
+  state.boardFilter = state.boardFilter || "all";
   $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div><h1>Opportunity board</h1><p class="sub">Open gigs posted by local businesses, schools, and nonprofits.</p>
-    <div class="grid two">${list.map((o) => `<div class="card"><div class="req-top"><b>${esc(o.title)}</b><span class="pill cat">${CAT[o.type]}</span></div>
+    <div class="board-filters" role="toolbar" aria-label="Filter by type of activity"></div><div id="board" class="grid two"></div>`;
+  const draw = () => {
+    const f = BOARD_FILTERS.find((x) => x[0] === state.boardFilter) || BOARD_FILTERS[0];
+    $(".board-filters").innerHTML = BOARD_FILTERS.map(([k, label, icon, test]) =>
+      `<button class="chip-f ${k === f[0] ? "on" : ""}" data-bf="${k}" aria-pressed="${k === f[0]}">${icon ? icon + " " : ""}${label} <span>${list.filter(test).length}</span></button>`).join("");
+    const shown = list.filter(f[3]);
+    $("#board").innerHTML = shown.map((o) => `<div class="card"><div class="req-top"><b>${esc(o.title)}</b><span>${o.charitable ? `<span class="pill charity">💛 Charitable</span> ` : ""}<span class="pill cat">${CAT[o.type]}</span></span></div>
       <div class="meta">${esc(o.org)} · ${esc(o.city)} · ${esc(o.date)}</div><p class="story">${esc(o.details)}</p>
-      <div class="card-foot"><span class="fee">Up to ${money(o.budget_max)}</span>
-      ${state.role === "booker" ? `<button class="btn small ghost" data-scout-opp="${o.id}">Find matches with Scout</button>` : ""}</div></div>`).join("")}</div>`;
-  document.querySelectorAll("[data-scout-opp]").forEach((b) => (b.onclick = () => {
-    const o = list.find((x) => x.id === b.dataset.scoutOpp);
-    state.lastQuery = `${o.title} for ${o.org} in ${o.city} on ${o.date}. ${o.details}`; state.lastBudget = o.budget_max; state.lastScout = null;
-    state.tab = "find"; render(); runScout();
-  }));
+      <div class="card-foot"><span class="fee">${o.budget_max ? `Up to ${money(o.budget_max)}` : "Volunteer"}</span>
+      ${state.role === "booker" ? `<button class="btn small ghost" data-scout-opp="${o.id}">Find matches with Scout</button>` : ""}</div></div>`).join("")
+      || `<div class="empty">No open gigs of this type right now.</div>`;
+    document.querySelectorAll("[data-bf]").forEach((b) => (b.onclick = () => { state.boardFilter = b.dataset.bf; draw(); }));
+    document.querySelectorAll("[data-scout-opp]").forEach((b) => (b.onclick = () => {
+      const o = list.find((x) => x.id === b.dataset.scoutOpp);
+      state.lastQuery = `${o.title} for ${o.org} in ${o.city} on ${o.date}. ${o.details}`; state.lastBudget = o.budget_max || null; state.lastScout = null;
+      state.tab = "find"; render(); runScout();
+    }));
+  };
+  draw();
 }
 
 // ---------------------------------------------------------------- behind the scenes
