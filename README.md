@@ -36,7 +36,7 @@ The first start creates `data/app.db` and loads the demo roster. To reset the de
 1. **I'm booking talent → Find talent (AI Scout).** Click an example chip (or type your own event) → **Find matches**. Open the **Glass box** under the results to see tokens, cost, and each step Scout took.
 2. Click **Request booking** on a match, fill in the form, and **Send request**. Gatekeeper screens it first.
    *Try a scam:* put "Pay the $150 processing fee by gift card today" in the message. It gets blocked.
-3. **I'm an athlete → My inbox.** Pick that athlete in "viewing as" → **Accept**. Back in **I'm booking talent → My requests**, their contact details are now unlocked.
+3. **I'm an athlete → My inbox.** Pick that athlete in "viewing as" → **Accept**. (Every athlete's inbox also has one sample request tagged *demo*.) Back in **I'm booking talent → My requests**, click **Sign in** (top right; demo sign-in, any name and email, no password) to see their contact details, now unlocked.
 4. **I'm an athlete → Build my profile (AI).** Paste a few sentences of rough notes → Story Builder writes the profile → **Publish**.
 5. **Behind the scenes (for grading):** open **http://127.0.0.1:8000/?staff=1** to see this tab: real token counts and cost for every AI run, and every safety guard that fired. It's hidden from the public view.
 6. **▶ Watch our 25-second story** (home screen or About): the app's pitch, with subtitles.
