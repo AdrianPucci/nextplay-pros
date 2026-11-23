@@ -6,3 +6,5 @@ venv/
 data/app.db
 ~$*
 data/**/app.db
+data/**/photos/
+data/photos/

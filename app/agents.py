@@ -106,12 +106,14 @@ def scout_agent() -> Agent:
         def search_athletes(ctx: RunContext[ScoutDeps], categories: list[Category] | None = None,
                             sport: str | None = None, near_city: str | None = None,
                             radius_miles: int | None = None, max_fee: int | None = None,
-                            virtual_only: bool = False, keywords: list[str] | None = None) -> str:
+                            virtual_only: bool = False, keywords: list[str] | None = None,
+                            day: str | None = None, time_of_day: str | None = None) -> str:
             cap = ctx.deps.budget_cap
             if cap is not None:  # the booker's budget is a hard limit, whatever the model asks for
                 max_fee = cap if max_fee is None else min(max_fee, cap)
             rows = store.search(sport=sport, categories=categories, near_city=near_city, radius_miles=radius_miles,
-                                max_fee=max_fee, virtual_only=virtual_only, keywords=keywords)
+                                max_fee=max_fee, virtual_only=virtual_only, keywords=keywords,
+                                day=day, time_of_day=time_of_day)
             ctx.deps.seen_ids.update(r["id"] for r in rows)
             for r in rows:
                 r["story"] = untrusted("athlete profile", r["story"])
@@ -119,7 +121,8 @@ def scout_agent() -> Agent:
 
         search_athletes.__doc__ = (
             "Search the NextPlay Pros roster. Returns up to 12 athletes with public profile fields "
-            "(never contact details). near_city must be one of: " + ", ".join(store.CITIES) + ".")
+            "(never contact details). near_city must be one of: " + ", ".join(store.CITIES) + ". "
+            "day (mon-sun) and time_of_day (morning, afternoon, evening) keep only athletes available then.")
         agent.tool(search_athletes)
         _agents["scout"] = agent
     return _agents["scout"]
@@ -314,6 +317,7 @@ async def screen_request(athlete: dict, form: dict) -> dict:
 
     verdict = out.verdict
     rule_rider = riders.rule_conflicts(rider, msg + " " + form.get("org", ""))
+    rule_rider += riders.availability_conflicts(athlete.get("availability"), form.get("event_date"), form.get("event_time"))
     nil = riders.nil_flags(athlete, msg)
     if nil:
         rule_flags = rule_flags + nil

@@ -69,16 +69,30 @@ function usageLine(g, open = false) {
 function thinking(agent, text) {
   return `<div class="thinking">${bot(agent, "thinking", 56, "bouncing")}<div>${esc(text)}<span class="dots"><i></i><i></i><i></i></span></div></div>`;
 }
+function photoBox(a, cls = "pro-photo") {
+  const hue = [...a.name].reduce((h, c) => h + c.charCodeAt(0), 0) % 360;
+  const init = a.name.replace(/".*?"/g, "").split(/\s+/).filter(Boolean).map((w) => w[0]).slice(0, 2).join("");
+  return `<div class="${cls}" style="--h:${hue}">${a.photo ? `<img src="${esc(a.photo)}" alt="${esc(a.name)}">` : `<span class="ph-init">${esc(init)}</span><span class="ph-note">📷 Photo coming soon</span>`}</div>`;
+}
+function availLine(a) {
+  const av = a.availability, o = state.riderOpts;
+  if (!av || !o) return "";
+  const days = av.days.length === 7 ? "Any day" : av.days.length === 2 && av.days.includes("sat") && av.days.includes("sun") ? "Weekends" : av.days.map((d) => o.days[d]).join(", ");
+  const times = av.times.length === 3 ? "any time" : av.times.map((t) => o.times[t].split(" (")[0].toLowerCase()).join(", ");
+  return `🗓️ ${esc(days)} · ${esc(times)} · ${av.notice_days} days' notice`;
+}
 function athleteCard(a, extra = "") {
-  return `<div class="card">
-    <div class="card-head">${avatar(a)}<div><div class="name">${esc(a.name)} ${SPORT_ICON[a.sport] || ""}</div>
-      <div class="meta">${esc(a.level)} · ${esc(a.sport)} · ${esc(a.city)}, ${esc(a.state)}</div></div>${extra.score || ""}</div>
+  return `<div class="card pro">
+    <div class="pro-top">${photoBox(a)}${extra.score || ""}</div>
+    <div class="card-head"><div><div class="name">${esc(a.name)} ${SPORT_ICON[a.sport] || ""}</div>
+      <div class="meta">${esc(a.level)} · ${esc(a.sport)} · ${esc(a.city)}, ${esc(a.state)}</div></div></div>
     ${extra.why || ""}
     ${a.headline ? `<div><b>${esc(a.headline)}</b></div>` : ""}
     <p class="story">${esc(a.story)}</p>
     <div>${a.categories.map((c) => `<span class="pill cat">${CAT[c] || c}</span>`).join("")}${a.topics.map((t) => `<span class="pill">${esc(t)}</span>`).join("")}</div>
     <div class="card-foot"><span class="fee">${money(a.fee_min)}–${money(a.fee_max)}</span>
       <span class="meta">${a.virtual_ok ? "Virtual OK · " : ""}travels ${a.travel_miles} mi</span></div>
+    <div class="avail">${availLine(a)}</div>
     ${riderChips(a)}
     <button class="btn small" data-request="${a.id}">Request booking</button>
   </div>`;
@@ -87,7 +101,7 @@ function athleteCard(a, extra = "") {
 // ---------------------------------------------------------------- tabs
 const TABS = {
   booker: [["find", "Find talent (AI Scout)"], ["browse", "Browse roster"], ["mine", "My requests"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
-  athlete: [["inbox", "My inbox"], ["rider", "My event rider"], ["build", "Build my profile (AI)"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
+  athlete: [["inbox", "My inbox"], ["rider", "My profile & rider"], ["build", "Build my profile (AI)"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
 };
 function renderTabs() {
   $("#tabs").innerHTML = TABS[state.role].map(([k, l]) => `<button data-tab="${k}" class="${state.tab === k ? "active" : ""}">${l}</button>`).join("");
@@ -111,6 +125,7 @@ function viewFind() {
   <section class="hero">
     <h1>Who do you want at your event?</h1>
     <p>Describe it like you'd tell a friend. Scout searches the roster, keeps you under budget, and explains every match.</p>
+    <div class="team-strip">${bot("scout", "classic", 30)}<span><b>Scout</b> finds</span>${bot("story_builder", "classic", 30)}<span><b>Story Builder</b> writes</span>${bot("gatekeeper", "classic", 30)}<span><b>Gatekeeper</b> protects</span></div>
     <div class="form">
       <div><label for="q">Your event</label><textarea id="q" placeholder="e.g. Motivational speaker for our 200-person sales kickoff in Denver, someone who came back from an injury">${esc(state.lastQuery || "")}</textarea></div>
       <div class="row"><div style="flex:0 1 200px"><label for="budget">Max budget (optional, enforced)</label><input id="budget" type="number" min="0" step="100" placeholder="5000" value="${esc(state.lastBudget || "")}"></div>
@@ -158,13 +173,17 @@ function viewBrowse() {
       <div><label>Type</label><select id="f-cat"><option value="">Any</option>${Object.entries(CAT).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select></div>
       <div><label>State</label><select id="f-state"><option value="">Any</option>${[...new Set(state.athletes.map((a) => a.state))].sort().map((s) => `<option>${s}</option>`).join("")}</select></div>
       <div><label>Max fee</label><input id="f-fee" type="number" step="100" placeholder="any"></div>
+      <div><label>Available on</label><select id="f-day"><option value="">Any day</option>${Object.entries(state.riderOpts.days).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select></div>
+      <div><label>Time of day</label><select id="f-time"><option value="">Any time</option>${Object.entries(state.riderOpts.times).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select></div>
     </div></div><div class="grid three" id="roster"></div>`;
   const draw = () => {
     const s = $("#f-sport").value, c = $("#f-cat").value, st = $("#f-state").value, f = Number($("#f-fee").value) || Infinity;
-    const list = state.athletes.filter((a) => (!s || a.sport === s) && (!c || a.categories.includes(c)) && (!st || a.state === st) && a.fee_min <= f);
+    const dy = $("#f-day").value, tm = $("#f-time").value;
+    const list = state.athletes.filter((a) => (!s || a.sport === s) && (!c || a.categories.includes(c)) && (!st || a.state === st) && a.fee_min <= f
+      && (!dy || a.availability.days.includes(dy)) && (!tm || a.availability.times.includes(tm)));
     $("#roster").innerHTML = list.map((a) => athleteCard(a)).join("") || `<div class="empty">No one matches those filters.</div>`;
   };
-  ["#f-sport", "#f-cat", "#f-state", "#f-fee"].forEach((id) => ($(id).oninput = draw));
+  ["#f-sport", "#f-cat", "#f-state", "#f-fee", "#f-day", "#f-time"].forEach((id) => ($(id).oninput = draw));
   draw();
 }
 
@@ -181,6 +200,7 @@ function requestModal(athleteId) {
       <div class="row"><div><label>City</label><input id="r-city" value="${esc(b.city || "")}"></div><div><label>Budget offered ($)</label><input id="r-budget" type="number" step="100" value="${esc(b.budget_max ?? state.lastBudget ?? "")}"></div></div>
       <div><label>Message</label><textarea id="r-msg" rows="4" placeholder="Tell ${esc(a.name.split(" ")[0])} about the event, audience, and what you'd like them to do."></textarea></div>
       <div class="meta">Fee range: ${money(a.fee_min)}–${money(a.fee_max)}</div>
+      <div class="avail-req">${availLine(a)}<div id="r-avail-warn" class="conflict" hidden></div></div>
       ${riderBlock(a)}
       <div><label>Transportation you'll provide</label><select id="r-transport">
         <option value="Pick-up and drop-off provided">Pick-up and drop-off provided</option>
@@ -198,6 +218,11 @@ function requestModal(athleteId) {
   if (a.rider && a.rider.transport === "pickup") $("#r-transport").value = "Pick-up and drop-off provided";
   const ready = () => ($("#r-send").disabled = !$("#r-agree").checked || ($("#r-nil") && !$("#r-nil").checked));
   $("#r-agree").onchange = ready;
+  const checkAvail = () => {
+    const w = availWarnings(a, $("#r-date").value, $("#r-time").value);
+    $("#r-avail-warn").hidden = !w.length; $("#r-avail-warn").textContent = w.length ? "⚠️ " + w.join(" · ") + ". You can still send it, but the athlete will see this." : "";
+  };
+  $("#r-date").oninput = checkAvail; $("#r-time").oninput = checkAvail;
   if ($("#r-nil")) $("#r-nil").onchange = ready;
   $("#r-terms").onclick = (e) => { e.preventDefault(); closeModal(); state.tab = "terms"; render(); };
   $("#r-send").onclick = async () => {
@@ -392,6 +417,13 @@ function viewAbout() {
     <h1>Every athlete's story deserves an audience</h1>
     <p>NextPlay Pros connects former, current, and rising athletes with the schools, companies, nonprofits, and local businesses that want them for talks, appearances, clinics, and events. AI does the matching, the writing, and the scam screening. The athlete decides who gets their contact details.</p>
   </section>
+  <h2 class="about-h">Meet your team</h2>
+  <p class="sub">Every pro has a team: a scout, a publicist, security. Most athletes never get one. NextPlay Pros gives every athlete three AI teammates.</p>
+  <div class="grid three team">
+    <div class="card team-card">${bot("scout", "happy", 84)}<div><h3>Scout</h3><div class="role">Your talent scout</div><p>Reads what a booker is planning, searches the roster, and puts you forward when your story fits: the theme, the city, the budget, and the day you're free.</p></div></div>
+    <div class="card team-card">${bot("story_builder", "happy", 84)}<div><h3>Story Builder</h3><div class="role">Your publicist</div><p>Turns your rough notes into a profile bookers want to hire, using only your facts, and flags every claim to verify before it goes live.</p></div></div>
+    <div class="card team-card">${bot("gatekeeper", "happy", 84)}<div><h3>Gatekeeper</h3><div class="role">Your security</div><p>Screens every request before you see it: scams, AI tricks, anything that breaks your Event Rider or your availability, and NIL problems for college athletes.</p></div></div>
+  </div>
   <h2 class="about-h">Who it serves</h2>
   <div class="grid three serve">
     <div class="card"><div class="serve-ico">🏅</div><h3>Athletes</h3><p>Retired pros, college standouts, Olympians in smaller sports, and rising players with real stories and <b>no agent</b>. NextPlay Pros writes their profile, brings them paid gigs, and keeps them in control.</p></div>
@@ -461,6 +493,14 @@ function drawRiderForm() {
   const boxes = (name, map, sel) => Object.entries(map).map(([k, v]) =>
     `<label class="check"><input type="checkbox" name="${name}" value="${k}" ${sel.includes(k) ? "checked" : ""}> ${esc(v)}</label>`).join("");
   $("#rider-form").innerHTML = `<div class="grid two">
+    <div class="panel profile-panel"><h2>📷 Profile photo</h2>
+      <div class="photo-edit">${photoBox(a, "pro-photo small")}<div><p class="meta">Shown on your card to every booker. JPG or PNG, up to 6 MB. We crop it to a portrait.</p>
+      <input type="file" id="photo-file" accept="image/jpeg,image/png,image/webp"><div id="photo-msg" class="meta"></div></div></div></div>
+    <div class="panel profile-panel"><h2>🗓️ When I'm available</h2>
+      <div class="day-grid">${Object.entries(o.days).map(([k, v]) => `<label class="check"><input type="checkbox" name="days" value="${k}" ${a.availability.days.includes(k) ? "checked" : ""}> ${v}</label>`).join("")}</div>
+      <div style="margin-top:8px">${Object.entries(o.times).map(([k, v]) => `<label class="check"><input type="checkbox" name="times" value="${k}" ${a.availability.times.includes(k) ? "checked" : ""}> ${esc(v)}</label>`).join("")}</div>
+      <div class="row" style="margin-top:8px"><div style="flex:0 1 220px"><label>Notice I need (days)</label><input id="notice-days" type="number" min="0" max="90" value="${a.availability.notice_days}"></div></div>
+      <p class="meta" style="margin:6px 0 0">Bookers can filter by your days and times, Scout only suggests you when you're free, and Gatekeeper flags requests outside these.</p></div>
     <div class="panel"><h2>🛡️ Safety &amp; security</h2>${boxes("security", o.security, r.security)}
       <h2 style="margin-top:18px">🏨 Accommodations</h2>${boxes("accommodations", o.accommodations, r.accommodations)}
       <div class="row" style="margin-top:10px"><div style="flex:0 1 220px"><label>Most hours I'll be on site</label><input id="max-hours" type="number" min="1" max="12" value="${r.max_hours}"></div></div></div>
@@ -468,13 +508,25 @@ function drawRiderForm() {
       `<label class="check"><input type="radio" name="transport" value="${k}" ${r.transport === k ? "checked" : ""}> ${esc(v)}</label>`).join("")}
       <h2 style="margin-top:18px">⛔ I won't do</h2>${boxes("wont_do", o.wont_do, r.wont_do)}
       <label style="margin-top:8px">Anything else I won't do</label><input id="wont-other" maxlength="300" value="${esc(r.wont_do_other)}" placeholder="e.g. no events on Sundays, no tobacco or vape brands">
-      <button class="btn good" id="rider-save" style="margin-top:14px">Save my rider</button></div></div>`;
+      <button class="btn good" id="rider-save" style="margin-top:14px">Save availability &amp; rider</button></div></div>`;
+  $("#photo-file").onchange = async () => {
+    const f = $("#photo-file").files[0]; if (!f) return;
+    if (f.size > 6e6) return ($("#photo-msg").textContent = "That photo is over 6 MB.");
+    $("#photo-msg").textContent = "Uploading…";
+    const data_url = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f); });
+    try { await api(`/api/athletes/${a.id}/photo`, { method: "POST", body: { athlete_id: a.id, data_url } }); await loadRoster(); toast("Photo saved."); drawRiderForm(); }
+    catch (err) { $("#photo-msg").textContent = err.message; }
+  };
   $("#rider-save").onclick = async () => {
     const pick = (n) => [...document.querySelectorAll(`input[name="${n}"]:checked`)].map((i) => i.value);
     const rider = { security: pick("security"), accommodations: pick("accommodations"), wont_do: pick("wont_do"),
       transport: (document.querySelector('input[name="transport"]:checked') || {}).value || "self",
       wont_do_other: $("#wont-other").value.trim(), max_hours: Number($("#max-hours").value) || 3 };
-    try { await api(`/api/athletes/${a.id}/rider`, { method: "PUT", body: { athlete_id: a.id, rider } }); await loadRoster(); toast("Saved. Bookers will see your rider before they can send a request."); }
+    const availability = { days: pick("days"), times: pick("times"), notice_days: Number($("#notice-days").value) || 0 };
+    try {
+      await api(`/api/athletes/${a.id}/rider`, { method: "PUT", body: { athlete_id: a.id, rider } });
+      await api(`/api/athletes/${a.id}/availability`, { method: "PUT", body: { athlete_id: a.id, availability } });
+      await loadRoster(); toast("Saved. Bookers will see your availability and rider before they can send a request."); }
     catch (err) { toast(err.message); }
   };
 }
@@ -546,6 +598,22 @@ function commitPanel(r, side) {
     ${side === "athlete" && !checked ? `<button class="btn good small" data-checkin="${r.id}">📍 I'm here: check in</button>` : ""}
     ${checked ? `<div class="meta">Current payout: <b>${money(p.athlete_payout)}</b>${p.booker_refund ? ` · ${money(p.booker_refund)} back to booker` : ""}</div>` : ""}
   </div>`;
+}
+
+function availWarnings(a, date, time) {
+  const av = a.availability, o = state.riderOpts, out = [];
+  if (!av) return out;
+  if (date) {
+    const d = new Date(date + "T12:00"), key = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"][d.getDay()];
+    if (!av.days.includes(key)) out.push(`Not available on ${o.days[key]}s`);
+    const lead = Math.round((d - new Date(new Date().toDateString())) / 864e5);
+    if (lead >= 0 && lead < av.notice_days) out.push(`Needs ${av.notice_days} days' notice`);
+  }
+  if (time) {
+    const h = Number(time.split(":")[0]), t = h < 12 ? "morning" : h < 17 ? "afternoon" : "evening";
+    if (!av.times.includes(t)) out.push(`Not available ${o.times[t].split(" (")[0].toLowerCase()}`);
+  }
+  return out;
 }
 
 const VIEWS = { rider: viewRider, terms: viewTerms, about: viewAbout, find: viewFind, browse: viewBrowse, mine: viewMine, board: viewBoard, behind: viewBehind, inbox: viewInbox, build: viewBuild };

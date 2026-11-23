@@ -205,3 +205,63 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .pay-grid span { font-size: 11.5px; color: var(--muted); }
 .commit .btn { justify-self: start; }
 @media (max-width: 640px) { .pay-grid { grid-template-columns: 1fr 1fr; } }
+
+/* Dark athlete cards with a photo area */
+.card.pro { background: #0f1b2d; border-color: #22324d; color: #e8edf5; padding: 0 0 16px; overflow: hidden; }
+.card.pro > *:not(.pro-top) { margin-left: 16px; margin-right: 16px; }
+.card.pro .name { color: #fff; }
+.card.pro .meta, .card.pro .avail { color: #9fb0c8; }
+.card.pro .story { color: #d6deea; }
+.card.pro .fee { color: #fff; }
+.card.pro .pill { background: #1d2c44; color: #c5d1e3; }
+.card.pro .pill.cat { background: rgba(255,90,31,.16); color: #ffb08f; }
+.card.pro .why { background: rgba(255,90,31,.12); color: #f1dccf; }
+.card.pro .why b { color: #ff9a6e; }
+.card.pro .rider-chips span { background: #1d2c44; color: #c5d1e3; }
+.card.pro .avail { font-size: 12.5px; }
+.pro-top { position: relative; }
+.pro-top .score { position: absolute; top: 10px; right: 10px; background: rgba(15,27,45,.85); color: #7fd1b0; }
+.pro-photo { height: 190px; background: linear-gradient(160deg, hsl(var(--h) 45% 32%), #0f1b2d); display: grid; place-items: center; position: relative; overflow: hidden; }
+.pro-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+.ph-init { font-size: 48px; font-weight: 800; color: rgba(255,255,255,.9); }
+.ph-note { position: absolute; bottom: 8px; left: 10px; font-size: 11px; color: rgba(255,255,255,.75); background: rgba(0,0,0,.25); padding: 2px 8px; border-radius: 999px; }
+.pro-photo.small { width: 120px; height: 160px; border-radius: 12px; flex: none; }
+.pro-photo.small .ph-init { font-size: 34px; }
+.photo-edit { display: flex; gap: 14px; align-items: flex-start; }
+.day-grid { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.avail-req { font-size: 14px; color: var(--muted); }
+.profile-panel { margin-bottom: 0; }
+
+/* Meet your team */
+.team-card { flex-direction: row; align-items: flex-start; gap: 12px; }
+.team-card h3 { margin: 0; }
+.team-card .role { font-size: 12px; font-weight: 800; color: var(--brand); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+.team-card p { margin: 0; font-size: 14px; }
+.team-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: -6px 0 14px; color: #dbe4f1; font-size: 14px; }
+.team-strip span { margin-right: 8px; }
+
+/* Phones */
+@media (max-width: 640px) {
+  .topbar { padding: 10px 12px; gap: 8px; }
+  .brand { font-size: 18px; }
+  .logo { width: 28px; height: 28px; }
+  .role-switch { width: 100%; }
+  .role-switch button { flex: 1; padding: 9px 6px; font-size: 13px; }
+  .tabs { scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs button { padding: 12px 10px; font-size: 14px; }
+  main { padding: 16px 12px 64px; }
+  h1 { font-size: 23px; }
+  .hero { padding: 18px 16px; }
+  input, select, textarea { font-size: 16px; }
+  .btn { padding: 12px 16px; }
+  .row > * { flex: 1 1 100%; }
+  .grid.two, .grid.three { grid-template-columns: 1fr; }
+  .modal { padding: 0; place-items: stretch; }
+  .modal-card { width: 100%; max-height: 100vh; height: 100%; border-radius: 0; padding: 18px 16px 32px; }
+  .card-foot { flex-wrap: wrap; }
+  .pro-photo { height: 220px; }
+  .photo-edit { flex-direction: column; }
+  .team-card { flex-direction: column; }
+  .req-top { align-items: flex-start; }
+}

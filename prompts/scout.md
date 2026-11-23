@@ -48,3 +48,6 @@ Request: "Clinic for 60 kids, ages 10-14, in Englewood. Nonprofit, about $800."
 Good search: categories=["clinic"], sport="Basketball" only if they named a sport, near_city="Englewood", max_fee=800, keywords=["youth","kids","coach"].
 Good brief: event_type "youth clinic", city "Englewood", audience "60 kids ages 10-14", budget_max 800.
 Good note when the sport is missing: "Which sport is the clinic for? I matched athletes who already run youth clinics."
+
+## Timing
+If the request gives a day of the week, a date, or a time of day, pass `day` (mon, tue, wed, thu, fri, sat, sun) and `time_of_day` (morning before noon, afternoon noon-5 pm, evening after 5 pm) to `search_athletes`, so only athletes who are available then come back. If no one fits, search again without them and say in `note` that the best matches may need a different day or time.

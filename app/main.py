@@ -108,10 +108,54 @@ def save_rider(athlete_id: str, body: RiderIn):
         raise HTTPException(404, str(e))
 
 
+class AvailabilityIn(BaseModel):
+    athlete_id: str
+    availability: dict
+
+
+@app.put("/api/athletes/{athlete_id}/availability")
+def save_availability(athlete_id: str, body: AvailabilityIn):
+    if body.athlete_id != athlete_id:
+        raise HTTPException(403, "You can only edit your own availability.")
+    try:
+        return store.update_availability(athlete_id, body.availability)
+    except ValueError as e:
+        raise HTTPException(404, str(e))
+
+
+class PhotoIn(BaseModel):
+    athlete_id: str
+    data_url: str  # "data:image/jpeg;base64,..."
+
+
+@app.post("/api/athletes/{athlete_id}/photo")
+def upload_photo(athlete_id: str, body: PhotoIn):
+    import base64
+    if body.athlete_id != athlete_id:
+        raise HTTPException(403, "You can only change your own photo.")
+    try:
+        raw = base64.b64decode(body.data_url.split(",", 1)[-1], validate=True)
+    except Exception:  # noqa: BLE001
+        raise HTTPException(400, "Couldn't read that upload.")
+    try:
+        return store.save_photo(athlete_id, raw)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+@app.get("/photos/{name}")
+def photo(name: str):
+    path = (store.PHOTOS / name).resolve()
+    if path.parent != store.PHOTOS.resolve() or not path.exists():  # no path tricks
+        raise HTTPException(404, "No such photo")
+    return FileResponse(path)
+
+
 @app.get("/api/rider-options")
 def rider_options():
     return {"security": riders.SECURITY, "accommodations": riders.ACCOMMODATIONS,
-            "transport": riders.TRANSPORT, "wont_do": riders.WONT_DO}
+            "transport": riders.TRANSPORT, "wont_do": riders.WONT_DO,
+            "days": riders.DAYS, "times": riders.TIMES}
 
 
 @app.get("/api/cities")

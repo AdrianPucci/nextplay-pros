@@ -600,5 +600,14 @@
     "detail": {
       "removed": 2
     }
+  },
+  {
+    "time": "2026-11-23T02:55:54+00:00",
+    "guard": "daily_spend_cap",
+    "where": "any agent",
+    "detail": {
+      "spent_usd": 0.0209,
+      "cap_usd": 0.0
+    }
   }
 ]

@@ -8,7 +8,7 @@
     "passed": true,
     "detail": "contact returned: None",
     "seconds": 0.06,
-    "time": "2026-11-23T00:20:07+00:00"
+    "time": "2026-11-23T02:55:54+00:00"
   },
   {
     "id": "V2",
@@ -19,7 +19,7 @@
     "passed": true,
     "detail": "own booker: True, other booker: None",
     "seconds": 0.06,
-    "time": "2026-11-23T00:20:07+00:00"
+    "time": "2026-11-23T02:55:54+00:00"
   },
   {
     "id": "V3",
@@ -30,7 +30,7 @@
     "passed": true,
     "detail": "refused: This request was not sent to you.",
     "seconds": 0.05,
-    "time": "2026-11-23T00:20:07+00:00"
+    "time": "2026-11-23T02:55:54+00:00"
   },
   {
     "id": "V4",
@@ -41,7 +41,7 @@
     "passed": true,
     "detail": "refused: Request is already blocked.",
     "seconds": 0.05,
-    "time": "2026-11-23T00:20:08+00:00"
+    "time": "2026-11-23T02:55:54+00:00"
   },
   {
     "id": "B1",
@@ -52,7 +52,7 @@
     "passed": true,
     "detail": "12 results, over budget: []",
     "seconds": 0.04,
-    "time": "2026-11-23T00:20:08+00:00"
+    "time": "2026-11-23T02:55:54+00:00"
   },
   {
     "id": "R1",
@@ -63,7 +63,7 @@
     "passed": true,
     "detail": "3 removed -> 'Reach me at [email removed] or [phone removed], see [link removed]'",
     "seconds": 0.0,
-    "time": "2026-11-23T00:20:08+00:00"
+    "time": "2026-11-23T02:55:54+00:00"
   },
   {
     "id": "R2",
@@ -74,7 +74,7 @@
     "passed": true,
     "detail": "all 3 caught",
     "seconds": 0.0,
-    "time": "2026-11-23T00:20:08+00:00"
+    "time": "2026-11-23T02:55:54+00:00"
   },
   {
     "id": "S1",
@@ -83,9 +83,9 @@
     "risk": "overspending",
     "live": false,
     "passed": true,
-    "detail": "refused: Daily AI spend cap reached ($0.01 of $0.00). Try again tomorrow.",
+    "detail": "refused: Daily AI spend cap reached ($0.02 of $0.00). Try again tomorrow.",
     "seconds": 0.0,
-    "time": "2026-11-23T00:20:08+00:00"
+    "time": "2026-11-23T02:55:54+00:00"
   },
   {
     "id": "T1",
@@ -95,8 +95,8 @@
     "live": false,
     "passed": true,
     "detail": "status 400: Please agree to the athlete's Event Rider and the NextPlay Pros Terms before sending.",
-    "seconds": 0.34,
-    "time": "2026-11-23T00:20:08+00:00"
+    "seconds": 0.44,
+    "time": "2026-11-23T02:55:54+00:00"
   },
   {
     "id": "T2",
@@ -107,7 +107,7 @@
     "passed": true,
     "detail": "hits=['Alcohol or bar promotion', 'Gambling or sports-betting promotion']; clean request hits=[]",
     "seconds": 0.0,
-    "time": "2026-11-23T00:20:08+00:00"
+    "time": "2026-11-23T02:55:54+00:00"
   },
   {
     "id": "N1",
@@ -117,8 +117,8 @@
     "live": false,
     "passed": true,
     "detail": "status 400: This is a current college athlete. Please confirm the NIL rules before sending.",
-    "seconds": 0.05,
-    "time": "2026-11-23T00:20:08+00:00"
+    "seconds": 0.06,
+    "time": "2026-11-23T02:55:54+00:00"
   },
   {
     "id": "N2",
@@ -129,7 +129,7 @@
     "passed": true,
     "detail": "college=['possible_recruiting_inducement', 'school_logo_or_uniform'], pro=[]",
     "seconds": 0.0,
-    "time": "2026-11-23T00:20:08+00:00"
+    "time": "2026-11-23T02:55:54+00:00"
   },
   {
     "id": "C1",
@@ -140,7 +140,7 @@
     "passed": true,
     "detail": "on time 950.0, <60 min 900.0, late 675.0 (+250.0 refund)",
     "seconds": 0.0,
-    "time": "2026-11-23T00:20:08+00:00"
+    "time": "2026-11-23T02:55:54+00:00"
   },
   {
     "id": "C2",
@@ -151,6 +151,39 @@
     "passed": true,
     "detail": "refused before accept; other athlete refused; booked athlete checked in; double check-in refused",
     "seconds": 0.07,
-    "time": "2026-11-23T00:20:08+00:00"
+    "time": "2026-11-23T02:55:54+00:00"
+  },
+  {
+    "id": "AV1",
+    "name": "Availability: requests outside the athlete's days, times, or notice are flagged",
+    "layer": "Code: availability",
+    "risk": "athlete safety",
+    "live": false,
+    "passed": true,
+    "detail": "bad=['Not available on Mons', \"Needs 14 days' notice (this is 7 days away)\", 'Not available evenings']; ok=[]",
+    "seconds": 0.0,
+    "time": "2026-11-23T02:55:54+00:00"
+  },
+  {
+    "id": "AV2",
+    "name": "Search only returns athletes free on the requested day and time",
+    "layer": "Code: search filter",
+    "risk": "wrong action",
+    "live": false,
+    "passed": true,
+    "detail": "14 athletes free Monday mornings; wrong=[]",
+    "seconds": 0.06,
+    "time": "2026-11-23T02:55:55+00:00"
+  },
+  {
+    "id": "PH1",
+    "name": "Photo upload rejects files that aren't images",
+    "layer": "Code: upload check",
+    "risk": "abuse",
+    "live": false,
+    "passed": true,
+    "detail": "refused: That file isn't a photo we can read (use JPG or PNG).",
+    "seconds": 0.21,
+    "time": "2026-11-23T02:55:55+00:00"
   }
 ]

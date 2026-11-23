@@ -131,3 +131,66 @@ def nil_flags(athlete: dict, text: str) -> list[str]:
     if SCHOOL_MARKS.search(text or ""):
         flags.append("school_logo_or_uniform")
     return flags
+
+
+# ---------------------------------------------------------------- availability (when the athlete can be booked)
+DAYS = {"mon": "Mon", "tue": "Tue", "wed": "Wed", "thu": "Thu", "fri": "Fri", "sat": "Sat", "sun": "Sun"}
+TIMES = {"morning": "Mornings (before noon)", "afternoon": "Afternoons (noon-5 pm)", "evening": "Evenings (after 5 pm)"}
+AVAIL_EMPTY = {"days": list(DAYS), "times": list(TIMES), "notice_days": 7}
+
+
+def clean_availability(av: dict | None) -> dict:
+    a = {**AVAIL_EMPTY, **(av or {})}
+    return {"days": [d for d in a["days"] if d in DAYS], "times": [t for t in a["times"] if t in TIMES],
+            "notice_days": max(0, min(90, int(a.get("notice_days") or 0)))}
+
+
+def seed_availability(i: int) -> dict:
+    """Varied, realistic availability for demo athlete number i (deterministic)."""
+    patterns = [
+        (["sat", "sun"], ["morning", "afternoon"]),                        # weekend only
+        (["mon", "tue", "wed", "thu", "fri"], ["morning", "afternoon"]),   # weekday daytime (e.g. coaches, teachers)
+        (["thu", "fri", "sat"], ["afternoon", "evening"]),
+        (list(DAYS), ["evening"]),                                         # evenings only (day job)
+        (list(DAYS), list(TIMES)),                                         # wide open
+        (["tue", "wed", "thu", "sat"], ["morning", "afternoon", "evening"]),
+    ]
+    days, times = patterns[i % len(patterns)]
+    return clean_availability({"days": days, "times": times, "notice_days": [7, 14, 3, 21, 10][i % 5]})
+
+
+def time_of_day(hhmm: str) -> str | None:
+    try:
+        h = int(hhmm.split(":")[0])
+    except (ValueError, AttributeError):
+        return None
+    return "morning" if h < 12 else "afternoon" if h < 17 else "evening"
+
+
+def availability_conflicts(av: dict, event_date: str | None, event_time: str | None, today=None) -> list[str]:
+    """Plain-language reasons a requested date/time is outside the athlete's availability (empty = fine)."""
+    from datetime import date, datetime
+    a = clean_availability(av)
+    out = []
+    try:
+        d = datetime.fromisoformat(event_date).date() if event_date else None
+    except ValueError:
+        d = None
+    if d:
+        key = list(DAYS)[d.weekday()]
+        if key not in a["days"]:
+            out.append(f"Not available on {DAYS[key]}s")
+        lead = (d - (today or date.today())).days
+        if 0 <= lead < a["notice_days"]:
+            out.append(f"Needs {a['notice_days']} days' notice (this is {lead} days away)")
+    t = time_of_day(event_time) if event_time else None
+    if t and t not in a["times"]:
+        out.append(f"Not available {TIMES[t].split(' (')[0].lower()}")
+    return out
+
+
+def describe_availability(av: dict) -> str:
+    a = clean_availability(av)
+    days = "every day" if len(a["days"]) == 7 else ", ".join(DAYS[d] for d in a["days"]) or "no days set"
+    times = "any time" if len(a["times"]) == 3 else ", ".join(TIMES[t].split(" (")[0].lower() for t in a["times"])
+    return f"Available {days}, {times}; needs {a['notice_days']} days' notice"

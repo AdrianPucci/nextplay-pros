@@ -63,7 +63,56 @@ def _with_rider(a: dict) -> dict:
         n = int(a["id"].split("_")[1]) if a["id"].split("_")[1].isdigit() else 0
         a["rider"] = riders.seed_rider(n, a.get("sport", ""), a.get("level", "")) if n else dict(riders.EMPTY)
     a["rider"] = riders.clean(a["rider"])
+    if "availability" not in a:
+        n = int(a["id"].split("_")[1]) if a["id"].split("_")[1].isdigit() else 0
+        a["availability"] = riders.seed_availability(n) if n else dict(riders.AVAIL_EMPTY)
+    a["availability"] = riders.clean_availability(a["availability"])
+    a.setdefault("photo", None)
     return a
+
+
+def _save(a: dict) -> dict:
+    with _lock, connect() as c:
+        c.execute("UPDATE athletes SET data = ? WHERE id = ?", (json.dumps(a), a["id"]))
+    return a
+
+
+def update_availability(athlete_id: str, availability: dict) -> dict:
+    a = get_athlete(athlete_id)
+    if not a:
+        raise ValueError("No such athlete")
+    a["availability"] = riders.clean_availability(availability)
+    return _save(a)
+
+
+PHOTOS = DATA_DIR / "photos"
+
+
+def save_photo(athlete_id: str, raw: bytes) -> dict:
+    """Validate an uploaded image, square it up to a 3:4 portrait, and store it next to the roster."""
+    import io
+    from PIL import Image
+    a = get_athlete(athlete_id)
+    if not a:
+        raise ValueError("No such athlete")
+    if len(raw) > 6_000_000:
+        raise ValueError("Photo is too large (max 6 MB).")
+    try:
+        im = Image.open(io.BytesIO(raw))
+        im.verify()
+        im = Image.open(io.BytesIO(raw)).convert("RGB")
+    except Exception:  # noqa: BLE001
+        raise ValueError("That file isn't a photo we can read (use JPG or PNG).")
+    w, h = im.size  # center-crop to 3:4, keep the top (faces)
+    tw = min(w, int(h * 3 / 4))
+    th = int(tw * 4 / 3)
+    left = (w - tw) // 2
+    im = im.crop((left, 0, left + tw, th)).resize((450, 600))
+    PHOTOS.mkdir(exist_ok=True)
+    name = f"{athlete_id}.jpg"
+    im.save(PHOTOS / name, "JPEG", quality=85)
+    a["photo"] = f"/photos/{name}?v={uuid.uuid4().hex[:6]}"
+    return _save(a)
 
 
 def all_athletes() -> list[dict]:
@@ -108,7 +157,8 @@ def miles(lat1, lon1, lat2, lon2) -> float:
 
 def search(sport: str | None = None, categories: list[str] | None = None, near_city: str | None = None,
            radius_miles: int | None = None, state: str | None = None, max_fee: int | None = None,
-           virtual_only: bool = False, keywords: list[str] | None = None, limit: int = 12) -> list[dict]:
+           virtual_only: bool = False, keywords: list[str] | None = None, limit: int = 12,
+           day: str | None = None, time_of_day: str | None = None) -> list[dict]:
     """Plain Python filter + keyword score over the roster. Returns public fields only (no contacts)."""
     origin = CITIES.get(near_city or "")
     results = []
@@ -120,6 +170,10 @@ def search(sport: str | None = None, categories: list[str] | None = None, near_c
         if max_fee is not None and a["fee_min"] > max_fee:
             continue
         if virtual_only and not a["virtual_ok"]:
+            continue
+        if day and day[:3].lower() not in a["availability"]["days"]:
+            continue
+        if time_of_day and time_of_day not in a["availability"]["times"]:
             continue
         if state and a["state"].upper() != state.upper():
             continue
@@ -138,6 +192,7 @@ def search(sport: str | None = None, categories: list[str] | None = None, near_c
             "categories": a["categories"], "topics": a["topics"],
             "fee_range": f"${a['fee_min']:,}-${a['fee_max']:,}", "fee_min": a["fee_min"],
             "virtual_ok": a["virtual_ok"], "keyword_hits": score, "story": a["story"],
+            "availability": riders.describe_availability(a["availability"]),
         })
     results.sort(key=lambda r: (-r["keyword_hits"], r["distance_miles"] if r["distance_miles"] is not None else 9999))
     return results[:limit]

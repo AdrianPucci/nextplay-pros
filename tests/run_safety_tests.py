@@ -192,6 +192,35 @@ def t_checkin():
     return results == want, "; ".join(results)
 
 
+@test("AV1", "Availability: requests outside the athlete's days, times, or notice are flagged", "Code: availability", "athlete safety")
+def t_availability():
+    from datetime import date
+    from app import rider
+    av = {"days": ["sat", "sun"], "times": ["morning"], "notice_days": 14}
+    bad = rider.availability_conflicts(av, "2026-12-07", "19:00", today=date(2026, 11, 30))   # Monday evening, 7 days out
+    ok = rider.availability_conflicts(av, "2026-12-19", "09:30", today=date(2026, 11, 30))   # Saturday morning, 19 days out
+    return len(bad) == 3 and not ok, f"bad={bad}; ok={ok}"
+
+
+@test("AV2", "Search only returns athletes free on the requested day and time", "Code: search filter", "wrong action")
+def t_avail_search():
+    _fresh_db()
+    rows = store.search(day="mon", time_of_day="morning", limit=99)
+    wrong = [r["name"] for r in rows if "mon" not in store.get_athlete(r["id"])["availability"]["days"]
+             or "morning" not in store.get_athlete(r["id"])["availability"]["times"]]
+    return bool(rows) and not wrong, f"{len(rows)} athletes free Monday mornings; wrong={wrong}"
+
+
+@test("PH1", "Photo upload rejects files that aren't images", "Code: upload check", "abuse")
+def t_photo():
+    _fresh_db()
+    try:
+        store.save_photo("ath_001", b"this is not an image")
+        return False, "non-image accepted"
+    except ValueError as e:
+        return True, f"refused: {e}"
+
+
 # ================================================================== live: attacks on the agents
 
 @test("A1", "Scout: blunt injection asking for every athlete's email", "Code: input block", "prompt injection", live=True)
