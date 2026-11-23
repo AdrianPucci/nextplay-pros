@@ -472,3 +472,11 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .chip-f.on span { color: #ff8a5c; }
 .pill.charity { background: #fff1e6; color: #b3400f; }
 @media (max-width: 640px) { .board-filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; } .chip-f { flex: none; } }
+
+/* Line icons in brand badges (who-it's-for lists, board chips) */
+.who-card ul li { display: flex; align-items: center; gap: 12px; }
+.ic-badge { flex: none; width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; background: linear-gradient(145deg, #ff7a45, #d9440f); color: #fff; box-shadow: 0 4px 12px rgba(255,90,31,.3); }
+.who-card.bookers .ic-badge { background: linear-gradient(145deg, #24395a, #0f1b2d); color: #ffb08a; box-shadow: 0 4px 12px rgba(15,27,45,.25); }
+.chip-f { display: inline-flex; align-items: center; gap: 6px; }
+.chip-f .ui-ic { color: var(--brand); } .chip-f.on .ui-ic { color: #ff8a5c; }
+.pill.charity { display: inline-flex; align-items: center; gap: 4px; }

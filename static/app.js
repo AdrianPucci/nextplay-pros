@@ -191,16 +191,35 @@ function playbook(label = true) {
   return `<div class="playbook" aria-label="Sports on NextPlay Pros">${items}</div>`;
 }
 
+// ---------------------------------------------------------------- UI line icons (replace emoji)
+const UI_ICON = {
+  pay: '<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6.5 9.5v5M17.5 9.5v5"/>',
+  pen: '<path d="M4 20l4-1 11-11-3-3L5 16z"/><path d="M14 6l3 3"/>',
+  shield: '<path d="M12 3l7 3v5c0 5-3.2 8.3-7 10-3.8-1.7-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/>',
+  lock: '<rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1.3"/>',
+  search: '<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/>',
+  target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.2"/><circle cx="12" cy="12" r="1"/>',
+  tag: '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8" r="1.4"/>',
+  hands: '<path d="M2.5 12l4-4 3 1.5 3-2.5 3 1 6 4"/><path d="M7 14.5l2.5 2.5a1.5 1.5 0 0 0 2.2 0l3.3-3.3"/><path d="M2.5 12l4.5 4.5M21.5 12L17 16.5"/>',
+  heart: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+  mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/>',
+  ball: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3v18M5.6 5.6c3 3 3 9.8 0 12.8M18.4 5.6c-3 3-3 9.8 0 12.8"/>',
+  star: '<path d="M12 3.5l2.6 5.3 5.9.9-4.2 4.1 1 5.8-5.3-2.8-5.3 2.8 1-5.8-4.2-4.1 5.9-.9z"/>',
+  grid: '<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>',
+};
+const uiIcon = (k, size = 20) => `<svg class="ui-ic" viewBox="0 0 24 24" width="${size}" height="${size}" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${UI_ICON[k]}</g></svg>`;
+const li = (k, html) => `<li><span class="ic-badge">${uiIcon(k)}</span><span>${html}</span></li>`;
+
 function whoFor() {
   return `<section class="who" aria-label="Who NextPlay Pros is for">
     <div class="who-card athletes">
       <div class="who-kicker">For athletes</div>
       <h2>Rising, retired, or a local hero</h2>
       <ul>
-        <li>💼 <b>Get paid</b> for talks, appearances, clinics, and events</li>
-        <li>✍️ <b>A profile written for you</b> from your own story</li>
-        <li>🛡️ <b>Your rules:</b> your rider, your schedule, your fees</li>
-        <li>🔒 <b>Your contact stays private</b> until you say yes</li>
+        ${li("pay", "<b>Get paid</b> for talks, appearances, clinics, and events")}
+        ${li("pen", "<b>A profile written for you</b> from your own story")}
+        ${li("shield", "<b>Your rules:</b> your rider, your schedule, your fees")}
+        ${li("lock", "<b>Your contact stays private</b> until you say yes")}
       </ul>
       <button class="btn" data-go-athlete>Build my profile</button>
     </div>
@@ -208,10 +227,10 @@ function whoFor() {
       <div class="who-kicker">For communities &amp; bookers</div>
       <h2>Schools, teams, businesses, charities</h2>
       <ul>
-        <li>🔎 <b>Describe your event</b> in plain English</li>
-        <li>🎯 <b>Get athletes who fit</b> your theme, city, budget, and date</li>
-        <li>💵 <b>Fair, clear fees</b> with no bureau markup</li>
-        <li>🤝 <b>Protected bookings:</b> escrow, check-in, refunds</li>
+        ${li("search", "<b>Describe your event</b> in plain English")}
+        ${li("target", "<b>Get athletes who fit</b> your theme, city, budget, and date")}
+        ${li("tag", "<b>Fair, clear fees</b> with no bureau markup")}
+        ${li("hands", "<b>Protected bookings:</b> escrow, check-in, refunds")}
       </ul>
       <button class="btn ghost-light" data-go-find>Find an athlete</button>
     </div>
@@ -573,12 +592,12 @@ function drawDraft() {
 
 // ---------------------------------------------------------------- opportunity board
 const BOARD_FILTERS = [  // activity types on the Opportunity board
-  ["all", "All", "", () => true],
-  ["charity", "Charitable", "💛", (o) => o.charitable],
-  ["story", "Story & speaking", "🎤", (o) => ["speaking", "mentoring"].includes(o.type)],
-  ["appear", "Appearances & autographs", "✍️", (o) => ["appearance", "endorsement"].includes(o.type)],
-  ["clinic", "Clinics & camps", "🏀", (o) => o.type === "clinic"],
-  ["fun", "Entertainment", "🎭", (o) => o.type === "comedy_entertainment"],
+  ["all", "All", "grid", () => true],
+  ["charity", "Charitable", "heart", (o) => o.charitable],
+  ["story", "Story & speaking", "mic", (o) => ["speaking", "mentoring"].includes(o.type)],
+  ["appear", "Appearances & autographs", "pen", (o) => ["appearance", "endorsement"].includes(o.type)],
+  ["clinic", "Clinics & camps", "ball", (o) => o.type === "clinic"],
+  ["fun", "Entertainment", "star", (o) => o.type === "comedy_entertainment"],
 ];
 async function viewBoard() {
   const list = await api("/api/opportunities");
@@ -588,9 +607,9 @@ async function viewBoard() {
   const draw = () => {
     const f = BOARD_FILTERS.find((x) => x[0] === state.boardFilter) || BOARD_FILTERS[0];
     $(".board-filters").innerHTML = BOARD_FILTERS.map(([k, label, icon, test]) =>
-      `<button class="chip-f ${k === f[0] ? "on" : ""}" data-bf="${k}" aria-pressed="${k === f[0]}">${icon ? icon + " " : ""}${label} <span>${list.filter(test).length}</span></button>`).join("");
+      `<button class="chip-f ${k === f[0] ? "on" : ""}" data-bf="${k}" aria-pressed="${k === f[0]}">${icon ? uiIcon(icon, 16) : ""}${label} <span>${list.filter(test).length}</span></button>`).join("");
     const shown = list.filter(f[3]);
-    $("#board").innerHTML = shown.map((o) => `<div class="card"><div class="req-top"><b>${esc(o.title)}</b><span>${o.charitable ? `<span class="pill charity">💛 Charitable</span> ` : ""}<span class="pill cat">${CAT[o.type]}</span></span></div>
+    $("#board").innerHTML = shown.map((o) => `<div class="card"><div class="req-top"><b>${esc(o.title)}</b><span>${o.charitable ? `<span class="pill charity">${uiIcon("heart", 13)} Charitable</span> ` : ""}<span class="pill cat">${CAT[o.type]}</span></span></div>
       <div class="meta">${esc(o.org)} · ${esc(o.city)} · ${esc(o.date)}</div><p class="story">${esc(o.details)}</p>
       <div class="card-foot"><span class="fee">${o.budget_max ? `Up to ${money(o.budget_max)}` : "Volunteer"}</span>
       ${state.role === "booker" ? `<button class="btn small ghost" data-scout-opp="${o.id}">Find matches with Scout</button>` : ""}</div></div>`).join("")
