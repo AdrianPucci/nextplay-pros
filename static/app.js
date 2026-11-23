@@ -125,7 +125,7 @@ document.addEventListener("click", (e) => { const r = e.target.closest("[data-re
 document.addEventListener("click", (e) => { if (e.target.closest("[data-story]")) openStory(); });
 function openStory() {
   const o = document.createElement("div"); o.className = "story-overlay";
-  o.innerHTML = `<iframe src="/static/story.html?autoplay=1&v=13" title="NextPlay Pros 15-second story" allow="autoplay"></iframe>`;
+  o.innerHTML = `<iframe src="/static/story.html?autoplay=1&v=14" title="NextPlay Pros story" allow="autoplay"></iframe>`;
   document.body.appendChild(o);
   const close = () => { o.remove(); window.removeEventListener("message", onMsg); document.removeEventListener("keydown", onKey); };
   const onMsg = (m) => { if (m.data === "close-story") close(); };
@@ -246,13 +246,13 @@ function introBanner() {
       <h1>Bring a real athlete <span>to your event.</span></h1>
       <p>Keynotes, autograph signings, youth clinics, and charity appearances, from athletes near you and in your budget.</p>
       <p class="intro-ask">Describe your event and we'll match you in seconds.</p>
-      <div class="intro-cta"><button class="btn" data-go-find>Find an athlete</button><button class="story-btn" data-story>▶ Watch our 15-second story</button></div>
+      <div class="intro-cta"><button class="btn" data-go-find>Find an athlete</button><button class="story-btn" data-story>▶ Watch our story</button></div>
       <button class="intro-switch" data-go-athlete>Are you an athlete? Build your profile →</button>
     </div>` : `<div class="intro-copy">
       <h1>You were a star, <span>or you're becoming one.</span></h1>
       <p>Let us help you connect with your community, get paid, and inspire through your story.</p>
       <p class="intro-ask">They're waiting… are you ready?</p>
-      <div class="intro-cta"><button class="btn" data-go-athlete>I'm ready: build my profile</button><button class="story-btn" data-story>▶ Watch our 15-second story</button></div>
+      <div class="intro-cta"><button class="btn" data-go-athlete>I'm ready: build my profile</button><button class="story-btn" data-story>▶ Watch our story</button></div>
     </div>`}
   </section>`;
 }
@@ -866,7 +866,7 @@ function viewAbout() {
     <div class="faces" aria-label="Athletes featured on NextPlay Pros"><div class="faces-track">${[0, 1].map((copy) => FACES.map(([img, name, pos]) =>
       `<figure ${copy ? 'aria-hidden="true"' : ""}><img src="/static/img/${img}" alt="${copy ? "" : esc(name)}" style="object-position:${pos}"><figcaption>${esc(name)}</figcaption></figure>`).join("")).join("")}</div></div>
     <h1>Every athlete's story deserves an audience</h1>
-    <button class="story-btn" data-story>▶ Watch our 15-second story</button>
+    <button class="story-btn" data-story>▶ Watch our story</button>
     <p>NextPlay Pros connects former, current, and rising athletes with the schools, companies, nonprofits, and local businesses that want them for talks, appearances, clinics, and events. We do the matching, the writing, and the scam screening. The athlete decides who gets their contact details.</p>
   </section>
   <h2 class="about-h">Meet your team</h2>
