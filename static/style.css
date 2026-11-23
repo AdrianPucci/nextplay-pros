@@ -177,8 +177,8 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .rider-box .label { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
 .rider-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .rider-cols ul { margin: 4px 0 0; padding-left: 18px; }
-.agree { display: flex; gap: 8px; align-items: flex-start; font-weight: 500; color: var(--ink); font-size: 14px; }
-.agree input { width: auto; margin-top: 3px; }
+.agree { display: block; font-weight: 500; color: var(--ink); font-size: 14px; line-height: 1.45; }
+.agree input { width: auto; margin: 0 8px 0 0; vertical-align: -2px; }
 .agree a { color: #24396a; }
 .check { display: flex; gap: 8px; align-items: center; font-weight: 500; color: var(--ink); font-size: 14px; margin: 6px 0; }
 .check input { width: auto; }

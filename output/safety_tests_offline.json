@@ -1,0 +1,156 @@
+[
+  {
+    "id": "V1",
+    "name": "Contact stays hidden while a request is pending",
+    "layer": "Code: contact vault",
+    "risk": "data leak",
+    "live": false,
+    "passed": true,
+    "detail": "contact returned: None",
+    "seconds": 0.06,
+    "time": "2026-11-23T00:20:07+00:00"
+  },
+  {
+    "id": "V2",
+    "name": "Contact unlocks only for the booker who was accepted",
+    "layer": "Code: contact vault",
+    "risk": "data leak",
+    "live": false,
+    "passed": true,
+    "detail": "own booker: True, other booker: None",
+    "seconds": 0.06,
+    "time": "2026-11-23T00:20:07+00:00"
+  },
+  {
+    "id": "V3",
+    "name": "Only the athlete a request was sent to can accept it",
+    "layer": "Code: access check",
+    "risk": "wrong action",
+    "live": false,
+    "passed": true,
+    "detail": "refused: This request was not sent to you.",
+    "seconds": 0.05,
+    "time": "2026-11-23T00:20:07+00:00"
+  },
+  {
+    "id": "V4",
+    "name": "Blocked requests can't be accepted later",
+    "layer": "Code: access check",
+    "risk": "wrong action",
+    "live": false,
+    "passed": true,
+    "detail": "refused: Request is already blocked.",
+    "seconds": 0.05,
+    "time": "2026-11-23T00:20:08+00:00"
+  },
+  {
+    "id": "B1",
+    "name": "Roster search never returns anyone over the budget",
+    "layer": "Code: budget rule",
+    "risk": "overspending",
+    "live": false,
+    "passed": true,
+    "detail": "12 results, over budget: []",
+    "seconds": 0.04,
+    "time": "2026-11-23T00:20:08+00:00"
+  },
+  {
+    "id": "R1",
+    "name": "Emails, phones, and links are stripped from text",
+    "layer": "Code: redaction",
+    "risk": "data leak",
+    "live": false,
+    "passed": true,
+    "detail": "3 removed -> 'Reach me at [email removed] or [phone removed], see [link removed]'",
+    "seconds": 0.0,
+    "time": "2026-11-23T00:20:08+00:00"
+  },
+  {
+    "id": "R2",
+    "name": "Rule scanner catches injection, harvesting, and payment scams",
+    "layer": "Code: rule scanner",
+    "risk": "prompt injection",
+    "live": false,
+    "passed": true,
+    "detail": "all 3 caught",
+    "seconds": 0.0,
+    "time": "2026-11-23T00:20:08+00:00"
+  },
+  {
+    "id": "S1",
+    "name": "Daily spend cap stops new AI runs",
+    "layer": "Code: spend cap",
+    "risk": "overspending",
+    "live": false,
+    "passed": true,
+    "detail": "refused: Daily AI spend cap reached ($0.01 of $0.00). Try again tomorrow.",
+    "seconds": 0.0,
+    "time": "2026-11-23T00:20:08+00:00"
+  },
+  {
+    "id": "T1",
+    "name": "Requests are refused unless the booker agrees to the Event Rider + Terms",
+    "layer": "Code: server check",
+    "risk": "wrong action",
+    "live": false,
+    "passed": true,
+    "detail": "status 400: Please agree to the athlete's Event Rider and the NextPlay Pros Terms before sending.",
+    "seconds": 0.34,
+    "time": "2026-11-23T00:20:08+00:00"
+  },
+  {
+    "id": "T2",
+    "name": "Rider rules catch requests that hit the athlete's won't-do list",
+    "layer": "Code: rider rules",
+    "risk": "athlete safety",
+    "live": false,
+    "passed": true,
+    "detail": "hits=['Alcohol or bar promotion', 'Gambling or sports-betting promotion']; clean request hits=[]",
+    "seconds": 0.0,
+    "time": "2026-11-23T00:20:08+00:00"
+  },
+  {
+    "id": "N1",
+    "name": "College athletes: requests are refused unless the booker confirms the NIL rules",
+    "layer": "Code: server check",
+    "risk": "NIL compliance",
+    "live": false,
+    "passed": true,
+    "detail": "status 400: This is a current college athlete. Please confirm the NIL rules before sending.",
+    "seconds": 0.05,
+    "time": "2026-11-23T00:20:08+00:00"
+  },
+  {
+    "id": "N2",
+    "name": "NIL rules spot recruiting inducements and school logos (college athletes only)",
+    "layer": "Code: NIL rules",
+    "risk": "NIL compliance",
+    "live": false,
+    "passed": true,
+    "detail": "college=['possible_recruiting_inducement', 'school_logo_or_uniform'], pro=[]",
+    "seconds": 0.0,
+    "time": "2026-11-23T00:20:08+00:00"
+  },
+  {
+    "id": "C1",
+    "name": "Pay rules: on-time keeps 95%, late returns 25% to the booker, no check-in pays standard",
+    "layer": "Code: payout rules",
+    "risk": "no-shows / follow-through",
+    "live": false,
+    "passed": true,
+    "detail": "on time 950.0, <60 min 900.0, late 675.0 (+250.0 refund)",
+    "seconds": 0.0,
+    "time": "2026-11-23T00:20:08+00:00"
+  },
+  {
+    "id": "C2",
+    "name": "Check-in: only the booked athlete, only after accepting, only once",
+    "layer": "Code: access check",
+    "risk": "wrong action",
+    "live": false,
+    "passed": true,
+    "detail": "refused before accept; other athlete refused; booked athlete checked in; double check-in refused",
+    "seconds": 0.07,
+    "time": "2026-11-23T00:20:08+00:00"
+  }
+]

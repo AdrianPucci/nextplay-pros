@@ -4,6 +4,5 @@ __pycache__/
 .venv/
 venv/
 data/app.db
-output/*.json
 ~$*
 data/**/app.db
