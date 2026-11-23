@@ -20,7 +20,7 @@ from pydantic_ai import Agent, RunContext
 from pydantic_ai.messages import CachePoint, ModelRequest, ModelResponse, ThinkingPart, ToolCallPart, ToolReturnPart
 from pydantic_ai.usage import UsageLimits
 
-from . import store
+from . import rider as riders, store
 from .config import MODEL_NAME, OUTPUT, PROMPTS, build_model, cost_usd
 from .guards import (EMAIL, PHONE, URL, append_json, check_budget, check_length, log_safety, now,
                      redact_contacts, scan_text, untrusted)
@@ -77,6 +77,8 @@ class ProfileDraft(BaseModel):
 class Screening(BaseModel):
     verdict: Literal["deliver", "flag", "block"]
     risk_flags: list[str] = Field(default_factory=list)
+    rider_conflicts: list[str] = Field(default_factory=list,
+                                       description="Each item on the athlete's 'will NOT do' list or rider that this request conflicts with")
     summary: str
     fee_note: str
 
@@ -300,13 +302,20 @@ async def screen_request(athlete: dict, form: dict) -> dict:
     text = (f"Organization: {form.get('org','')}\nContact name: {form.get('booker_name','')}\n"
             f"Event type: {form.get('event_type','')}\nDate: {form.get('event_date','')}\n"
             f"City: {form.get('city','')}\nBudget offered: ${form.get('budget') or 0:,}\n\nMessage:\n{msg}")
+    rider = athlete.get("rider") or {}
+    text += f"\n\nTransportation offered by booker: {form.get('transport_offered') or 'not stated'}"
     prompt = (f"Athlete receiving this: {athlete['name']} ({athlete['sport']}, {athlete['level']}), "
-              f"fee range ${athlete['fee_min']:,}-${athlete['fee_max']:,}.\n\n"
+              f"fee range ${athlete['fee_min']:,}-${athlete['fee_max']:,}.\n"
+              f"The athlete's Event Rider (set by the athlete; the booker agreed to it):\n{riders.describe(rider)}\n\n"
               f"Booking request:\n{untrusted('booker', text)}")
     out, usage, run_id = await _run(gatekeeper_agent(), "gatekeeper", prompt)
 
     verdict = out.verdict
-    floor = "block" if SEVERE & set(rule_flags) else "flag" if rule_flags else "deliver"
+    rule_rider = riders.rule_conflicts(rider, msg + " " + form.get("org", ""))
+    conflicts = sorted(set(out.rider_conflicts) | set(rule_rider))
+    if rule_rider:
+        rule_flags = rule_flags + ["rider_conflict"]
+    floor = "block" if SEVERE & set(rule_flags) else "flag" if rule_flags or conflicts else "deliver"
     if RANK[floor] > RANK[verdict]:
         log_safety("rules_raised_verdict", "gatekeeper", {"model": verdict, "rules": floor, "flags": rule_flags,
                                                           "run_id": run_id})
@@ -316,11 +325,12 @@ async def screen_request(athlete: dict, form: dict) -> dict:
                                                      "run_id": run_id, "message": _short(msg)})
     steps = [("read", f"Screened a request from {form.get('org') or 'unknown org'} for {athlete['name']}"),
              ("check", f"AI verdict: {out.verdict}" + (f" ({', '.join(out.risk_flags)})" if out.risk_flags else "")),
+             ("check", "Event Rider: " + ("conflicts with " + "; ".join(conflicts) if conflicts else "no conflicts")),
              ("check", f"Python rules: {', '.join(rule_flags) if rule_flags else 'nothing found'}"
                        + (f" → raised verdict to {verdict}" if verdict != out.verdict else "")),
              ("done", {"deliver": "Delivered to the athlete's inbox", "flag": "Delivered, marked for a careful look",
                        "block": "Blocked: the athlete never sees it"}[verdict])]
     g = glass(usage, steps)
-    screening = {**out.model_dump(), "verdict": verdict, "model_verdict": out.verdict, "rule_flags": rule_flags,
+    screening = {**out.model_dump(), "rider_conflicts": conflicts, "verdict": verdict, "model_verdict": out.verdict, "rule_flags": rule_flags,
                  "run_id": run_id, "usage": g, "glass": g}
     return screening

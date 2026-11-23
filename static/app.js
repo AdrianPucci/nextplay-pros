@@ -79,14 +79,15 @@ function athleteCard(a, extra = "") {
     <div>${a.categories.map((c) => `<span class="pill cat">${CAT[c] || c}</span>`).join("")}${a.topics.map((t) => `<span class="pill">${esc(t)}</span>`).join("")}</div>
     <div class="card-foot"><span class="fee">${money(a.fee_min)}–${money(a.fee_max)}</span>
       <span class="meta">${a.virtual_ok ? "Virtual OK · " : ""}travels ${a.travel_miles} mi</span></div>
+    ${riderChips(a)}
     <button class="btn small" data-request="${a.id}">Request booking</button>
   </div>`;
 }
 
 // ---------------------------------------------------------------- tabs
 const TABS = {
-  booker: [["find", "Find talent (AI Scout)"], ["browse", "Browse roster"], ["mine", "My requests"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["about", "About"]],
-  athlete: [["inbox", "My inbox"], ["build", "Build my profile (AI)"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["about", "About"]],
+  booker: [["find", "Find talent (AI Scout)"], ["browse", "Browse roster"], ["mine", "My requests"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
+  athlete: [["inbox", "My inbox"], ["rider", "My event rider"], ["build", "Build my profile (AI)"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
 };
 function renderTabs() {
   $("#tabs").innerHTML = TABS[state.role].map(([k, l]) => `<button data-tab="${k}" class="${state.tab === k ? "active" : ""}">${l}</button>`).join("");
@@ -180,10 +181,21 @@ function requestModal(athleteId) {
       <div class="row"><div><label>City</label><input id="r-city" value="${esc(b.city || "")}"></div><div><label>Budget offered ($)</label><input id="r-budget" type="number" step="100" value="${esc(b.budget_max ?? state.lastBudget ?? "")}"></div></div>
       <div><label>Message</label><textarea id="r-msg" rows="4" placeholder="Tell ${esc(a.name.split(" ")[0])} about the event, audience, and what you'd like them to do."></textarea></div>
       <div class="meta">Fee range: ${money(a.fee_min)}–${money(a.fee_max)}</div>
-      <button class="btn" id="r-send">Send request</button><div id="r-out"></div>
+      ${riderBlock(a)}
+      <div><label>Transportation you'll provide</label><select id="r-transport">
+        <option value="Pick-up and drop-off provided">Pick-up and drop-off provided</option>
+        <option value="Mileage reimbursed">Mileage reimbursed</option>
+        <option value="Athlete arranges own transportation">Athlete arranges own transportation</option></select></div>
+      <label class="agree"><input type="checkbox" id="r-agree"> I agree to ${esc(a.name.split(" ")[0])}'s Event Rider above and the
+        <a href="#" id="r-terms">NextPlay Pros Terms</a> (including the no-show refund and cancellation policy).</label>
+      <button class="btn" id="r-send" disabled>Send request</button><div id="r-out"></div>
     </div>`);
+  if (a.rider && a.rider.transport === "pickup") $("#r-transport").value = "Pick-up and drop-off provided";
+  $("#r-agree").onchange = () => ($("#r-send").disabled = !$("#r-agree").checked);
+  $("#r-terms").onclick = (e) => { e.preventDefault(); closeModal(); state.tab = "terms"; render(); };
   $("#r-send").onclick = async () => {
-    const body = { athlete_id: a.id, booker_id: state.bookerId, booker_name: $("#r-name").value.trim(), org: $("#r-org").value.trim(),
+    if (!$("#r-agree").checked) return toast("Please agree to the Event Rider and Terms first.");
+    const body = { agreed_terms: true, transport_offered: $("#r-transport").value, athlete_id: a.id, booker_id: state.bookerId, booker_name: $("#r-name").value.trim(), org: $("#r-org").value.trim(),
       event_type: $("#r-type").value, event_date: $("#r-date").value, city: $("#r-city").value.trim(),
       budget: $("#r-budget").value ? Number($("#r-budget").value) : null, message: $("#r-msg").value.trim() };
     if (!body.booker_name || !body.org || !body.message) return toast("Name, organization, and message are required.");
@@ -228,7 +240,7 @@ async function drawInbox() {
   const open = list.filter((r) => r.status !== "blocked"), blocked = list.filter((r) => r.status === "blocked");
   const reqHtml = (r) => `<div class="req">
     <div class="req-top"><div><b>${esc(r.org)}</b> <span class="meta">· ${esc(r.booker_name)} · ${esc(r.city || "")} · ${esc(r.event_date || "date TBD")}</span></div><span class="status ${r.status}">${r.status}</span></div>
-    <div class="gate"><div class="label">${bot("gatekeeper", r.status === "blocked" ? "classic" : "happy", 22)} Gatekeeper summary</div>${esc(r.screening.summary)}<br><span class="meta">${esc(r.screening.fee_note)}</span>
+    <div class="gate"><div class="label">${bot("gatekeeper", r.status === "blocked" ? "classic" : "happy", 22)} Gatekeeper summary</div>${(r.screening.rider_conflicts || []).length ? `<div class="conflict">⚠️ Conflicts with your Event Rider: ${esc(r.screening.rider_conflicts.join("; "))}</div>` : ""}${esc(r.screening.summary)}<br><span class="meta">${esc(r.screening.fee_note)}</span>
       ${(r.screening.risk_flags || []).length || (r.screening.rule_flags || []).length ? `<br><span class="meta">⚠️ ${esc([...(r.screening.risk_flags || []), ...(r.screening.rule_flags || [])].join(", "))}</span>` : ""}</div>
     <details><summary>Read full message</summary><p class="msg">${esc(r.message)}</p></details>
     ${["pending", "flagged"].includes(r.status) ? `<div class="row" style="justify-content:flex-start"><button class="btn good small" style="flex:0 0 auto" data-decide="${r.id}" data-accept="1">Accept & share my contact</button><button class="btn ghost small" style="flex:0 0 auto" data-decide="${r.id}" data-accept="0">Decline</button></div>` : ""}
@@ -383,7 +395,90 @@ function viewAbout() {
   </ol></div>`;
 }
 
-const VIEWS = { about: viewAbout, find: viewFind, browse: viewBrowse, mine: viewMine, board: viewBoard, behind: viewBehind, inbox: viewInbox, build: viewBuild };
+// ---------------------------------------------------------------- Event Rider (athlete-controlled parameters)
+function riderChips(a) {
+  const r = a.rider, o = state.riderOpts;
+  if (!r || !o) return "";
+  const chips = [];
+  if (r.transport === "pickup") chips.push("🚗 Pick-up & drop-off");
+  if (r.security.includes("escort")) chips.push("🛡️ Security escort");
+  if (r.wont_do.length) chips.push(`⛔ ${r.wont_do.length + (r.wont_do_other ? 1 : 0)} won't-do`);
+  chips.push(`⏱ ${r.max_hours} hr max`);
+  return `<div class="rider-chips">${chips.map((c) => `<span>${c}</span>`).join("")}</div>`;
+}
+function riderBlock(a) {
+  const r = a.rider, o = state.riderOpts;
+  if (!r || !o) return "";
+  const list = (keys, map) => keys.map((k) => `<li>${esc(map[k])}</li>`).join("");
+  const wont = list(r.wont_do, o.wont_do) + (r.wont_do_other ? `<li>${esc(r.wont_do_other)}</li>` : "");
+  return `<div class="rider-box"><div class="label">📋 ${esc(a.name.split(" ")[0])}'s Event Rider</div>
+    <div class="rider-cols">
+      <div><b>Must have</b><ul>${list(r.security, o.security)}${list(r.accommodations, o.accommodations)}
+        <li>${esc(o.transport[r.transport])}</li><li>No more than ${r.max_hours} hours on site</li></ul></div>
+      <div><b>Won't do</b><ul>${wont || "<li>Nothing listed</li>"}</ul></div>
+    </div></div>`;
+}
+function viewRider() {
+  const opts = state.athletes.map((a) => `<option value="${a.id}" ${a.id === state.athleteId ? "selected" : ""}>${esc(a.name)} (${esc(a.sport)})</option>`).join("");
+  $("#view").innerHTML = `<div class="row" style="margin-bottom:16px"><div><h1>My event rider</h1><p class="sub" style="margin:0">Your rules for every booking. Bookers must agree to them before they can send you a request, and Gatekeeper flags any request that breaks them.</p></div>
+    <div style="flex:0 1 280px"><label>Demo sign-in: viewing as</label><select id="who">${opts}</select></div></div><div id="rider-form"></div>`;
+  $("#who").onchange = () => { state.athleteId = $("#who").value; localSet("np_athlete", state.athleteId); drawRiderForm(); };
+  drawRiderForm();
+}
+function drawRiderForm() {
+  const a = state.athletes.find((x) => x.id === state.athleteId) || state.athletes[0];
+  const r = a.rider, o = state.riderOpts;
+  const boxes = (name, map, sel) => Object.entries(map).map(([k, v]) =>
+    `<label class="check"><input type="checkbox" name="${name}" value="${k}" ${sel.includes(k) ? "checked" : ""}> ${esc(v)}</label>`).join("");
+  $("#rider-form").innerHTML = `<div class="grid two">
+    <div class="panel"><h2>🛡️ Safety &amp; security</h2>${boxes("security", o.security, r.security)}
+      <h2 style="margin-top:18px">🏨 Accommodations</h2>${boxes("accommodations", o.accommodations, r.accommodations)}
+      <div class="row" style="margin-top:10px"><div style="flex:0 1 220px"><label>Most hours I'll be on site</label><input id="max-hours" type="number" min="1" max="12" value="${r.max_hours}"></div></div></div>
+    <div class="panel"><h2>🚗 Transportation</h2>${Object.entries(o.transport).map(([k, v]) =>
+      `<label class="check"><input type="radio" name="transport" value="${k}" ${r.transport === k ? "checked" : ""}> ${esc(v)}</label>`).join("")}
+      <h2 style="margin-top:18px">⛔ I won't do</h2>${boxes("wont_do", o.wont_do, r.wont_do)}
+      <label style="margin-top:8px">Anything else I won't do</label><input id="wont-other" maxlength="300" value="${esc(r.wont_do_other)}" placeholder="e.g. no events on Sundays, no tobacco or vape brands">
+      <button class="btn good" id="rider-save" style="margin-top:14px">Save my rider</button></div></div>`;
+  $("#rider-save").onclick = async () => {
+    const pick = (n) => [...document.querySelectorAll(`input[name="${n}"]:checked`)].map((i) => i.value);
+    const rider = { security: pick("security"), accommodations: pick("accommodations"), wont_do: pick("wont_do"),
+      transport: (document.querySelector('input[name="transport"]:checked') || {}).value || "self",
+      wont_do_other: $("#wont-other").value.trim(), max_hours: Number($("#max-hours").value) || 3 };
+    try { await api(`/api/athletes/${a.id}/rider`, { method: "PUT", body: { athlete_id: a.id, rider } }); await loadRoster(); toast("Saved. Bookers will see your rider before they can send a request."); }
+    catch (err) { toast(err.message); }
+  };
+}
+
+// ---------------------------------------------------------------- Terms & Safety
+function viewTerms() {
+  $("#view").innerHTML = `<h1>Terms &amp; Safety</h1>
+  <p class="sub">Plain-English rules for everyone on NextPlay Pros. <b>Class-project draft:</b> these terms illustrate how the service would work and are not legal advice; a real launch would have them reviewed by a lawyer.</p>
+  <div class="grid two">
+    <div class="panel"><h2>For bookers</h2><ul class="terms">
+      <li><b>No-show refund.</b> If the athlete does not show up, you get <b>100% of the fee back</b>.</li>
+      <li><b>Cancellations.</b> Cancel 14+ days before the event: full refund. 7–13 days: 50% refund. Under 7 days: no refund unless the athlete agrees.</li>
+      <li><b>Honor the Event Rider.</b> You agree to the athlete's security, accommodation, and transportation needs and their "won't do" list. If the rider is not honored, the athlete may leave and is still paid in full.</li>
+      <li><b>Conduct.</b> No harassment, no recording or photos without consent, no requests to pay off-platform or share personal information.</li>
+      <li><b>Accurate requests.</b> Describe the event honestly: audience, duration, sponsors, and anything involving alcohol, gambling, politics, or media.</li>
+    </ul></div>
+    <div class="panel"><h2>For athletes</h2><ul class="terms">
+      <li><b>Independent contractor.</b> You work for yourself, not for NextPlay Pros. You set your fees and your rider.</li>
+      <li><b>Accurate profile.</b> Your stats, teams, and titles must be true. AI-written profiles flag every claim to verify before going live.</li>
+      <li><b>Show up.</b> Accepting a request is a commitment. No-shows lose standing on the platform; real emergencies are handled case by case.</li>
+      <li><b>Your safety comes first.</b> You can decline any request for any reason, and you can leave any event where you feel unsafe or your rider is not honored.</li>
+      <li><b>Your contact details are yours.</b> They stay in a private vault and are shared only with a booker whose request you accept.</li>
+    </ul></div>
+  </div>
+  <div class="panel" style="margin-top:16px"><h2>About the platform</h2><ul class="terms">
+    <li><b>We connect, we're not a party to the booking.</b> NextPlay Pros introduces athletes and bookers. The agreement for each event is between the booker and the athlete.</li>
+    <li><b>AI-assisted.</b> Matches, profiles, and request screening are produced by AI and checked by rules in code. AI can make mistakes; always confirm key details directly.</li>
+    <li><b>Scam screening is a safety net, not a guarantee.</b> Never pay to be "selected," never send gift cards, and report anything suspicious.</li>
+    <li><b>No endorsement.</b> Listing an athlete or booker does not mean we endorse them.</li>
+    <li><b>Demo data.</b> The 40 athletes in this demo are fictional. Real athletes shown on the About page are there to illustrate the idea, with sources cited.</li>
+  </ul></div>`;
+}
+
+const VIEWS = { rider: viewRider, terms: viewTerms, about: viewAbout, find: viewFind, browse: viewBrowse, mine: viewMine, board: viewBoard, behind: viewBehind, inbox: viewInbox, build: viewBuild };
 
 async function loadRoster() { state.athletes = await api("/api/athletes"); }
-(async () => { [state.cities] = await Promise.all([api("/api/cities"), loadRoster()]); render(); })();
+(async () => { [state.cities, state.riderOpts] = await Promise.all([api("/api/cities"), api("/api/rider-options"), loadRoster()]); render(); })();

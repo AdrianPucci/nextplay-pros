@@ -11,6 +11,7 @@ import threading
 import uuid
 from datetime import datetime, timezone
 
+from . import rider as riders
 from .config import DATA, DATA_DIR
 
 DB_PATH = DATA_DIR / "app.db"  # one database per roster folder
@@ -52,15 +53,34 @@ def init_db(reset: bool = False) -> None:
 
 # ------------------------------------------------------------------ roster
 
+def _with_rider(a: dict) -> dict:
+    """Every athlete has an Event Rider. Demo athletes get a varied default until they edit theirs."""
+    if "rider" not in a:
+        n = int(a["id"].split("_")[1]) if a["id"].split("_")[1].isdigit() else 0
+        a["rider"] = riders.seed_rider(n, a.get("sport", ""), a.get("level", "")) if n else dict(riders.EMPTY)
+    a["rider"] = riders.clean(a["rider"])
+    return a
+
+
 def all_athletes() -> list[dict]:
     with connect() as c:
-        return [json.loads(r["data"]) for r in c.execute("SELECT data FROM athletes ORDER BY id")]
+        return [_with_rider(json.loads(r["data"])) for r in c.execute("SELECT data FROM athletes ORDER BY id")]
 
 
 def get_athlete(athlete_id: str) -> dict | None:
     with connect() as c:
         row = c.execute("SELECT data FROM athletes WHERE id = ?", (athlete_id,)).fetchone()
-    return json.loads(row["data"]) if row else None
+    return _with_rider(json.loads(row["data"])) if row else None
+
+
+def update_rider(athlete_id: str, rider: dict) -> dict:
+    a = get_athlete(athlete_id)
+    if not a:
+        raise ValueError("No such athlete")
+    a["rider"] = riders.clean(rider)
+    with _lock, connect() as c:
+        c.execute("UPDATE athletes SET data = ? WHERE id = ?", (json.dumps(a), athlete_id))
+    return a
 
 
 def add_athlete(profile: dict, email: str, phone: str) -> dict:

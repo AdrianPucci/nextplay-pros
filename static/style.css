@@ -169,3 +169,19 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .sources ol { margin: 6px 0 0; padding-left: 20px; }
 .sources a { color: #24396a; }
 @media (max-width: 640px) { .feature { grid-template-columns: 1fr; } .feature-photo { max-width: 240px; } }
+
+/* Event Rider + Terms */
+.rider-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.rider-chips span { font-size: 12px; background: #eef3fb; color: #24396a; border-radius: 999px; padding: 3px 9px; }
+.rider-box { background: #f7f9fc; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; font-size: 14px; }
+.rider-box .label { font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+.rider-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.rider-cols ul { margin: 4px 0 0; padding-left: 18px; }
+.agree { display: flex; gap: 8px; align-items: flex-start; font-weight: 500; color: var(--ink); font-size: 14px; }
+.agree input { width: auto; margin-top: 3px; }
+.agree a { color: #24396a; }
+.check { display: flex; gap: 8px; align-items: center; font-weight: 500; color: var(--ink); font-size: 14px; margin: 6px 0; }
+.check input { width: auto; }
+.conflict { background: var(--warn-soft); color: #6b4300; border-radius: 8px; padding: 6px 10px; margin: 4px 0 6px; font-weight: 600; }
+.terms li { margin: 8px 0; font-size: 14px; }
+@media (max-width: 640px) { .rider-cols { grid-template-columns: 1fr; } }

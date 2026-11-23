@@ -10,7 +10,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import agents, store
+from . import agents, rider as riders, store
 from .config import DAILY_SPEND_CAP_USD, STATIC
 from .guards import SAFETY_LOG, USAGE_LOG, redact_contacts, spent_today
 
@@ -44,6 +44,7 @@ class PublishIn(BaseModel):
     travel_miles: int = 200
     email: str
     phone: str = ""
+    rider: dict | None = None
 
 
 class RequestIn(BaseModel):
@@ -56,6 +57,13 @@ class RequestIn(BaseModel):
     city: str = ""
     budget: int | None = Field(None, ge=0)
     message: str
+    agreed_terms: bool = False  # booker accepted the athlete's Event Rider + the Terms
+    transport_offered: str = ""  # what the booker offers for transportation
+
+
+class RiderIn(BaseModel):
+    athlete_id: str  # demo sign-in: the athlete editing their own rider
+    rider: dict
 
 
 class DecideIn(BaseModel):
@@ -86,6 +94,22 @@ def athlete(athlete_id: str):
     if not a:
         raise HTTPException(404, "No such athlete")
     return a
+
+
+@app.put("/api/athletes/{athlete_id}/rider")
+def save_rider(athlete_id: str, body: RiderIn):
+    if body.athlete_id != athlete_id:  # demo sign-in: you can only edit your own rider
+        raise HTTPException(403, "You can only edit your own Event Rider.")
+    try:
+        return store.update_rider(athlete_id, body.rider)
+    except ValueError as e:
+        raise HTTPException(404, str(e))
+
+
+@app.get("/api/rider-options")
+def rider_options():
+    return {"security": riders.SECURITY, "accommodations": riders.ACCOMMODATIONS,
+            "transport": riders.TRANSPORT, "wont_do": riders.WONT_DO}
 
 
 @app.get("/api/cities")
@@ -129,7 +153,7 @@ def publish(body: PublishIn):
         "city": body.city, "categories": d.get("categories", []), "topics": d.get("topics", []),
         "story": d.get("story", ""), "bio": d.get("bio", ""), "headline": d.get("headline", ""),
         "fee_min": body.fee_min, "fee_max": body.fee_max, "virtual_ok": body.virtual_ok,
-        "travel_miles": body.travel_miles,
+        "travel_miles": body.travel_miles, "rider": riders.clean(body.rider),
     }
     for k in ("story", "bio", "headline", "career"):  # never let contact details into a public profile
         profile[k], _ = redact_contacts(profile[k])
@@ -143,6 +167,8 @@ async def send_request(body: RequestIn):
     a = store.get_athlete(body.athlete_id)
     if not a:
         raise HTTPException(404, "No such athlete")
+    if not body.agreed_terms:  # enforced on the server, not just the checkbox
+        raise HTTPException(400, "Please agree to the athlete's Event Rider and the NextPlay Pros Terms before sending.")
     try:
         screening = await agents.screen_request(a, body.model_dump())
     except Exception as e:  # noqa: BLE001

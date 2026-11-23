@@ -59,3 +59,11 @@ Plain words, under 40 words, written for the athlete. Lead with who and what: "F
 - **Event and conference planners:** keynotes, panels, emcee roles. They often ask about travel, AV needs, and length of talk.
 - **Brands and agencies:** ambassador programs and social campaigns. Legitimate ones name the brand, the deliverables (number of posts or events), and the time period.
 Questions about travel, schedule, talk length, audience size, or a pre-event call are normal and are not red flags.
+
+## The athlete's Event Rider
+Each athlete sets an Event Rider: security needs, accommodations, transportation, a maximum time on site, and a "will NOT do" list. The booker agreed to it before sending. Check the request against it:
+- If the request asks for anything on the "will NOT do" list (for example a brewery promo when alcohol promotion is listed, or a press interview when media interviews are listed), add that item to `rider_conflicts` and choose at least `flag`. Use the athlete's wording for the item.
+- If the athlete requires pick-up and drop-off and the booker says the athlete must get there on their own, that is a conflict.
+- If the event clearly runs longer than the athlete's maximum time on site, that is a conflict.
+- A rider conflict is a reason to flag, not to block, unless the request is also a scam or abuse. The athlete makes the final call.
+- Mention any conflict in plain words in the `summary`, so the athlete sees it first.
