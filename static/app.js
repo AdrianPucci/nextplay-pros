@@ -105,7 +105,8 @@ const TABS = {
 };
 const STAFF = new URLSearchParams(location.search).has("staff");
 { const go = new URLSearchParams(location.search).get("go");  // links from the story video's end card
-  if (go === "build") { state.role = "athlete"; state.tab = "build"; } else if (go === "find") { state.role = "booker"; state.tab = "find"; } }  // ?staff=1 shows "Behind the scenes" (for grading)
+  if (go === "build") { state.role = "athlete"; state.tab = "build"; } else if (go === "find") { state.role = "booker"; state.tab = "find"; state.bookingHero = true; }
+  if (go) history.replaceState(null, "", location.pathname + location.search.replace(/[?&]go=[^&]*/, "").replace(/^&/, "?") + location.hash); }  // ?staff=1 shows "Behind the scenes" (for grading)
 function renderTabs() {
   $("#tabs").innerHTML = TABS[state.role].filter(([k]) => STAFF || k !== "behind").map(([k, l]) => `<button data-tab="${k}" class="${state.tab === k ? "active" : ""}">${l}</button>`).join("");
   document.querySelectorAll(".role-switch button").forEach((b) => b.classList.toggle("active", b.dataset.role === state.role));
@@ -149,20 +150,34 @@ const INTRO_SLIDES = [  // generated images: athlete types, not names, no one lo
   ["gen/hockey.jpg", "Hockey", "Hometown heroes"],
   ["gen/runner.jpg", "Track", "Distance & mountain runners"],
 ];
+const BOOK_SLIDES = [  // booking landing (from the story video's "Find an athlete" link)
+  ["gen/book_speaking.jpg", "Keynotes & school talks", "Stories that stick with an audience"],
+  ["gen/book_autographs.jpg", "Autograph signings", "Store openings, fan days, fundraisers"],
+  ["gen/book_clinic.jpg", "Youth clinics & camps", "Real athletes coaching your kids"],
+];
 function introBanner() {
-  const n = INTRO_SLIDES.length, step = 1.6;  // seconds per photo: under 2 s per athlete
+  const booking = !!state.bookingHero;
+  const SLIDES = booking ? BOOK_SLIDES : INTRO_SLIDES;
+  const n = SLIDES.length, step = booking ? 3 : 1.6;  // seconds per photo: under 2 s per athlete
   const on = 100 / n, fade = Math.min(3, on / 4);  // keyframes scale with the number of photos
   const kf = `@keyframes introFade{0%{opacity:0}${fade.toFixed(2)}%{opacity:1}${on.toFixed(2)}%{opacity:1}${(on + fade).toFixed(2)}%{opacity:0}100%{opacity:0}}
     @keyframes introZoom{0%{transform:scale(1.12)}${(on + fade).toFixed(2)}%{transform:scale(1)}100%{transform:scale(1)}}`;
   return `<style>${kf}</style><section class="intro" style="--n:${n};--cycle:${n * step}s" aria-label="NextPlay Pros">
-    <div class="intro-pics" aria-hidden="true">${INTRO_SLIDES.map(([img, name, role], i) =>
+    <div class="intro-pics" aria-hidden="true">${SLIDES.map(([img, name, role], i) =>
       `<figure style="animation-delay:${i * step - n * step}s"><img src="/static/img/${img}" alt=""><figcaption><b>${esc(name)}</b>${esc(role)}</figcaption></figure>`).join("")}</div>
-    <div class="intro-copy">
+    ${booking ? `<div class="intro-copy">
+      <div class="intro-kicker">For schools, businesses &amp; charities</div>
+      <h1>Bring a real athlete <span>to your event.</span></h1>
+      <p>Keynotes, autograph signings, youth clinics, and charity appearances, from athletes near you and in your budget.</p>
+      <p class="intro-ask">Describe your event and we'll match you in seconds.</p>
+      <div class="intro-cta"><button class="btn" data-go-find>Find an athlete</button><button class="story-btn" data-story>▶ Watch our 15-second story</button></div>
+      <button class="intro-switch" data-go-athlete>Are you an athlete? Build your profile →</button>
+    </div>` : `<div class="intro-copy">
       <h1>You were a star, <span>or you're becoming one.</span></h1>
       <p>Let us help you connect with your community, get paid, and inspire through your story.</p>
       <p class="intro-ask">They're waiting… are you ready?</p>
       <div class="intro-cta"><button class="btn" data-go-athlete>I'm ready: build my profile</button><button class="story-btn" data-story>▶ Watch our 15-second story</button></div>
-    </div>
+    </div>`}
   </section>`;
 }
 document.addEventListener("click", (e) => {
