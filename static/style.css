@@ -482,3 +482,5 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .pill.charity { display: inline-flex; align-items: center; gap: 4px; }
 
 @media (max-width: 640px) { .role-switch .long { display: none; } }
+
+.pill.orgtype { background: #e7f1fb; color: #1d4f86; }

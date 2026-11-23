@@ -210,6 +210,9 @@ const UI_ICON = {
 const uiIcon = (k, size = 20) => `<svg class="ui-ic" viewBox="0 0 24 24" width="${size}" height="${size}" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${UI_ICON[k]}</g></svg>`;
 const li = (k, html) => `<li><span class="ic-badge">${uiIcon(k)}</span><span>${html}</span></li>`;
 
+const ORG_TYPES = [["school", "School or university"], ["nonprofit", "Nonprofit or charity"], ["company", "Company or business"],
+  ["team", "Team, league, or club"], ["community", "Community group (Rotary, chamber, church)"], ["individual", "Individual / private event"]];
+const ORG_LABEL = { school: "School", nonprofit: "Nonprofit", company: "Company", team: "Team / league", community: "Community group", individual: "Private event" };
 function whoFor() {
   return `<section class="who" aria-label="Who NextPlay Pros is for">
     <div class="who-card athletes">
@@ -311,7 +314,7 @@ function drawAcct() {
 function acctMenu() {
   const u = state.user;
   openModal(`<div class="signin"><span class="avatar big">${esc(initials(u.name))}</span><h2>${esc(u.name)}</h2>
-    <p class="sub">${esc(u.email)} · ${u.role === "athlete" ? "Athlete" : "Booking talent"}</p>
+    <p class="sub">${esc(u.email)} · ${u.role === "athlete" ? "Athlete" : esc([u.org, ORG_LABEL[u.org_type]].filter(Boolean).join(" · ") || "Booking talent")}</p>
     <div class="row-btns"><button class="btn" data-acct-go>${u.role === "athlete" ? "Go to my inbox" : "Go to my requests"}</button><button class="btn ghost" data-signout>Sign out</button></div></div>`);
 }
 function signIn(opts = {}) {
@@ -321,6 +324,8 @@ function signIn(opts = {}) {
     <h2>${esc(title)}</h2><p class="sub">${esc(lead)}</p>
     <div class="seg" role="tablist"><button data-seg="booker" class="${role === "booker" ? "active" : ""}">Booking talent for an event</button><button data-seg="athlete" class="${role === "athlete" ? "active" : ""}">I'm an athlete</button></div>
     <label>Your name</label><input id="si-name" autocomplete="name" value="${esc(name)}" placeholder="First and last name">
+    <div id="si-org" ${role === "athlete" ? "hidden" : ""}><label>Booking as</label><select id="si-orgtype">${ORG_TYPES.map(([k, l]) => `<option value="${k}">${l}</option>`).join("")}</select>
+      <label>School or organization name</label><input id="si-orgname" placeholder="e.g. Lakewood Middle School"></div>
     <label>Email</label><input id="si-email" type="email" autocomplete="email" placeholder="you@school.org">
     <button class="btn wide" id="si-go">Email me a sign-in link</button>
     <div class="or"><span>or</span></div>
@@ -328,10 +333,10 @@ function signIn(opts = {}) {
     <p class="fine">No passwords. We email a one-time link, and your contact details stay private until you accept a booking.
       <br><b>Class demo:</b> no email is sent; the link is simulated on the next screen.</p></div>`);
   let r = role;
-  document.querySelectorAll("[data-seg]").forEach((b) => (b.onclick = () => { r = b.dataset.seg; document.querySelectorAll("[data-seg]").forEach((x) => x.classList.toggle("active", x === b)); }));
+  document.querySelectorAll("[data-seg]").forEach((b) => (b.onclick = () => { r = b.dataset.seg; document.querySelectorAll("[data-seg]").forEach((x) => x.classList.toggle("active", x === b)); $("#si-org").hidden = r === "athlete"; }));
   $("#si-google").onclick = () => toast("Google sign-in comes at launch. Use the email link for now.");
   $("#si-go").onclick = () => {
-    const n = $("#si-name").value.trim(), e = $("#si-email").value.trim();
+    const n = $("#si-name").value.trim(), e = $("#si-email").value.trim(), ot = $("#si-orgtype").value, on = $("#si-orgname").value.trim();
     if (!n) return toast("Add your name.");
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) return toast("Add a valid email.");
     $("#modal-body").innerHTML = `<div class="signin"><div class="mail">✉️</div><h2>Check your email</h2>
@@ -339,7 +344,7 @@ function signIn(opts = {}) {
       <button class="btn wide" id="si-link">Open the link (demo)</button>
       <p class="fine">In the real app this button is the link in your inbox.</p></div>`;
     $("#si-link").onclick = () => {
-      state.user = { name: n, email: e, role: r };
+      state.user = { name: n, email: e, role: r, org_type: r === "booker" ? ot : "", org: r === "booker" ? on : "" };
       localSet("np_user", JSON.stringify(state.user));
       if (r === "booker") { state.bookerName = n; localSet("np_booker_name", n); }
       $("#modal").hidden = true; drawAcct();
@@ -440,7 +445,7 @@ function requestModal(athleteId) {
   openModal(`<h2>Request ${esc(a.name)}</h2>
     <p class="sub">Their contact details stay private until they accept. Every request is screened by Gatekeeper before it reaches them.</p>
     <div class="form">
-      <div class="row"><div><label>Your name</label><input id="r-name" value="${esc(state.bookerName)}"></div><div><label>Organization</label><input id="r-org"></div></div>
+      <div class="row"><div><label>Your name</label><input id="r-name" value="${esc(state.bookerName)}"></div><div><label>Organization</label><input id="r-org" value="${esc((state.user && state.user.org) || "")}"></div><div><label>Booking as</label><select id="r-orgtype">${ORG_TYPES.map(([k, l]) => `<option value="${k}" ${state.user && state.user.org_type === k ? "selected" : ""}>${l}</option>`).join("")}</select></div></div>
       <div class="row"><div><label>Type</label><select id="r-type">${a.categories.map((c) => `<option value="${c}">${CAT[c]}</option>`).join("")}</select></div>
         <div><label>Date</label><input id="r-date" type="date"></div><div><label>Start time</label><input id="r-time" type="time"></div></div>
       <div class="row"><div><label>City</label><input id="r-city" value="${esc(b.city || "")}"></div><div><label>Budget offered ($)</label><input id="r-budget" type="number" step="100" value="${esc(b.budget_max ?? state.lastBudget ?? "")}"></div></div>
@@ -474,7 +479,7 @@ function requestModal(athleteId) {
   $("#r-send").onclick = async () => {
     if (!$("#r-agree").checked) return toast("Please agree to the Event Rider and Terms first.");
     if ($("#r-nil") && !$("#r-nil").checked) return toast("Please confirm the NIL rules first.");
-    const body = { agreed_nil: !!$("#r-nil"), agreed_terms: true, transport_offered: $("#r-transport").value, athlete_id: a.id, booker_id: state.bookerId, booker_name: $("#r-name").value.trim(), org: $("#r-org").value.trim(),
+    const body = { agreed_nil: !!$("#r-nil"), agreed_terms: true, transport_offered: $("#r-transport").value, athlete_id: a.id, booker_id: state.bookerId, booker_name: $("#r-name").value.trim(), org: $("#r-org").value.trim(), org_type: $("#r-orgtype").value,
       event_type: $("#r-type").value, event_date: $("#r-date").value, event_time: $("#r-time").value, city: $("#r-city").value.trim(),
       budget: $("#r-budget").value ? Number($("#r-budget").value) : null, message: $("#r-msg").value.trim() };
     if (!body.booker_name || !body.org || !body.message) return toast("Name, organization, and message are required.");
@@ -521,7 +526,7 @@ async function drawInbox() {
   if (who !== state.athleteId || !$("#inbox")) return; // a newer selection already drew
   const open = list.filter((r) => r.status !== "blocked"), blocked = list.filter((r) => r.status === "blocked");
   const reqHtml = (r) => `<div class="req">
-    <div class="req-top"><div><b>${esc(r.org)}</b> <span class="meta">· ${esc(r.booker_name)} · ${esc(r.city || "")} · ${esc(r.event_date || "date TBD")}</span></div><span>${r.screening.demo ? `<span class="status demo" title="Sample request so every inbox has something to try">demo</span> ` : ""}<span class="status ${r.status}">${r.status}</span></span></div>
+    <div class="req-top"><div><b>${esc(r.org)}</b> ${r.org_type ? `<span class="pill orgtype">${esc(ORG_LABEL[r.org_type] || r.org_type)}</span>` : ""} <span class="meta">· ${esc(r.booker_name)} · ${esc(r.city || "")} · ${esc(r.event_date || "date TBD")}</span></div><span>${r.screening.demo ? `<span class="status demo" title="Sample request so every inbox has something to try">demo</span> ` : ""}<span class="status ${r.status}">${r.status}</span></span></div>
     <div class="gate"><div class="label">${bot("gatekeeper", r.status === "blocked" ? "classic" : "happy", 22)} Gatekeeper summary</div>${(r.screening.rider_conflicts || []).length ? `<div class="conflict">⚠️ Conflicts with your Event Rider: ${esc(r.screening.rider_conflicts.join("; "))}</div>` : ""}${esc(r.screening.summary)}<br><span class="meta">${esc(r.screening.fee_note)}</span>
       ${(r.screening.risk_flags || []).length || (r.screening.rule_flags || []).length ? `<br><span class="meta">⚠️ ${esc([...(r.screening.risk_flags || []), ...(r.screening.rule_flags || [])].join(", "))}</span>` : ""}</div>
     <details><summary>Read full message</summary><p class="msg">${esc(r.message)}</p></details>

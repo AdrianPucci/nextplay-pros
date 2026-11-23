@@ -54,6 +54,7 @@ class RequestIn(BaseModel):
     booker_id: str
     booker_name: str
     org: str
+    org_type: str = ""  # school, nonprofit, company, team, community, individual
     event_type: str
     event_date: str = ""
     event_time: str = ""  # start time, HH:MM (for the 60-minutes-early check-in rule)

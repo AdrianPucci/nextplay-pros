@@ -69,7 +69,7 @@ def init_db(reset: bool = False) -> None:
                 status TEXT NOT NULL, screening TEXT, created TEXT, decided TEXT);
         """)
         cols = {r[1] for r in c.execute("PRAGMA table_info(requests)")}
-        for col in ("event_time", "checked_in"):  # added for the commitment rules
+        for col in ("event_time", "checked_in", "org_type"):  # added for the commitment rules
             if col not in cols:
                 c.execute(f"ALTER TABLE requests ADD COLUMN {col} TEXT")
         if c.execute("SELECT COUNT(*) FROM athletes").fetchone()[0] == 0:
@@ -230,11 +230,11 @@ def create_request(athlete_id: str, booker_id: str, form: dict, status: str, scr
     rid = f"req_{uuid.uuid4().hex[:8]}"
     with _lock, connect() as c:
         c.execute("INSERT INTO requests (id, athlete_id, booker_id, booker_name, org, event_type, event_date, city, "
-                  "budget, message, status, screening, created, decided, event_time, checked_in) "
-                  "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
+                  "budget, message, status, screening, created, decided, event_time, checked_in, org_type) "
+                  "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
             rid, athlete_id, booker_id, form.get("booker_name"), form.get("org"), form.get("event_type"),
             form.get("event_date"), form.get("city"), form.get("budget"), form.get("message"),
-            status, json.dumps(screening), now(), None, form.get("event_time") or None, None))
+            status, json.dumps(screening), now(), None, form.get("event_time") or None, None, form.get("org_type") or None))
     return get_request(rid)
 
 
@@ -305,7 +305,10 @@ def demo_request(athlete_id: str) -> dict:
     screening = {"verdict": "deliver", "demo": True, "risk_flags": [], "rule_flags": [], "rider_conflicts": [],
                  "summary": "Looks legitimate: a named organization, a clear event and audience, and no requests for money, gift cards, or off-platform payment. (Demo request.)",
                  "fee_note": f"Offer of ${budget:,} is inside your ${lo:,}–${hi:,} range.", "usage": {}}
-    form = {"booker_name": pick[0], "org": pick[1].format(city=city), "event_type": pick[2], "event_date": date,
+    org = pick[1].format(city=city)
+    org_type = ("school" if "School" in org else "nonprofit" if any(w in org for w in ("Club", "Gala", "Foundation")) else
+                "team" if "League" in org else "company")
+    form = {"booker_name": pick[0], "org": org, "org_type": org_type, "event_type": pick[2], "event_date": date,
             "event_time": "10:00", "city": city, "budget": budget, "message": pick[3]}
     return create_request(athlete_id, "demo_booker", form, "pending", screening)
 
