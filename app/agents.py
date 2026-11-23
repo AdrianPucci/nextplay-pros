@@ -206,7 +206,7 @@ def glass(usage: dict, steps: list[tuple[str, str]]) -> dict:
 
 # ================================================================== public entry points
 
-async def scout(request_text: str, budget: int | None = None) -> dict:
+async def scout(request_text: str, budget: int | None = None, state: str | None = None, region: str | None = None) -> dict:
     check_length(request_text, "Request")
     clean, n = redact_contacts(request_text)
     if n:
@@ -224,6 +224,12 @@ async def scout(request_text: str, budget: int | None = None) -> dict:
     prompt = f"Booking request:\n{untrusted('booker', clean)}"
     if budget is not None:
         prompt += f"\n\nThe booker's maximum budget is ${budget:,} (set in the app form)."
+    if state:  # the booker chose to start local
+        cities = store.regions().get(state, {}).get("regions", {}).get(region or "", []) if region else []
+        where = f"{region}, {store.STATE_NAMES.get(state, state)}" if region else store.STATE_NAMES.get(state, state)
+        prompt += (f"\n\nThe booker chose to start local: {where}. Search there first"
+                   + (f" (use near_city='{cities[0]}')" if cities else f" (use state='{state}')")
+                   + ". Only widen the search if fewer than 3 local athletes fit, and say so in note.")
     out, usage, run_id = await _run(scout_agent(), "scout", prompt, deps)
 
     cap = budget if budget is not None else out.brief.budget_max

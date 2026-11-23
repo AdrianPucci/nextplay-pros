@@ -4663,5 +4663,79 @@
         "Former college tennis player"
       ]
     }
+  },
+  {
+    "run_id": "82b6516eb9",
+    "time": "2026-11-23T03:44:13+00:00",
+    "agent": "scout",
+    "input": "Booking request: <untrusted source=\"booker\"> Keynote for 250 credit-union employees in Denver in January about bouncing back from setbacks. Budget $5,000. </untrusted> The booker chose to start local: Denver Metro, Colorado. Search there first (use near_city='Denver'). Only widen the search if fewer than 3 local athletes fit, and say so in note.",
+    "tool_calls": [
+      {
+        "tool": "search_athletes",
+        "arguments": {
+          "categories": [
+            "speaking"
+          ],
+          "near_city": "Denver",
+          "max_fee": 5000,
+          "keywords": [
+            "comeback",
+            "setbacks",
+            "resilience",
+            "bouncing back"
+          ]
+        },
+        "result": "[{\"id\": \"ath_001\", \"name\": \"Marcus Hale\", \"sport\": \"Football\", \"level\": \"Former Pro\", \"city\": \"Denver\", \"state\": \"CO\", \"distance_miles\": 0, \"categories\": [\"speaking\", \"appearance\", \"mentoring\"], \"topi..."
+      },
+      {
+        "tool": "search_athletes",
+        "arguments": {
+          "categories": [
+            "speaking"
+          ],
+          "max_fee": 5000,
+          "keywords": [
+            "comeback",
+            "resilience",
+            "recovery",
+            "setbacks"
+          ]
+        },
+        "result": "[{\"id\": \"ath_001\", \"name\": \"Marcus Hale\", \"sport\": \"Football\", \"level\": \"Former Pro\", \"city\": \"Denver\", \"state\": \"CO\", \"distance_miles\": null, \"categories\": [\"speaking\", \"appearance\", \"mentoring\"], \"t..."
+      }
+    ],
+    "reasoning": [],
+    "output": {
+      "brief": {
+        "event_type": "keynote",
+        "city": "Denver",
+        "audience": "250 credit-union employees",
+        "themes": [
+          "bouncing back from setbacks",
+          "resilience"
+        ],
+        "budget_max": 5000,
+        "date": "January",
+        "virtual_ok": null
+      },
+      "matches": [
+        {
+          "athlete_id": "ath_001",
+          "fit_score": 10,
+          "why": "After being cut twice and told his career was over following a second ACL tear, Marcus rehabbed for 14 months and played four more seasons. He now coaches sales teams on bouncing back from rejection\u2014a direct match for employees hearing about resilience."
+        },
+        {
+          "athlete_id": "ath_004",
+          "fit_score": 9,
+          "why": "Kenji crashed out of his first Olympics on live TV, faced panic attacks afterward, and returned four years later to finish fifth. His candid story of responding to a public setback is a strong fit for this keynote."
+        },
+        {
+          "athlete_id": "ath_038",
+          "fit_score": 9,
+          "why": "After breaking her back and learning to walk again, Megan went on to design boards and speak about recovery from injury. Her comeback story connects directly to bouncing back from setbacks."
+        }
+      ],
+      "note": "I widened the search after fewer than three strong thematic fits surfaced in the initial Denver-city results; these strongest matches are all in the Denver area. What exact January date is the keynote?"
+    }
   }
 ]

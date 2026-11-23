@@ -115,7 +115,7 @@ document.addEventListener("click", (e) => { const r = e.target.closest("[data-re
 document.addEventListener("click", (e) => { if (e.target.closest("[data-story]")) openStory(); });
 function openStory() {
   const o = document.createElement("div"); o.className = "story-overlay";
-  o.innerHTML = `<iframe src="/static/story.html?autoplay=1&v=12" title="NextPlay Pros 20-second story" allow="autoplay"></iframe>`;
+  o.innerHTML = `<iframe src="/static/story.html?autoplay=1&v=12" title="NextPlay Pros 15-second story" allow="autoplay"></iframe>`;
   document.body.appendChild(o);
   const close = () => { o.remove(); window.removeEventListener("message", onMsg); document.removeEventListener("keydown", onKey); };
   const onMsg = (m) => { if (m.data === "close-story") close(); };
@@ -140,10 +140,11 @@ const INTRO_SLIDES = [  // two photos per athlete where we have them: action sho
   ["bloom.jpg", "Jeremy Bloom", "Olympic skier · NFL draft pick"],
   ["clark.jpg", "Wyndham Clark", "2x U.S. Open champion"],
   ["dauwalter.jpg", "Courtney Dauwalter", "Ultrarunner · former teacher"],
+  ["coburn.jpg", "Emma Coburn", "Steeplechase world champion · CO"],
 ];
 function introBanner() {
-  const n = INTRO_SLIDES.length, step = 3;  // seconds per photo (faster, more action)
-  const on = 100 / n, fade = Math.min(4, on / 3);  // keyframes scale with the number of photos
+  const n = INTRO_SLIDES.length, step = 1.6;  // seconds per photo: under 2 s per athlete
+  const on = 100 / n, fade = Math.min(3, on / 4);  // keyframes scale with the number of photos
   const kf = `@keyframes introFade{0%{opacity:0}${fade.toFixed(2)}%{opacity:1}${on.toFixed(2)}%{opacity:1}${(on + fade).toFixed(2)}%{opacity:0}100%{opacity:0}}
     @keyframes introZoom{0%{transform:scale(1.12)}${(on + fade).toFixed(2)}%{transform:scale(1)}100%{transform:scale(1)}}`;
   return `<style>${kf}</style><section class="intro" style="--n:${n};--cycle:${n * step}s" aria-label="NextPlay Pros">
@@ -153,7 +154,7 @@ function introBanner() {
       <h1>You were a star, <span>or you're becoming one.</span></h1>
       <p>Let us help you connect with your community, get paid, and inspire through your story.</p>
       <p class="intro-ask">They're waiting… are you ready?</p>
-      <div class="intro-cta"><button class="btn" data-go-athlete>I'm ready: build my profile</button><button class="story-btn" data-story>▶ Watch our 20-second story</button></div>
+      <div class="intro-cta"><button class="btn" data-go-athlete>I'm ready: build my profile</button><button class="story-btn" data-story>▶ Watch our 15-second story</button></div>
     </div>
   </section>`;
 }
@@ -210,8 +211,45 @@ function howItWorks() {
   </section>`;
 }
 
+// ---------------------------------------------------------------- "Start local": State -> City region (remembered)
+state.loc = (() => { try { return JSON.parse(localGet("np_loc")) || { st: "CO", rg: "" }; } catch { return { st: "CO", rg: "" }; } })();
+function regionOf(city, st) {
+  const regs = (state.regions && state.regions[st] && state.regions[st].regions) || {};
+  return Object.keys(regs).find((r) => regs[r].includes(city)) || "";
+}
+function inLoc(a) {
+  const { st, rg } = state.loc;
+  if (!st) return true;
+  if (a.state !== st) return false;
+  return !rg || regionOf(a.city, a.state) === rg;
+}
+function locLabel() {
+  const { st, rg } = state.loc;
+  if (!st) return "everywhere";
+  return rg ? `${rg}, ${state.regions[st].name}` : state.regions[st].name;
+}
+function locationBar(id = "loc") {
+  if (!state.regions) return "";
+  const { st, rg } = state.loc;
+  const regs = st ? Object.keys(state.regions[st].regions) : [];
+  const count = state.athletes.filter(inLoc).length;
+  return `<div class="loc-bar" id="${id}">
+    <div class="loc-title">📍 <b>Start local</b><span>Where's your event, or where are you based?</span></div>
+    <div class="loc-picks">
+      <select data-loc="st" aria-label="State"><option value="">Anywhere in the U.S.</option>${Object.entries(state.regions).map(([k, v]) => `<option value="${k}" ${k === st ? "selected" : ""}>${esc(v.name)}</option>`).join("")}</select>
+      <select data-loc="rg" aria-label="City region" ${st ? "" : "disabled"}><option value="">${st ? "All of " + esc(state.regions[st].name) : "Pick a state first"}</option>${regs.map((r) => `<option ${r === rg ? "selected" : ""}>${esc(r)}</option>`).join("")}</select>
+      <span class="loc-count"><b>${count}</b> athlete${count === 1 ? "" : "s"} ${st ? "here" : "total"}</span>
+    </div></div>`;
+}
+document.addEventListener("change", (e) => {
+  const sel = e.target.closest("[data-loc]"); if (!sel) return;
+  if (sel.dataset.loc === "st") state.loc = { st: sel.value, rg: "" }; else state.loc = { ...state.loc, rg: sel.value };
+  localSet("np_loc", JSON.stringify(state.loc));
+  render();
+});
+
 function viewFind() {
-  $("#view").innerHTML = `${introBanner()}${whoFor()}
+  $("#view").innerHTML = `${introBanner()}${locationBar()}${whoFor()}
   <div class="band" role="img" aria-label="Silhouettes of a basketball player, a golfer, a dancer, and a women's soccer player racing across the page"></div>
   <section class="hero" id="find-hero">
     <h1>Who do you want at your event?</h1>
@@ -237,7 +275,7 @@ async function runScout() {
   const btn = $("#go"); btn.disabled = true; btn.innerHTML = `<span class="spinner"></span>Scouting…`;
   $("#results").innerHTML = thinking("scout", `Scout is reading your request and searching ${state.athletes.length} athletes`);
   try {
-    state.lastScout = await api("/api/scout", { method: "POST", body: { text, budget: b ? Number(b) : null } });
+    state.lastScout = await api("/api/scout", { method: "POST", body: { text, budget: b ? Number(b) : null, state: state.loc.st || null, region: state.loc.rg || null } });
     $("#results").innerHTML = scoutResults(state.lastScout);
   } catch (err) { $("#results").innerHTML = `<div class="alert bad">${esc(err.message)}</div>`; }
   btn.disabled = false; btn.textContent = "Find matches";
@@ -259,23 +297,22 @@ function scoutResults(r) {
 // ---------------------------------------------------------------- booker: browse
 function viewBrowse() {
   const sports = [...new Set(state.athletes.map((a) => a.sport))].sort();
-  $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div><h1>The roster</h1><p class="sub">${state.athletes.length} athletes. All demo profiles are fictional.</p>
+  $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div><h1>The roster</h1><p class="sub">Showing athletes in <b>${esc(locLabel())}</b>. All demo profiles are fictional.</p>${locationBar()}
     <div class="panel" style="margin-bottom:16px"><div class="row">
       <div><label>Sport</label><select id="f-sport"><option value="">Any</option>${sports.map((s) => `<option>${esc(s)}</option>`).join("")}</select></div>
       <div><label>Type</label><select id="f-cat"><option value="">Any</option>${Object.entries(CAT).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select></div>
-      <div><label>State</label><select id="f-state"><option value="">Any</option>${[...new Set(state.athletes.map((a) => a.state))].sort().map((s) => `<option>${s}</option>`).join("")}</select></div>
       <div><label>Max fee</label><input id="f-fee" type="number" step="100" placeholder="any"></div>
       <div><label>Available on</label><select id="f-day"><option value="">Any day</option>${Object.entries(state.riderOpts.days).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select></div>
       <div><label>Time of day</label><select id="f-time"><option value="">Any time</option>${Object.entries(state.riderOpts.times).map(([k, v]) => `<option value="${k}">${v}</option>`).join("")}</select></div>
     </div></div><div class="grid three" id="roster"></div>`;
   const draw = () => {
-    const s = $("#f-sport").value, c = $("#f-cat").value, st = $("#f-state").value, f = Number($("#f-fee").value) || Infinity;
+    const s = $("#f-sport").value, c = $("#f-cat").value, f = Number($("#f-fee").value) || Infinity;
     const dy = $("#f-day").value, tm = $("#f-time").value;
-    const list = state.athletes.filter((a) => (!s || a.sport === s) && (!c || a.categories.includes(c)) && (!st || a.state === st) && a.fee_min <= f
+    const list = state.athletes.filter((a) => (!s || a.sport === s) && (!c || a.categories.includes(c)) && inLoc(a) && a.fee_min <= f
       && (!dy || a.availability.days.includes(dy)) && (!tm || a.availability.times.includes(tm)));
-    $("#roster").innerHTML = list.map((a) => athleteCard(a)).join("") || `<div class="empty">No one matches those filters.</div>`;
+    $("#roster").innerHTML = list.map((a) => athleteCard(a)).join("") || `<div class="empty">No one matches here yet. Try <b>All of ${esc(state.loc.st ? state.regions[state.loc.st].name : "the U.S.")}</b> or <b>Anywhere</b> above.</div>`;
   };
-  ["#f-sport", "#f-cat", "#f-state", "#f-fee", "#f-day", "#f-time"].forEach((id) => ($(id).oninput = draw));
+  ["#f-sport", "#f-cat", "#f-fee", "#f-day", "#f-time"].forEach((id) => ($(id).oninput = draw));
   draw();
 }
 
@@ -515,6 +552,14 @@ const FEATURED = [
       "In 2023, became the first person to win Western States, Hardrock, and UTMB in the same year, with course records [10][11]",
     ],
     why: "A teacher who became the best in the world, and still talks like a teacher. Schools, running clubs, and companies would line up to hear that story, and local trail races would love her at the start line. NextPlay Pros makes that one request away." },
+  { name: "Emma Coburn", alt: "Emma Coburn", role: "Steeplechase world champion · Olympic medalist · Crested Butte, CO", photo: "/static/img/coburn.jpg", initials: "EC", hue: 350,
+    credit: 'Photo: jenaragon94 (Flickr), <a href="https://commons.wikimedia.org/wiki/File:2018_USA_Indoor_Track_and_Field_Championships_(26466189318).jpg" target="_blank" rel="noopener">CC BY 2.0</a>',
+    facts: [
+      "Grew up in Crested Butte and ran for the University of Colorado Boulder [12]",
+      "Three-time Olympian and Olympic bronze medalist in the 3000 m steeplechase [12]",
+      "World champion, world silver medalist, and 10-time U.S. champion in the steeplechase [12]",
+    ],
+    why: "A small-mountain-town kid who became a world champion. Every Colorado high school track team, running club, and girls-in-sports program would love an hour with her. That's exactly the local pull NextPlay Pros is built for." },
 ];
 function viewAbout() {
   const card = (a) => `<article class="feature">
@@ -532,7 +577,7 @@ function viewAbout() {
   <section class="hero about-hero">
     <div class="about-crew">${bot("scout", "happy", 96)}${bot("story_builder", "happy", 96)}${bot("gatekeeper", "happy", 96)}</div>
     <h1>Every athlete's story deserves an audience</h1>
-    <button class="story-btn" data-story>▶ Watch our 20-second story</button>
+    <button class="story-btn" data-story>▶ Watch our 15-second story</button>
     <p>NextPlay Pros connects former, current, and rising athletes with the schools, companies, nonprofits, and local businesses that want them for talks, appearances, clinics, and events. We do the matching, the writing, and the scam screening. The athlete decides who gets their contact details.</p>
   </section>
   <h2 class="about-h">Meet your team</h2>
@@ -561,7 +606,7 @@ function viewAbout() {
     <p class="meta">Adrian Pucci · Yale SOM · MGT 409 final project</p>
   </div>
   <h2 class="about-h">Athletes who show why</h2>
-  <p class="sub">Real athletes who show who NextPlay Pros is for. MG and Memo are from my own circle; Jeremy, Wyndham, and Courtney are Colorado stories everyone here knows. They are shown to illustrate the idea, not as members: they are not in the demo roster, and no fees or contact details are listed.</p>
+  <p class="sub">Real athletes who show who NextPlay Pros is for. MG and Memo are from my own circle; Jeremy, Wyndham, Courtney, and Emma are Colorado stories everyone here knows. They are shown to illustrate the idea, not as members: they are not in the demo roster, and no fees or contact details are listed.</p>
   <div class="grid">${FEATURED.map(card).join("")}</div>
   <div class="panel sources"><b>Sources</b><ol>
     <li><a href="https://www.sltrib.com/sports/2017/12/04/park-citys-maryguenn-vellinga-is-utahs-best-hope-for-glory-as-salt-palace-hosts-usa-boxing-national-championships-this-week" target="_blank" rel="noopener">Salt Lake Tribune, Dec 2017</a></li>
@@ -575,6 +620,7 @@ function viewAbout() {
     <li><a href="https://www.cbsnews.com/news/wyndham-clark-u-s-open-2026-golf/" target="_blank" rel="noopener">CBS News, Jun 2026</a></li>
     <li><a href="https://en.wikipedia.org/wiki/Courtney_Dauwalter" target="_blank" rel="noopener">Wikipedia: Courtney Dauwalter</a></li>
     <li><a href="https://ultrarunning.com/featured/2023-ultrarunner-of-the-year-courtney-dauwalter/" target="_blank" rel="noopener">UltraRunning Magazine, 2023 Ultrarunner of the Year</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Emma_Coburn" target="_blank" rel="noopener">Wikipedia: Emma Coburn</a></li>
   </ol></div>`;
 }
 
@@ -742,4 +788,6 @@ function availWarnings(a, date, time) {
 const VIEWS = { rider: viewRider, terms: viewTerms, about: viewAbout, find: viewFind, browse: viewBrowse, mine: viewMine, board: viewBoard, behind: viewBehind, inbox: viewInbox, build: viewBuild };
 
 async function loadRoster() { state.athletes = await api("/api/athletes"); }
-(async () => { [state.cities, state.riderOpts] = await Promise.all([api("/api/cities"), api("/api/rider-options"), loadRoster()]); render(); })();
+(async () => { [state.cities, state.riderOpts, state.regions] = await Promise.all([api("/api/cities"), api("/api/rider-options"), api("/api/regions"), loadRoster()]);
+  if (state.loc.st && !state.regions[state.loc.st]) state.loc = { st: "CO", rg: "" };
+  render(); })();

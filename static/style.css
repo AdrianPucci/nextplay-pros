@@ -363,3 +363,19 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
 .band.slim { height: clamp(96px, 12vw, 160px); margin: -24px 0 22px calc(50% - 50vw); background-position: center 58%; }
 @media (max-width: 640px) { .band.slim { margin-top: -16px; height: 96px; } }
+
+/* Start local: State -> City region */
+.loc-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 18px; background: #fff; border: 1px solid var(--line);
+           border-left: 0; border-radius: var(--radius); padding: 14px 18px; margin: 0 0 18px; box-shadow: var(--shadow); }
+.loc-title { display: flex; flex-direction: column; font-size: 17px; }
+.loc-title span { font-size: 13px; color: var(--muted); }
+.loc-picks { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.loc-picks select { width: auto; min-width: 190px; font-weight: 600; }
+.loc-count { font-size: 14px; color: var(--muted); }
+.loc-count b { color: var(--brand); font-size: 18px; }
+@media (max-width: 640px) { .loc-picks select { flex: 1 1 100%; } }
+
+/* light grey wash on athlete photos so they read as one fluid set */
+.intro-pics img, .feature-photo img, .pro-photo img { filter: saturate(.8) contrast(.95); }
+.intro-pics figure::before, .feature-photo::after, .pro-photo::after { content: ""; position: absolute; inset: 0; background: rgba(214,220,228,.16); pointer-events: none; z-index: 1; }
+.intro-pics figcaption { z-index: 2; }

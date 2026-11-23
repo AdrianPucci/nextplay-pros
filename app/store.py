@@ -18,6 +18,32 @@ DB_PATH = DATA_DIR / "app.db"  # one database per roster folder
 _lock = threading.Lock()
 CITIES = json.loads((DATA / "cities.json").read_text(encoding="utf-8"))
 
+STATE_NAMES = {"AZ": "Arizona", "CA": "California", "CO": "Colorado", "CT": "Connecticut", "FL": "Florida", "GA": "Georgia",
+               "IL": "Illinois", "MA": "Massachusetts", "MN": "Minnesota", "MO": "Missouri", "NC": "North Carolina", "NV": "Nevada",
+               "NY": "New York", "OH": "Ohio", "OR": "Oregon", "PA": "Pennsylvania", "TN": "Tennessee", "TX": "Texas",
+               "UT": "Utah", "WA": "Washington"}
+# Region -> cities. Colorado follows how locals talk about it; every other city is its own metro area for now.
+REGION_GROUPS = {"CO": {"Denver Metro": ["Denver", "Englewood"], "Boulder & Northern Colorado": ["Boulder", "Fort Collins"],
+                        "Colorado Springs & South": ["Colorado Springs"]}}
+
+
+def regions() -> dict:
+    """{state: {"name": ..., "regions": {region: [cities]}}} for every state in the city list."""
+    out = {}
+    for city, info in CITIES.items():
+        st = info["state"]
+        groups = REGION_GROUPS.get(st, {})
+        region = next((r for r, cs in groups.items() if city in cs), f"{city} area")
+        out.setdefault(st, {"name": STATE_NAMES.get(st, st), "regions": {}})["regions"].setdefault(region, []).append(city)
+    return dict(sorted(out.items(), key=lambda kv: kv[1]["name"]))
+
+
+def region_of(city: str) -> str | None:
+    info = CITIES.get(city)
+    if not info:
+        return None
+    return next((r for r, cs in REGION_GROUPS.get(info["state"], {}).items() if city in cs), f"{city} area")
+
 
 def now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")

@@ -21,6 +21,8 @@ store.init_db()
 class ScoutIn(BaseModel):
     text: str
     budget: int | None = Field(None, ge=0)
+    state: str | None = None   # the booker's location filter (start local)
+    region: str | None = None
 
 
 class StoryIn(BaseModel):
@@ -158,6 +160,11 @@ def rider_options():
             "days": riders.DAYS, "times": riders.TIMES}
 
 
+@app.get("/api/regions")
+def regions():
+    return store.regions()
+
+
 @app.get("/api/cities")
 def cities():
     return sorted(store.CITIES)
@@ -176,7 +183,7 @@ def opportunities():
 @app.post("/api/scout")
 async def scout(body: ScoutIn):
     try:
-        return await agents.scout(body.text, body.budget)
+        return await agents.scout(body.text, body.budget, body.state, body.region)
     except Exception as e:  # noqa: BLE001
         _err(e)
 
