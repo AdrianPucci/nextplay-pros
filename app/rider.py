@@ -108,3 +108,26 @@ def seed_rider(i: int, sport: str, level: str) -> dict:
     wont.append("photos_minors") if i % 7 == 0 else None
     return clean({"security": security, "accommodations": acc, "transport": transport, "wont_do": wont,
                   "max_hours": [2, 3, 4][i % 3]})
+
+
+# ---------------------------------------------------------------- NIL (college athletes)
+NIL_INDUCEMENT = re.compile(
+    r"\b(transfer\w*|commit(ment)? to|enroll\w* at|stay at|if you sign with|sign with (our|the) (school|program|university)|"
+    r"booster|collective|play for|come play|recruit\w*|portal)\b", re.I)
+SCHOOL_MARKS = re.compile(r"\b(in (your|team) uniform|wear (your|the) (jersey|uniform)|school logo|team logo|university logo)\b", re.I)
+
+
+def is_college(athlete: dict) -> bool:
+    return "college" in (athlete.get("level") or "").lower() and (athlete.get("level") or "").lower().startswith("rising")
+
+
+def nil_flags(athlete: dict, text: str) -> list[str]:
+    """Plain-Python NIL red flags for a request to a current college athlete."""
+    if not is_college(athlete):
+        return []
+    flags = []
+    if NIL_INDUCEMENT.search(text or ""):
+        flags.append("possible_recruiting_inducement")
+    if SCHOOL_MARKS.search(text or ""):
+        flags.append("school_logo_or_uniform")
+    return flags

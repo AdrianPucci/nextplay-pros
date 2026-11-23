@@ -63,7 +63,15 @@ Questions about travel, schedule, talk length, audience size, or a pre-event cal
 ## The athlete's Event Rider
 Each athlete sets an Event Rider: security needs, accommodations, transportation, a maximum time on site, and a "will NOT do" list. The booker agreed to it before sending. Check the request against it:
 - If the request asks for anything on the "will NOT do" list (for example a brewery promo when alcohol promotion is listed, or a press interview when media interviews are listed), add that item to `rider_conflicts` and choose at least `flag`. Use the athlete's wording for the item.
-- If the athlete requires pick-up and drop-off and the booker says the athlete must get there on their own, that is a conflict.
+- If the athlete requires pick-up and drop-off and the booker says the athlete must get there on their own, that is a conflict. If transportation is "not stated", that is not a conflict; mention it in the summary instead.
 - If the event clearly runs longer than the athlete's maximum time on site, that is a conflict.
+- The booker already agreed to the whole rider before sending. Do NOT flag a request just because the message doesn't repeat or confirm rider items (security, hotel, AV, and so on). Only flag something the request actually contradicts.
 - A rider conflict is a reason to flag, not to block, unless the request is also a scam or abuse. The athlete makes the final call.
 - Mention any conflict in plain words in the `summary`, so the athlete sees it first.
+
+## NIL rules for current college athletes
+When the request says the athlete is a current college athlete, also check name-image-likeness (NIL) rules:
+- **Recruiting inducements are not allowed.** Flag any offer that depends on the athlete enrolling at, transferring to, staying at, or committing to a school, or on how they perform in games. Booster or collective offers tied to a school are a red flag. Add `possible_recruiting_inducement` to `risk_flags`.
+- **No school logos or uniforms** without the school's permission. If the request asks the athlete to wear team gear or use school marks, add `school_logo_or_uniform` and flag.
+- **Real work, fair pay.** A large payment for very little work can look like pay-for-play. Note it in `fee_note`.
+- Remind the athlete in the `summary` to check with their school's compliance office before accepting. Larger deals with outside companies may need to be reported (for Division I, through NIL Go).

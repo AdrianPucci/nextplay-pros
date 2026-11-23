@@ -182,7 +182,7 @@ async def _run(agent: Agent, agent_name: str, prompt: str, deps=None) -> tuple:
     append_json(USAGE_LOG, usage)
     calls = _tool_calls(messages)
     append_json(AUDIT_TRAIL, {"run_id": run_id, "time": usage["time"], "agent": agent_name,
-                              "input": _short(prompt, 600), "tool_calls": calls, "reasoning": reasoning,
+                              "input": _short(prompt, 2000), "tool_calls": calls, "reasoning": reasoning,
                               "output": result.output.model_dump()})
     usage["_calls"], usage["_reasoning"] = calls, reasoning  # removed again by glass()
     return result.output, usage, run_id
@@ -307,11 +307,16 @@ async def screen_request(athlete: dict, form: dict) -> dict:
     prompt = (f"Athlete receiving this: {athlete['name']} ({athlete['sport']}, {athlete['level']}), "
               f"fee range ${athlete['fee_min']:,}-${athlete['fee_max']:,}.\n"
               f"The athlete's Event Rider (set by the athlete; the booker agreed to it):\n{riders.describe(rider)}\n\n"
-              f"Booking request:\n{untrusted('booker', text)}")
+              + ("This athlete is a CURRENT COLLEGE athlete, so NIL rules apply (see your instructions).\n\n"
+                 if riders.is_college(athlete) else "")
+              + f"Booking request:\n{untrusted('booker', text)}")
     out, usage, run_id = await _run(gatekeeper_agent(), "gatekeeper", prompt)
 
     verdict = out.verdict
     rule_rider = riders.rule_conflicts(rider, msg + " " + form.get("org", ""))
+    nil = riders.nil_flags(athlete, msg)
+    if nil:
+        rule_flags = rule_flags + nil
     conflicts = sorted(set(out.rider_conflicts) | set(rule_rider))
     if rule_rider:
         rule_flags = rule_flags + ["rider_conflict"]

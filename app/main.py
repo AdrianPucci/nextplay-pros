@@ -58,6 +58,7 @@ class RequestIn(BaseModel):
     budget: int | None = Field(None, ge=0)
     message: str
     agreed_terms: bool = False  # booker accepted the athlete's Event Rider + the Terms
+    agreed_nil: bool = False  # college athletes only: booker confirms the NIL rules (no inducements, no school marks)
     transport_offered: str = ""  # what the booker offers for transportation
 
 
@@ -169,6 +170,8 @@ async def send_request(body: RequestIn):
         raise HTTPException(404, "No such athlete")
     if not body.agreed_terms:  # enforced on the server, not just the checkbox
         raise HTTPException(400, "Please agree to the athlete's Event Rider and the NextPlay Pros Terms before sending.")
+    if riders.is_college(a) and not body.agreed_nil:
+        raise HTTPException(400, "This is a current college athlete. Please confirm the NIL rules before sending.")
     try:
         screening = await agents.screen_request(a, body.model_dump())
     except Exception as e:  # noqa: BLE001

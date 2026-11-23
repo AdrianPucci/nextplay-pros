@@ -186,16 +186,24 @@ function requestModal(athleteId) {
         <option value="Pick-up and drop-off provided">Pick-up and drop-off provided</option>
         <option value="Mileage reimbursed">Mileage reimbursed</option>
         <option value="Athlete arranges own transportation">Athlete arranges own transportation</option></select></div>
+      ${isCollege(a) ? `<div class="nil-box"><b>🎓 ${esc(a.name.split(" ")[0])} is a current college athlete. NIL rules apply.</b>
+        <ul><li>No offer can depend on enrolling at, transferring to, or staying at a school, or on game performance.</li>
+        <li>No school logos, uniforms, or trademarks without the school's permission.</li>
+        <li>Pay must match real work. Larger deals may need to be reported by the athlete (for Division I: NIL Go, $600+).</li></ul>
+        <label class="agree"><input type="checkbox" id="r-nil"> I confirm this offer follows these NIL rules.</label></div>` : ""}
       <label class="agree"><input type="checkbox" id="r-agree"> I agree to ${esc(a.name.split(" ")[0])}'s Event Rider above and the
         <a href="#" id="r-terms">NextPlay Pros Terms</a> (including the no-show refund and cancellation policy).</label>
       <button class="btn" id="r-send" disabled>Send request</button><div id="r-out"></div>
     </div>`);
   if (a.rider && a.rider.transport === "pickup") $("#r-transport").value = "Pick-up and drop-off provided";
-  $("#r-agree").onchange = () => ($("#r-send").disabled = !$("#r-agree").checked);
+  const ready = () => ($("#r-send").disabled = !$("#r-agree").checked || ($("#r-nil") && !$("#r-nil").checked));
+  $("#r-agree").onchange = ready;
+  if ($("#r-nil")) $("#r-nil").onchange = ready;
   $("#r-terms").onclick = (e) => { e.preventDefault(); closeModal(); state.tab = "terms"; render(); };
   $("#r-send").onclick = async () => {
     if (!$("#r-agree").checked) return toast("Please agree to the Event Rider and Terms first.");
-    const body = { agreed_terms: true, transport_offered: $("#r-transport").value, athlete_id: a.id, booker_id: state.bookerId, booker_name: $("#r-name").value.trim(), org: $("#r-org").value.trim(),
+    if ($("#r-nil") && !$("#r-nil").checked) return toast("Please confirm the NIL rules first.");
+    const body = { agreed_nil: !!$("#r-nil"), agreed_terms: true, transport_offered: $("#r-transport").value, athlete_id: a.id, booker_id: state.bookerId, booker_name: $("#r-name").value.trim(), org: $("#r-org").value.trim(),
       event_type: $("#r-type").value, event_date: $("#r-date").value, city: $("#r-city").value.trim(),
       budget: $("#r-budget").value ? Number($("#r-budget").value) : null, message: $("#r-msg").value.trim() };
     if (!body.booker_name || !body.org || !body.message) return toast("Name, organization, and message are required.");
@@ -409,6 +417,7 @@ function viewAbout() {
 }
 
 // ---------------------------------------------------------------- Event Rider (athlete-controlled parameters)
+const isCollege = (a) => /^rising/i.test(a.level || "") && /college/i.test(a.level || "");
 function riderChips(a) {
   const r = a.rider, o = state.riderOpts;
   if (!r || !o) return "";
@@ -417,6 +426,7 @@ function riderChips(a) {
   if (r.security.includes("escort")) chips.push("🛡️ Security escort");
   if (r.wont_do.length) chips.push(`⛔ ${r.wont_do.length + (r.wont_do_other ? 1 : 0)} won't-do`);
   chips.push(`⏱ ${r.max_hours} hr max`);
+  if (isCollege(a)) chips.unshift("🎓 NIL rules apply");
   return `<div class="rider-chips">${chips.map((c) => `<span>${c}</span>`).join("")}</div>`;
 }
 function riderBlock(a) {
@@ -482,6 +492,16 @@ function viewTerms() {
       <li><b>Your contact details are yours.</b> They stay in a private vault and are shared only with a booker whose request you accept.</li>
     </ul></div>
   </div>
+  <div class="panel" style="margin-top:16px"><h2>🎓 NIL rules for college athletes</h2><ul class="terms">
+    <li><b>18 and over only.</b> NextPlay Pros does not list high school or minor athletes.</li>
+    <li><b>Your school's rules come first.</b> College athletes must follow their school, conference, and NCAA rules and tell their compliance office about NIL deals the way their school requires.</li>
+    <li><b>Reporting.</b> Division I athletes must report third-party NIL deals worth $600 or more through NIL Go (College Sports Commission), within five business days of signing. Rules change often, so confirm with your compliance office.</li>
+    <li><b>No pay-for-play or recruiting inducements.</b> No offer on NextPlay Pros may depend on enrolling at, transferring to, or staying at a school, or on athletic performance. Bookers confirm this for every college athlete, and Gatekeeper flags offers that look like inducements.</li>
+    <li><b>No school marks without permission.</b> Bookers may not ask athletes to use school logos, uniforms, or trademarks unless the school has approved it.</li>
+    <li><b>Banned categories.</b> Many schools ban NIL deals with alcohol, gambling, tobacco or vape, or adult products. Add these to your Event Rider so Gatekeeper flags them.</li>
+    <li><b>International students.</b> Students on F-1 visas can put their visa status at risk by doing NIL work in the U.S. Talk to your international student office or an immigration attorney before accepting.</li>
+    <li><b>Taxes.</b> NIL income is taxable. NextPlay Pros does not give legal, tax, or compliance advice.</li>
+  </ul></div>
   <div class="panel" style="margin-top:16px"><h2>About the platform</h2><ul class="terms">
     <li><b>We connect, we're not a party to the booking.</b> NextPlay Pros introduces athletes and bookers. The agreement for each event is between the booker and the athlete.</li>
     <li><b>AI-assisted.</b> Matches, profiles, and request screening are produced by AI and checked by rules in code. AI can make mistakes; always confirm key details directly.</li>
