@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field
 
 from . import agents, rider as riders, store
 from .config import DAILY_SPEND_CAP_USD, STATIC
-from .guards import SAFETY_LOG, USAGE_LOG, redact_contacts, spent_today
+from .guards import SAFETY_LOG, USAGE_LOG, log_safety, redact_contacts, scan_text, spent_today
 
 app = FastAPI(title="NextPlay Pros")
 store.init_db()
@@ -64,6 +64,8 @@ class RequestIn(BaseModel):
     agreed_terms: bool = False  # booker accepted the athlete's Event Rider + the Terms
     agreed_nil: bool = False  # college athletes only: booker confirms the NIL rules (no inducements, no school marks)
     transport_offered: str = ""  # what the booker offers for transportation
+    prep_call: bool = False  # booker would like a short call before the athlete commits
+    prep_slots: list[str] = Field(default_factory=list, max_length=3)  # up to 3 offered times (YYYY-MM-DDTHH:MM)
 
 
 class RiderIn(BaseModel):
@@ -232,7 +234,37 @@ async def send_request(body: RequestIn):
     form = body.model_dump()
     form["message"], _ = redact_contacts(form["message"])  # off-platform contact waits until accepted
     status = {"deliver": "pending", "flag": "flagged", "block": "blocked"}[screening["verdict"]]
-    return store.create_request(body.athlete_id, body.booker_id, form, status, screening)
+    req = store.create_request(body.athlete_id, body.booker_id, form, status, screening)
+    if body.prep_call and status != "blocked" and any(body.prep_slots):
+        req = store.prep_action(req["id"], "booker", body.booker_id, "request", body.prep_slots)
+    return req
+
+
+class PrepIn(BaseModel):
+    actor: str  # "athlete" or "booker" (demo sign-in)
+    actor_id: str
+    action: str  # "request" (offer times), "confirm" (pick one of the other side's times), or "note"
+    slots: list[str] = Field(default_factory=list, max_length=3)
+    time: str = ""
+    note: str = Field("", max_length=500)
+
+
+@app.post("/api/requests/{rid}/prep")
+def prep_call(rid: str, body: PrepIn):
+    """Ask for, or confirm, a short prep call before committing. Notes get the same scam/injection screen as requests."""
+    note = body.note.strip()
+    if note:
+        flags = [f for f in scan_text(note) if f != "contact_or_link_in_text"]
+        if flags:
+            log_safety("prep_note_blocked", "prep_call", {"rid": rid, "flags": flags})
+            raise HTTPException(400, "That note was blocked by Gatekeeper's safety rules. Keep prep notes about the event.")
+        note, removed = redact_contacts(note)
+        if removed:
+            log_safety("redacted_contact", "prep_call", {"rid": rid, "removed": removed})
+    try:
+        return store.prep_action(rid, body.actor, body.actor_id, body.action, body.slots, body.time, note)
+    except Exception as e:  # noqa: BLE001
+        _err(e)
 
 
 @app.get("/api/requests/athlete/{athlete_id}")

@@ -69,7 +69,7 @@ def init_db(reset: bool = False) -> None:
                 status TEXT NOT NULL, screening TEXT, created TEXT, decided TEXT);
         """)
         cols = {r[1] for r in c.execute("PRAGMA table_info(requests)")}
-        for col in ("event_time", "checked_in", "org_type"):  # added for the commitment rules
+        for col in ("event_time", "checked_in", "org_type", "prep_status", "prep_by", "prep_slots", "prep_time", "prep_link", "prep_notes"):  # added for the commitment rules
             if col not in cols:
                 c.execute(f"ALTER TABLE requests ADD COLUMN {col} TEXT")
         if c.execute("SELECT COUNT(*) FROM athletes").fetchone()[0] == 0:
@@ -241,6 +241,8 @@ def create_request(athlete_id: str, booker_id: str, form: dict, status: str, scr
 def _row(r: sqlite3.Row) -> dict:
     d = dict(r)
     d["screening"] = json.loads(d["screening"] or "{}")
+    d["prep_slots"] = json.loads(d.get("prep_slots") or "[]")
+    d["prep_notes"] = json.loads(d.get("prep_notes") or "[]")
     a = get_athlete(d["athlete_id"])
     d["athlete_name"] = a["name"] if a else d["athlete_id"]
     if d["status"] == "accepted":
@@ -334,6 +336,40 @@ def decide(rid: str, athlete_id: str, accept: bool) -> dict:
     with _lock, connect() as c:
         c.execute("UPDATE requests SET status = ?, decided = ? WHERE id = ?",
                   ("accepted" if accept else "declined", now(), rid))
+    return get_request(rid)
+
+
+# ------------------------------------------------------------------ prep call before committing
+# Either side can ask for a short video call before the athlete commits. Contact details stay in the vault:
+# the call happens through a generated video-room link, and notes are screened like requests.
+
+def prep_action(rid: str, actor: str, actor_id: str, action: str, slots: list[str] | None = None,
+                time: str = "", note: str = "") -> dict:
+    import secrets
+    req = get_request(rid)
+    owner = req and (req["athlete_id"] if actor == "athlete" else req["booker_id"])
+    if not req or actor not in ("athlete", "booker") or owner != actor_id:
+        raise PermissionError("This request isn't yours.")
+    if req["status"] not in ("pending", "flagged", "accepted"):
+        raise ValueError(f"Request is {req['status']}; a prep call isn't available.")
+    slots = [s for s in (slots or []) if s][:3]
+    notes = req["prep_notes"] + ([{"by": actor, "text": note, "at": now()}] if note else [])
+    fields = {"prep_notes": json.dumps(notes)}
+    if action == "request":
+        if not slots:
+            raise ValueError("Offer at least one time for the call.")
+        fields.update(prep_status="requested", prep_by=actor, prep_slots=json.dumps(slots), prep_time=None, prep_link=None)
+    elif action == "confirm":
+        if req.get("prep_status") != "requested" or req.get("prep_by") == actor:
+            raise ValueError("There's no prep-call request from the other side to confirm.")
+        if time not in req["prep_slots"]:
+            raise ValueError("Pick one of the offered times.")
+        fields.update(prep_status="scheduled", prep_time=time,
+                      prep_link=f"https://meet.jit.si/NextPlayPros-{rid}-{secrets.token_hex(3)}")
+    elif action != "note":
+        raise ValueError("Unknown prep-call action.")
+    with _lock, connect() as c:
+        c.execute(f"UPDATE requests SET {', '.join(k + ' = ?' for k in fields)} WHERE id = ?", (*fields.values(), rid))
     return get_request(rid)
 
 

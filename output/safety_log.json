@@ -736,5 +736,34 @@
       "spent_usd": 0.0286,
       "cap_usd": 0.0
     }
+  },
+  {
+    "time": "2026-11-23T19:12:27+00:00",
+    "guard": "redacted_contact",
+    "where": "prep_call",
+    "detail": {
+      "rid": "req_7f5a85a1",
+      "removed": 1
+    }
+  },
+  {
+    "time": "2026-11-23T19:12:27+00:00",
+    "guard": "prep_note_blocked",
+    "where": "prep_call",
+    "detail": {
+      "rid": "req_7f5a85a1",
+      "flags": [
+        "off_platform_payment"
+      ]
+    }
+  },
+  {
+    "time": "2026-11-23T19:13:06+00:00",
+    "guard": "daily_spend_cap",
+    "where": "any agent",
+    "detail": {
+      "spent_usd": 0.0286,
+      "cap_usd": 0.0
+    }
   }
 ]

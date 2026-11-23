@@ -449,6 +449,9 @@ function requestModal(athleteId) {
       <div class="row"><div><label>Type</label><select id="r-type">${a.categories.map((c) => `<option value="${c}">${CAT[c]}</option>`).join("")}</select></div>
         <div><label>Date</label><input id="r-date" type="date"></div><div><label>Start time</label><input id="r-time" type="time"></div></div>
       <div class="row"><div><label>City</label><input id="r-city" value="${esc(b.city || "")}"></div><div><label>Budget offered ($)</label><input id="r-budget" type="number" step="100" value="${esc(b.budget_max ?? state.lastBudget ?? "")}"></div></div>
+      <div class="prep-ask"><label class="agree"><input type="checkbox" id="r-prep"> I'd like a <b>15-minute prep call</b> before ${esc(a.name.split(" ")[0])} commits</label>
+        <div id="r-prep-slots" class="prep-slots" hidden><span class="meta">Offer up to three times:</span>
+          <input type="datetime-local" class="r-slot"><input type="datetime-local" class="r-slot"><input type="datetime-local" class="r-slot"></div></div>
       <div><label>Message</label><textarea id="r-msg" rows="4" placeholder="Tell ${esc(a.name.split(" ")[0])} about the event, audience, and what you'd like them to do."></textarea></div>
       <div class="meta">Fee range: ${money(a.fee_min)}–${money(a.fee_max)}</div>
       <div class="avail-req">${availLine(a)}<div id="r-avail-warn" class="conflict" hidden></div></div>
@@ -469,6 +472,7 @@ function requestModal(athleteId) {
   if (a.rider && a.rider.transport === "pickup") $("#r-transport").value = "Pick-up and drop-off provided";
   const ready = () => ($("#r-send").disabled = !$("#r-agree").checked || ($("#r-nil") && !$("#r-nil").checked));
   $("#r-agree").onchange = ready;
+  $("#r-prep").onchange = () => ($("#r-prep-slots").hidden = !$("#r-prep").checked);
   const checkAvail = () => {
     const w = availWarnings(a, $("#r-date").value, $("#r-time").value);
     $("#r-avail-warn").hidden = !w.length; $("#r-avail-warn").textContent = w.length ? "⚠️ " + w.join(" · ") + ". You can still send it, but the athlete will see this." : "";
@@ -480,6 +484,7 @@ function requestModal(athleteId) {
     if (!$("#r-agree").checked) return toast("Please agree to the Event Rider and Terms first.");
     if ($("#r-nil") && !$("#r-nil").checked) return toast("Please confirm the NIL rules first.");
     const body = { agreed_nil: !!$("#r-nil"), agreed_terms: true, transport_offered: $("#r-transport").value, athlete_id: a.id, booker_id: state.bookerId, booker_name: $("#r-name").value.trim(), org: $("#r-org").value.trim(), org_type: $("#r-orgtype").value,
+      prep_call: $("#r-prep").checked, prep_slots: $("#r-prep").checked ? [...document.querySelectorAll(".r-slot")].map((x) => x.value).filter(Boolean) : [],
       event_type: $("#r-type").value, event_date: $("#r-date").value, event_time: $("#r-time").value, city: $("#r-city").value.trim(),
       budget: $("#r-budget").value ? Number($("#r-budget").value) : null, message: $("#r-msg").value.trim() };
     if (!body.booker_name || !body.org || !body.message) return toast("Name, organization, and message are required.");
@@ -498,6 +503,45 @@ function requestModal(athleteId) {
   };
 }
 
+// ---------------------------------------------------------------- prep call before committing (both sides)
+const fmtTime = (t) => { try { return new Date(t).toLocaleString([], { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }); } catch { return t; } };
+function prepPanel(r, side) {
+  if (!["pending", "flagged", "accepted"].includes(r.status)) return "";
+  const other = side === "athlete" ? (r.org || "the booker") : r.athlete_name.split(" ")[0];
+  const notes = (r.prep_notes || []).map((n) => `<div class="prep-note"><b>${n.by === side ? "You" : esc(other)}:</b> ${esc(n.text)}</div>`).join("");
+  let body;
+  if (r.prep_status === "scheduled") {
+    body = `<div class="prep-on">${uiIcon("mic", 16)} <b>Prep call set:</b> ${esc(fmtTime(r.prep_time))} · <a href="${esc(r.prep_link)}" target="_blank" rel="noopener">Join video call</a></div>`;
+  } else if (r.prep_status === "requested" && r.prep_by !== side) {
+    body = `<div><b>${esc(other)} asked for a prep call before committing.</b> Pick a time:</div>
+      <div class="prep-times">${r.prep_slots.map((t) => `<button class="btn small ghost" data-prep-confirm="${r.id}" data-time="${esc(t)}">${esc(fmtTime(t))}</button>`).join("")}</div>`;
+  } else if (r.prep_status === "requested") {
+    body = `<div>${uiIcon("mic", 16)} You asked for a prep call. Waiting for ${esc(other)} to pick: ${r.prep_slots.map((t) => esc(fmtTime(t))).join(" · ")}</div>`;
+  } else {
+    body = `<button class="btn small ghost" data-prep-open="${r.id}">${uiIcon("mic", 15)} ${side === "athlete" ? "Ask for a prep call first" : "Request a prep call"}</button>
+      <div class="prep-form" id="pf-${r.id}" hidden><span class="meta">Offer up to three times, and add questions to prepare:</span>
+        <div class="prep-slots"><input type="datetime-local" class="pf-slot"><input type="datetime-local" class="pf-slot"><input type="datetime-local" class="pf-slot"></div>
+        <textarea class="pf-note" rows="2" maxlength="500" placeholder="${side === "athlete" ? "e.g. How old is the audience? Will there be a mic? What should I focus on?" : "e.g. We'd love to walk through the run of show and what our kids are working on."}"></textarea>
+        <button class="btn small" data-prep-send="${r.id}">Send request</button></div>`;
+  }
+  return `<div class="prep" data-side="${side}"><div class="prep-k">Prep call · before anyone commits</div>${body}${notes ? `<div class="prep-notes">${notes}</div>` : ""}</div>`;
+}
+function wirePrep(side, redraw) {
+  const actor_id = side === "athlete" ? state.athleteId : state.bookerId;
+  const send = async (rid, payload) => {
+    try { await api(`/api/requests/${rid}/prep`, { method: "POST", body: { actor: side, actor_id, ...payload } }); toast(payload.action === "confirm" ? "Prep call scheduled. The video link is on the request." : "Prep call requested."); redraw(); }
+    catch (err) { toast(err.message); }
+  };
+  document.querySelectorAll("[data-prep-open]").forEach((b) => (b.onclick = () => { const f = $(`#pf-${b.dataset.prepOpen}`); f.hidden = !f.hidden; }));
+  document.querySelectorAll("[data-prep-send]").forEach((b) => (b.onclick = () => {
+    const f = $(`#pf-${b.dataset.prepSend}`);
+    const slots = [...f.querySelectorAll(".pf-slot")].map((x) => x.value).filter(Boolean);
+    if (!slots.length) return toast("Offer at least one time.");
+    send(b.dataset.prepSend, { action: "request", slots, note: f.querySelector(".pf-note").value.trim() });
+  }));
+  document.querySelectorAll("[data-prep-confirm]").forEach((b) => (b.onclick = () => send(b.dataset.prepConfirm, { action: "confirm", time: b.dataset.time })));
+}
+
 async function viewMine() {
   if (!state.user) { $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div><h1>My requests</h1>${signInGate("your requests")}`; return; }
   $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div><h1>My requests</h1><p class="sub">Contact details unlock only after an athlete accepts.</p><div id="list" class="grid"><div class="thinking"><span class="spinner"></span>Loading…</div></div>`;
@@ -505,11 +549,13 @@ async function viewMine() {
   $("#list").innerHTML = list.length ? list.map((r) => `<div class="req">
     <div class="req-top"><div><b>${esc(r.athlete_name)}</b> · <span class="meta">${esc(CAT[r.event_type] || r.event_type)} · ${esc(r.event_date || "date TBD")} · ${money(r.budget)}</span></div><span>${r.screening.demo ? `<span class="status demo" title="Sample request so every inbox has something to try">demo</span> ` : ""}<span class="status ${r.status}">${r.status}</span></span></div>
     <p class="msg">${esc(r.message)}</p>
+    ${prepPanel(r, "booker")}
     ${r.payout ? commitPanel(r, "booker") : ""}
     ${r.contact ? `<div class="contact">🔓 <b>Contact unlocked:</b> ${esc(r.contact.email)}${r.contact.phone ? " · " + esc(r.contact.phone) : ""}</div>`
       : r.status === "blocked" ? `<div class="alert bad">🛡️ Blocked by Gatekeeper: ${esc(r.screening.summary)}</div>`
       : `<div class="locked">🔒 Contact details stay private until ${esc(r.athlete_name.split(" ")[0])} accepts.</div>`}
   </div>`).join("") : `<div class="empty">No requests yet. Use <b>Find talent</b> to send one.</div>`;
+  wirePrep("booker", viewMine);
 }
 
 // ---------------------------------------------------------------- athlete: inbox
@@ -530,6 +576,7 @@ async function drawInbox() {
     <div class="gate"><div class="label">${bot("gatekeeper", r.status === "blocked" ? "classic" : "happy", 22)} Gatekeeper summary</div>${(r.screening.rider_conflicts || []).length ? `<div class="conflict">⚠️ Conflicts with your Event Rider: ${esc(r.screening.rider_conflicts.join("; "))}</div>` : ""}${esc(r.screening.summary)}<br><span class="meta">${esc(r.screening.fee_note)}</span>
       ${(r.screening.risk_flags || []).length || (r.screening.rule_flags || []).length ? `<br><span class="meta">⚠️ ${esc([...(r.screening.risk_flags || []), ...(r.screening.rule_flags || [])].join(", "))}</span>` : ""}</div>
     <details><summary>Read full message</summary><p class="msg">${esc(r.message)}</p></details>
+    ${prepPanel(r, "athlete")}
     ${r.payout ? commitPanel(r, "athlete") : ""}
     ${["pending", "flagged"].includes(r.status) ? `<div class="row" style="justify-content:flex-start"><button class="btn good small" style="flex:0 0 auto" data-decide="${r.id}" data-accept="1">Accept & share my contact</button><button class="btn ghost small" style="flex:0 0 auto" data-decide="${r.id}" data-accept="0">Decline</button></div>` : ""}
   </div>`;
@@ -539,6 +586,7 @@ async function drawInbox() {
     try { await api(`/api/requests/${b.dataset.checkin}/checkin`, { method: "POST", body: { athlete_id: state.athleteId } });
       toast("Checked in. Thanks for being early!"); drawInbox(); } catch (err) { toast(err.message); }
   }));
+  wirePrep("athlete", drawInbox);
   document.querySelectorAll("[data-decide]").forEach((b) => (b.onclick = async () => {
     try { await api(`/api/requests/${b.dataset.decide}/decide`, { method: "POST", body: { athlete_id: state.athleteId, accept: b.dataset.accept === "1" } });
       toast(b.dataset.accept === "1" ? "Accepted. The booker can now see your contact details." : "Declined."); drawInbox();
