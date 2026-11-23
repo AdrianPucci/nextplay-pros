@@ -355,7 +355,7 @@ function viewFind() {
     <div class="team-strip"><div class="ts">${bot("scout", "happy", 46)}<span><b>Scout</b> finds</span></div><div class="ts">${bot("story_builder", "happy", 46)}<span><b>Story Builder</b> promotes</span></div><div class="ts">${bot("gatekeeper", "happy", 46)}<span><b>Gatekeeper</b> guards your rider</span></div></div>
     <div class="form">
       <div><label for="q">Your event</label><textarea id="q" placeholder="e.g. Motivational speaker for our 200-person sales kickoff in Denver, someone who came back from an injury">${esc(state.lastQuery || "")}</textarea></div>
-      <div class="row"><div style="flex:0 1 200px"><label for="budget">Max budget (optional, enforced)</label><input id="budget" type="number" min="0" step="100" placeholder="5000" value="${esc(state.lastBudget || "")}"></div>
+      <div class="row"><div style="flex:0 1 240px"><label for="budget">Your budget, up to (optional)</label><input id="budget" type="number" min="0" step="100" placeholder="$5,000" value="${esc(state.lastBudget || "")}"><small class="budget-hint">We only show athletes whose fee fits.</small></div>
         <div style="flex:0 0 auto"><button class="btn" id="go">Find matches</button></div></div>
     </div>
     <div class="chips">${EXAMPLES.map((x, i) => `<button class="chip" data-ex="${i}">${esc(x.slice(0, 48))}…</button>`).join("")}</div>
