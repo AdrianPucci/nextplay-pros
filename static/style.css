@@ -455,3 +455,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 @keyframes faces { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 @media (max-width: 640px) { .faces figure, .faces img { width: 84px; } .faces img { height: 84px; } }
 @media (prefers-reduced-motion: reduce) { .faces-track { animation: none; } }
+/* Keep the athletes' heads in frame: anchor the silhouette band near the top of the image */
+.band { background-position: center 25%; }
+.band.slim { height: clamp(120px, 15vw, 220px); background-position: center 30%; }
+@media (max-width: 640px) { .band.slim { height: 110px; background-size: auto 260%; background-position: 30% 8%; } .band { background-position: 30% 10%; } }
