@@ -529,3 +529,6 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .dash-n { font-size: 26px; font-weight: 900; color: var(--navy); line-height: 1; }
 .dash-card.hot .dash-n { color: var(--brand); }
 @media (max-width: 640px) { #stepper { padding: 0 10px; } .step .txt small { display: none; } .tab-sep { display: none; } }
+
+.why-two { margin: 4px 0 12px; padding-left: 20px; display: grid; gap: 6px; }
+.why-two b { color: var(--brand); }

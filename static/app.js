@@ -892,7 +892,11 @@ function viewAbout() {
   <div class="panel founder">
     <h2>Why I'm building this</h2>
     <p>As a designer, I worked with the NBA, MLB, and NFL and on more than five Olympic Games. I've seen stars rise and fade, and I've seen how much fans love both the memories and the journeys behind them.</p>
-    <p>NextPlay Pros is the platform I've long wanted to build: real business opportunities for stars past their prime, a way to reconnect with their fans and inspire people who want to hear their stories, and a moment to shine for up-and-coming athletes, with audiences who want to know who they are.</p>
+    <p>NextPlay Pros is the platform I've long wanted to build, for two kinds of athletes:</p>
+    <ul class="why-two">
+      <li><b>Stars past their prime:</b> real business opportunities, a way to reconnect with their fans, and a stage to inspire people who want to hear their stories.</li>
+      <li><b>Up-and-coming athletes:</b> their moment to shine, and a way to connect with audiences who want to know who they are.</li>
+    </ul>
     <p class="meta">Adrian Vellinga · Yale SOM · MGT 409 final project</p>
   </div>
   <h2 class="about-h">Athletes who show why</h2>
