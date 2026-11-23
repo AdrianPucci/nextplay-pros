@@ -4633,5 +4633,35 @@
       ],
       "note": "Jordan\u2019s listed fee range is $600\u2013$1,500, with a $600 minimum; confirm whether the two-hour clinic for 60 kids can be booked within the $800 budget."
     }
+  },
+  {
+    "run_id": "882e124153",
+    "time": "2026-11-23T03:06:30+00:00",
+    "agent": "story_builder",
+    "input": "Athlete basics: <untrusted source=\"athlete form\"> Name: David Rosenberg Sport: Tennis Level: Former College City: Dallas </untrusted> Athlete notes: <untrusted source=\"athlete notes\"> I play to win, both in sports and in my professional life after college athletics. I\u2019m always looking for opportunities to share my story of perseverance on and off the court. </untrusted>",
+    "tool_calls": [],
+    "reasoning": [],
+    "output": {
+      "headline": "Perseverance Beyond the Tennis Court",
+      "bio": "After college athletics, David Rosenberg carried his competitive mindset into his professional life. A former college tennis player based in Dallas, he says he plays to win in both sport and work. He welcomes opportunities to share his story of perseverance on and off the court.",
+      "story": "A former college tennis player from Dallas, David Rosenberg brings a competitive mindset to his professional life after athletics. He shares a story of perseverance on and off the court, connecting lessons from sport with the world of work.",
+      "topics": [
+        "Perseverance On and Off the Court",
+        "Competing in Work and Sport",
+        "Carrying a Competitive Mindset",
+        "Life After College Athletics"
+      ],
+      "best_fit_events": [
+        "company perseverance and teamwork programs",
+        "college athletics alumni gatherings",
+        "Dallas-area tennis club events"
+      ],
+      "categories": [
+        "speaking"
+      ],
+      "claims_to_verify": [
+        "Former college tennis player"
+      ]
+    }
   }
 ]

@@ -411,6 +411,23 @@ const FEATURED = [
       "Named a Utah Jazz team ambassador after his playing career [6]",
     ],
     why: "A champion and All-Star whose name still means something in Utah and in Turkey, now well past his playing days. NextPlay Pros would put him in front of community events, youth clinics, and Turkish-American groups that would love to book him but have no idea how to reach him." },
+  { name: "Jeremy Bloom", alt: "Jeremy Bloom", role: "Two-time Olympic skier · NFL draft pick · Colorado", photo: "/static/img/bloom.jpg", initials: "JB", hue: 200,
+    credit: 'Photo: Web Summit / Sportsfile, <a href="https://commons.wikimedia.org/wiki/File:Sportsfile_(Web_Summit)_(15090782254).jpg" target="_blank" rel="noopener">CC BY 2.0</a>',
+    facts: [
+      "Born in Fort Collins and raised in Loveland; at 15, the youngest male freestyle skier ever named to the U.S. Ski Team [7]",
+      "Two-time Olympian in moguls (2002, 2006), three-time World Champion, 11 World Cup wins; U.S. Ski Hall of Fame, 2013 [7]",
+      "Freshman All-American receiver and return man at the University of Colorado; drafted by the Philadelphia Eagles in 2006 [7]",
+      "Co-founded the marketing-tech company Integrate and founded Wish of a Lifetime, a nonprofit that grants wishes to seniors [7]",
+    ],
+    why: "Two sports, a business, and a charity: a story companies pay to hear at keynotes. NextPlay Pros would also put him within reach of the schools, senior centers, and local nonprofits that would never know how to book him." },
+  { name: "Wyndham Clark", alt: "Wyndham Clark", role: "Two-time U.S. Open champion · Denver", photo: "/static/img/clark.jpg", initials: "WC", hue: 130,
+    credit: 'Photo: Titleist, <a href="https://commons.wikimedia.org/wiki/File:Wyndham_Clark_2023_01.png" target="_blank" rel="noopener">CC BY 3.0</a>',
+    facts: [
+      "Born in Denver in 1993; played college golf at Oklahoma State and the University of Oregon [8]",
+      "Turned pro in 2017 and broke through in 2023 with the Wells Fargo Championship and his first U.S. Open [8]",
+      "Won his second U.S. Open in June 2026 at Shinnecock Hills, leading wire to wire [9]",
+    ],
+    why: "A Denver kid who became a two-time major champion. Even at the top of the game, his hometown's junior clinics, school assemblies, and charity events have no simple way to ask. That's the gap NextPlay Pros closes, and it's even bigger for local golf pros who never made the Tour."},
 ];
 function viewAbout() {
   const card = (a) => `<article class="feature">
@@ -456,8 +473,8 @@ function viewAbout() {
     <p>I spent years doing design work alongside sports and event teams in Utah. Over and over I met athletes with incredible stories who were past their playing days, not household names, or still on the rise, and the businesses and events that would have loved to book them had no idea how to reach them. NextPlay Pros is the bridge I kept wishing existed.</p>
     <p class="meta">Adrian Pucci · Yale SOM · MGT 409 final project</p>
   </div>
-  <h2 class="about-h">The athletes who inspired it</h2>
-  <p class="sub">Two people from my own circle, and exactly who NextPlay Pros is for. They are shown here to illustrate the idea; they are not part of the demo roster, and no fees or contact details are listed.</p>
+  <h2 class="about-h">Athletes who show why</h2>
+  <p class="sub">Real athletes who show who NextPlay Pros is for. MG and Memo are from my own circle; Jeremy and Wyndham are Colorado stories everyone here knows. They are shown to illustrate the idea, not as members: they are not in the demo roster, and no fees or contact details are listed.</p>
   <div class="grid">${FEATURED.map(card).join("")}</div>
   <div class="panel sources"><b>Sources</b><ol>
     <li><a href="https://www.sltrib.com/sports/2017/12/04/park-citys-maryguenn-vellinga-is-utahs-best-hope-for-glory-as-salt-palace-hosts-usa-boxing-national-championships-this-week" target="_blank" rel="noopener">Salt Lake Tribune, Dec 2017</a></li>
@@ -466,6 +483,9 @@ function viewAbout() {
     <li><a href="https://townlift.com/2026/08/mountain-mettle-returns-aug-22-with-focus-on-youth-scholarships/" target="_blank" rel="noopener">TownLift, Aug 2026</a></li>
     <li><a href="https://en.wikipedia.org/wiki/Mehmet_Okur" target="_blank" rel="noopener">Wikipedia: Mehmet Okur</a></li>
     <li><a href="https://www.deseret.com/2014/9/28/20549451/mehmet-okur-named-team-ambassador-for-utah-jazz" target="_blank" rel="noopener">Deseret News, Sep 2014</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Jeremy_Bloom" target="_blank" rel="noopener">Wikipedia: Jeremy Bloom</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Wyndham_Clark" target="_blank" rel="noopener">Wikipedia: Wyndham Clark</a></li>
+    <li><a href="https://www.cbsnews.com/news/wyndham-clark-u-s-open-2026-golf/" target="_blank" rel="noopener">CBS News, Jun 2026</a></li>
   </ol></div>`;
 }
 

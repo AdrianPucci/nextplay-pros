@@ -2022,5 +2022,20 @@
     "reasoning_tokens": 248,
     "cost_usd": 0.00042104,
     "seconds": 11.71
+  },
+  {
+    "run_id": "882e124153",
+    "time": "2026-11-23T03:06:30+00:00",
+    "agent": "story_builder",
+    "model": "gpt-6-luna",
+    "requests": 1,
+    "tool_calls": 0,
+    "input_tokens": 1385,
+    "cached_input_tokens": 0,
+    "cache_write_tokens": 1259,
+    "output_tokens": 406,
+    "reasoning_tokens": 209,
+    "cost_usd": 0.00037297,
+    "seconds": 5.86
   }
 ]
