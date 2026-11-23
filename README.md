@@ -2,7 +2,7 @@
 
 **An AI booking desk that gets overlooked athletes (retired, mid-level, and rising) paid speaking, appearance, clinic, and entertainment gigs with the businesses, schools, and events that want them, with the athlete in control of who can reach them.**
 
-MGT 409 Final Project · Adrian Pucci · Report: `report.html` · Slides: `slides.html`
+MGT 409 Final Project · Adrian Vellinga · Report: `report.html` · Slides: `slides.html`
 
 ---
 

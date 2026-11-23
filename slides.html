@@ -25,7 +25,7 @@ blockquote{font-size:.8em;border-left:5px solid var(--orange);margin:0 0 .5em;pa
 </style></head><body>
 <div class="reveal"><div class="slides">
 <section class="dark" data-background-color="#0f1b2d">
-  <div class="kicker">MGT 409 · Final Project · Adrian Pucci</div>
+  <div class="kicker">MGT 409 · Final Project · Adrian Vellinga</div>
   <h1>NextPlay Pros</h1>
   <p class="pitch">An AI booking desk that gets overlooked athletes paid gigs, with the athlete in control of who can reach them.</p>
   <div class="crew" id="crew1"></div>
@@ -86,7 +86,7 @@ blockquote{font-size:.8em;border-left:5px solid var(--orange);margin:0 0 .5em;pa
 <rect x="800" y="384" width="12" height="12" class="py"/><text x="818" y="395" class="lab">plain Python (rules)</text>
 <rect x="800" y="404" width="12" height="12" class="vault"/><text x="818" y="415" class="lab">private data</text>
 </svg>
-  <p class="small"><b>The team every pro has:</b> Scout = talent scout · Gatekeeper = booking agent &amp; protector · Story Builder = publicist. The AI understands, ranks, writes, and judges; Python decides who exists, the budget, and who sees contact details. All on gpt-6-luna.</p>
+  <p class="small"><b>The team every pro has:</b> Scout = talent scout · Gatekeeper = booking agent &amp; protector · Story Builder = promoter. The AI understands, ranks, writes, and judges; Python decides who exists, the budget, and who sees contact details. All on gpt-6-luna.</p>
 </section>
 
 <section>
@@ -199,23 +199,36 @@ blockquote{font-size:.8em;border-left:5px solid var(--orange);margin:0 0 .5em;pa
       <rect x="140" y="164" width="14" height="22" rx="5" fill="${INK}"/><rect x="156" y="164" width="14" height="22" rx="5" fill="${INK}"/>
       <rect x="152" y="170" width="6" height="8" fill="${INK}"/>
       <circle cx="147" cy="186" r="5" fill="#9fdcec"/><circle cx="163" cy="186" r="5" fill="#9fdcec"/>`,
-    // Story Builder: writer. Red beret, pencil behind the ear, open notebook.
+    // Story Builder: promoter (she/her), African American, with attitude. Afro puff, sunglasses, arched brow, smirk,
+    // gold hoops, headset mic, sharp orange blazer, hand on hip, megaphone up.
     story_builder: (m) => `${legs("#8a96ad", "#3b4763")}
-      <rect x="54" y="126" width="92" height="68" rx="16" fill="#f4f1ea"/>
-      <rect x="54" y="134" width="92" height="8" fill="#e6c27a"/><rect x="54" y="152" width="92" height="8" fill="#e6c27a"/><rect x="54" y="170" width="92" height="8" fill="#e6c27a"/>
-      <rect x="88" y="116" width="24" height="12" rx="3" fill="#b7c2d6"/>
-      <rect x="58" y="62" width="84" height="58" rx="22" fill="#dfe5ee" stroke="#b7c2d6" stroke-width="2"/>
-      <circle cx="84" cy="88" r="12" fill="#fff" stroke="${INK}" stroke-width="3"/><circle cx="116" cy="88" r="12" fill="#fff" stroke="${INK}" stroke-width="3"/>
-      <line x1="96" y1="88" x2="104" y2="88" stroke="${INK}" stroke-width="3"/>
-      ${eyes(m, 84, 116, 88)}${mouth(m, 108)}
-      <ellipse cx="96" cy="60" rx="46" ry="14" fill="#c62828"/><circle cx="96" cy="46" r="5" fill="#c62828"/>
-      <rect x="140" y="66" width="8" height="38" rx="2" fill="#e6c27a" transform="rotate(20 144 85)"/>
-      <path d="M148 101 L152 112 L156 100 Z" fill="#f4d9b0" transform="rotate(20 144 85)"/>
-      <path d="M60 158 Q50 168 66 176" fill="none" stroke="#b7c2d6" stroke-width="10" stroke-linecap="round"/>
-      <path d="M140 158 Q150 168 134 176" fill="none" stroke="#b7c2d6" stroke-width="10" stroke-linecap="round"/>
-      <path d="M64 162 L100 170 L100 196 L64 188 Z" fill="#fff" stroke="#9aa7bf" stroke-width="2"/><path d="M136 162 L100 170 L100 196 L136 188 Z" fill="#fff" stroke="#9aa7bf" stroke-width="2"/>
-      <line x1="70" y1="172" x2="94" y2="177" stroke="#9fdcec" stroke-width="2"/><line x1="70" y1="179" x2="94" y2="184" stroke="#9fdcec" stroke-width="2"/>
-      <line x1="106" y1="177" x2="130" y2="172" stroke="#9fdcec" stroke-width="2"/><line x1="106" y1="184" x2="124" y2="180" stroke="#9fdcec" stroke-width="2"/>`,
+      <rect x="54" y="126" width="92" height="68" rx="12" fill="#ff5a1f"/>
+      <path d="M100 126 L84 126 L100 154 L116 126 Z" fill="#0f1b2d"/>
+      <path d="M84 126 L92 142 L80 150 Z M116 126 L108 142 L120 150 Z" fill="#d9440f"/>
+      <circle cx="100" cy="174" r="3" fill="#0f1b2d"/>
+      <rect x="88" y="116" width="24" height="12" rx="3" fill="#53301c"/>
+      <circle cx="100" cy="34" r="27" fill="#1a110c"/><circle cx="86" cy="26" r="10" fill="#2a1b12" opacity=".6"/>
+      <rect x="84" y="54" width="32" height="7" rx="3.5" fill="#ff5a1f"/>
+      <rect x="58" y="62" width="84" height="58" rx="22" fill="#6b4026" stroke="#53301c" stroke-width="2"/>
+      <path d="M58 84 Q56 56 100 56 Q144 56 142 84 Q130 66 100 66 Q70 66 58 84 Z" fill="#1a110c"/>
+      <circle cx="59" cy="104" r="5" fill="none" stroke="#e6c27a" stroke-width="2.5"/><circle cx="141" cy="104" r="5" fill="none" stroke="#e6c27a" stroke-width="2.5"/>
+      ${m === "thinking"
+        ? `<rect x="68" y="${78 + 6}" width="28" height="15" rx="7" fill="#0b1630"/><rect x="104" y="84" width="28" height="15" rx="7" fill="#0b1630"/>`
+        : `<rect x="68" y="80" width="28" height="15" rx="7" fill="#0b1630"/><rect x="104" y="80" width="28" height="15" rx="7" fill="#0b1630"/>`}
+      <rect x="94" y="84" width="12" height="3" fill="#0b1630"/><path d="M68 84 L60 82 M132 84 L140 82" stroke="#0b1630" stroke-width="3" stroke-linecap="round"/>
+      <path d="M72 84 L82 84" stroke="#ff8a3d" stroke-width="3" stroke-linecap="round" opacity=".85"/><path d="M108 84 L118 84" stroke="#ff8a3d" stroke-width="3" stroke-linecap="round" opacity=".85"/>
+      <path d="M72 75 Q82 72 92 75" fill="none" stroke="#120c09" stroke-width="3" stroke-linecap="round"/>
+      <path d="M108 74 Q117 65 127 71" fill="none" stroke="#120c09" stroke-width="3" stroke-linecap="round"/>
+      ${m === "thinking" ? `<path d="M92 107 L110 105" stroke="#120c09" stroke-width="3" stroke-linecap="round"/>`
+        : `<path d="M88 104 Q102 109 115 98" fill="none" stroke="#c2185b" stroke-width="4.5" stroke-linecap="round"/>`}
+      <path d="M61 88 Q58 66 74 58" fill="none" stroke="#3b4763" stroke-width="4" stroke-linecap="round"/>
+      <rect x="54" y="86" width="10" height="14" rx="4" fill="#3b4763"/>
+      <path d="M60 100 Q64 112 80 112" fill="none" stroke="#3b4763" stroke-width="3" stroke-linecap="round"/><circle cx="82" cy="112" r="3.5" fill="#3b4763"/>
+      <path d="M56 140 Q30 156 50 176 L58 172" fill="none" stroke="#6b4026" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M144 140 Q162 132 166 118" fill="none" stroke="#6b4026" stroke-width="10" stroke-linecap="round"/>
+      <path d="M160 120 L186 94 L200 128 L172 128 Z" fill="#f4f1ea" stroke="#9aa7bf" stroke-width="2" stroke-linejoin="round"/>
+      <rect x="158" y="116" width="13" height="13" rx="3" fill="#0f1b2d"/>
+      <path d="M202 92 L208 84 M204 110 L212 110 M196 78 L198 70" stroke="#ff5a1f" stroke-width="3" stroke-linecap="round"/>`,
     // Gatekeeper: bouncer. Square, shades, earpiece, shield badge, velvet rope post.
     gatekeeper: (m) => `${legs("#6f7d99", "#232836")}
       <rect x="50" y="128" width="100" height="66" rx="6" fill="#232836"/>
@@ -237,7 +250,7 @@ blockquote{font-size:.8em;border-left:5px solid var(--orange);margin:0 0 .5em;pa
       <path d="M172 160 Q190 176 200 168" fill="none" stroke="#c62828" stroke-width="6" stroke-linecap="round"/>`,
   };
   const LABEL = { scout: "Scout, a talent-scout robot in an orange ball cap with binoculars and a clipboard",
-    story_builder: "Story Builder, a writer robot in a red beret with a pencil and an open notebook",
+    story_builder: "Story Builder, a confident African American promoter robot with an afro puff, sunglasses, gold hoops, a headset, an orange blazer, and a megaphone",
     gatekeeper: "Gatekeeper, a square bouncer robot in sunglasses with an earpiece, a shield badge and a velvet rope" };
   // Finish: brushed-metal heads, shaded bodies, soft drop shadow, so the robots read as polished at any size.
   let uid = 0;

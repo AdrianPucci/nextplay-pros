@@ -123,7 +123,8 @@ function openStory() {
   window.addEventListener("message", onMsg); document.addEventListener("keydown", onKey);
 }
 
-function render() { renderTabs(); (VIEWS[state.tab] || VIEWS.find)(); }
+function drawFooter() { const f = $("#foot"); if (f && !f.innerHTML) f.innerHTML = `<div class="foot-brand">${XO(56)}<div><b>NextPlay <span>Pros</span></b><small>Get booked. Get paid. Inspire.</small></div></div>${playbook(false)}<div class="foot-fine">MGT 409 · Yale SOM · Adrian Vellinga · All roster profiles are fictional demo data.</div>`; }
+function render() { drawFooter(); if ($("#acct")) drawAcct(); renderTabs(); (VIEWS[state.tab] || VIEWS.find)(); }
 
 // ---------------------------------------------------------------- booker: Scout
 const EXAMPLES = [
@@ -133,15 +134,17 @@ const EXAMPLES = [
   "Virtual fireside chat on women in leadership for a business school club, budget $3,000.",
 ];
 // ---------------------------------------------------------------- intro banner (home): crossfading athletes + tagline
-const INTRO_SLIDES = [  // two photos per athlete where we have them: action shot first
-  ["mg2.jpg", "MG Vellinga", "Pro boxer · Park City"],
-  ["mg.jpg", "MG Vellinga", "Pro boxer · Park City"],
-  ["bloom2.jpg", "Jeremy Bloom", "Olympic skier · NFL draft pick"],
-  ["bloom.jpg", "Jeremy Bloom", "Olympic skier · NFL draft pick"],
-  ["clark.jpg", "Wyndham Clark", "2x U.S. Open champion"],
-  ["clark2.jpg", "Wyndham Clark", "2x U.S. Open champion"],
-  ["dauwalter.jpg", "Courtney Dauwalter", "Ultrarunner · former teacher"],
-  ["coburn.jpg", "Emma Coburn", "Steeplechase world champion · CO"],
+const INTRO_SLIDES = [  // generated images: athlete types, not names, no one looking at the camera
+  ["gen/boxer2.jpg", "Boxing", "Fighters with comeback stories"],
+  ["gen/basketball.jpg", "Basketball", "Former college & pro players"],
+  ["gen/wheelchair.jpg", "Adaptive sports", "Paralympians & wheelchair athletes"],
+  ["gen/skier.jpg", "Alpine skiing", "Olympians & mountain locals"],
+  ["gen/runner2.jpg", "Track", "Rising stars & record holders"],
+  ["gen/golfer2.jpg", "Golf", "Tour pros & club champions"],
+  ["gen/soccer.jpg", "Soccer", "Women's soccer leaders"],
+  ["gen/dancer.jpg", "Dance", "Performers & coaches"],
+  ["gen/hockey.jpg", "Hockey", "Hometown heroes"],
+  ["gen/runner.jpg", "Track", "Distance & mountain runners"],
 ];
 function introBanner() {
   const n = INTRO_SLIDES.length, step = 1.6;  // seconds per photo: under 2 s per athlete
@@ -162,6 +165,28 @@ function introBanner() {
 document.addEventListener("click", (e) => {
   if (e.target.closest("[data-go-athlete]")) { state.role = "athlete"; state.tab = "build"; render(); window.scrollTo(0, 0); }
 });
+
+// ---------------------------------------------------------------- Brand: the X-and-O play + sport symbols (line art)
+const XO = (size = 64, cls = "") => `<svg class="xo ${cls}" viewBox="0 0 32 32" width="${size}" height="${size}" aria-hidden="true"><g stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"><path d="M5 20 L11 26 M11 20 L5 26"/><circle cx="24.5" cy="8" r="4.2"/><path d="M9 17 Q 10.5 10.5 16.8 10.2" stroke-width="2" stroke-dasharray="2.4 2.4"/><path d="M15 7.9 L18 10.2 L15.2 12.5" stroke-width="2" stroke-linejoin="round"/></g></svg>`;
+const SPORT_SVG = {
+  Basketball: '<circle cx="16" cy="16" r="12"/><path d="M4 16h24M16 4v24M7.5 7.5c4 4 4 13 0 17M24.5 7.5c-4 4-4 13 0 17"/>',
+  Soccer: '<circle cx="16" cy="16" r="12"/><path d="M16 10l5 3.6-1.9 5.9h-6.2L11 13.6z"/><path d="M16 10V4.5M21 13.6l5.5-1.8M19.1 19.5l3.3 4.6M12.9 19.5l-3.3 4.6M11 13.6l-5.5-1.8"/>',
+  Football: '<path d="M5 27C3 18 9 5 27 5c2 9-4 22-22 22z"/><path d="M11 21l10-10M13 15l4 4M15.5 12.5l4 4M10.5 17.5l4 4"/>',
+  Baseball: '<circle cx="16" cy="16" r="12"/><path d="M9 6.5c3 3 3 16 0 19M23 6.5c-3 3-3 16 0 19"/><path d="M9.5 10l2-1M10.5 14h2M10.5 18h2M9.5 22l2 1M22.5 10l-2-1M21.5 14h-2M21.5 18h-2M22.5 22l-2 1" stroke-width="1.6"/>',
+  Hockey: '<path d="M9 3l7 19c.6 1.6 2 2.5 3.6 2.5H27"/><ellipse cx="9" cy="25.5" rx="5" ry="2"/>',
+  Tennis: '<circle cx="16" cy="16" r="12"/><path d="M6 8c6 4 6 12 0 16M26 8c-6 4-6 12 0 16"/>',
+  Golf: '<path d="M11 28V4l12 5-12 5"/><ellipse cx="16" cy="28" rx="10" ry="2"/>',
+  Skiing: '<circle cx="21" cy="5.5" r="2.5"/><path d="M4 22l24 8M8 10l8 3 2 6-5 4M16 13l5-4 4 4"/>',
+  Track: '<circle cx="19" cy="5" r="2.5"/><path d="M8 13l6-3 5 3 3 5M14 10l-2 8-6 4M12 18l6 3v7"/>',
+  Volleyball: '<circle cx="16" cy="16" r="12"/><path d="M16 4c-2 7 2 12 9.5 14M6 9c7-1 11 3 12 10M8 25c3-6 9-8 16-6"/>',
+  Boxing: '<path d="M9 14V9a6 6 0 0 1 6-6h5a6 6 0 0 1 6 6v8a6 6 0 0 1-6 6h-9a4 4 0 0 1-4-4v-1a4 4 0 0 1 4-4h6"/><path d="M10 23v6h12v-6"/>',
+};
+const sportSvg = (name, size = 34) => `<svg class="sport-ic" viewBox="0 0 32 32" width="${size}" height="${size}" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${SPORT_SVG[name]}</g></svg>`;
+function playbook(label = true) {
+  const names = Object.keys(SPORT_SVG);
+  const items = names.map((n, i) => `<span class="pb-item" title="${n}">${sportSvg(n)}${label ? `<small>${n}</small>` : ""}</span>${i % 4 === 3 && i < names.length - 1 ? `<span class="pb-xo">${XO(30)}</span>` : ""}`).join("");
+  return `<div class="playbook" aria-label="Sports on NextPlay Pros">${items}</div>`;
+}
 
 function whoFor() {
   return `<section class="who" aria-label="Who NextPlay Pros is for">
@@ -198,6 +223,7 @@ function howItWorks() {
       <div class="how-num">${n}</div>${bot(b, mood, 120)}
       <h3>${title}</h3><div class="how-who">${who}</div><p>${text}</p></div>`;
   return `<section class="how" aria-label="How NextPlay Pros works">
+    <div class="how-xo">${XO(84)}</div>
     <div class="how-kicker">How it works</div>
     <h2>The team every pro has, now for every athlete</h2>
     <div class="how-steps">
@@ -205,9 +231,10 @@ function howItWorks() {
         "Reads what a school, team, business, or charity is planning and finds athletes whose story, city, budget, and schedule fit. Every match comes with a reason.")}
       ${step(2, "gatekeeper", "classic", "Booking agents &amp; protectors", "Gatekeeper · your appearance guardrails",
         "We screen every request for scams and tricks, check it against the athlete's rider, schedule, and NIL rules, and protect both sides with escrow, check-in, and refunds.")}
-      ${step(3, "story_builder", "happy", "Promoters", "Story Builder · your publicist",
-        "Turns an athlete's rough notes into a profile that sells, using only their own facts, so rising athletes and local heroes get noticed like the pros.")}
+      ${step(3, "story_builder", "happy", "Promoters", "Story Builder · your promoter",
+        "She turns an athlete's rough notes into a profile that sells and puts it in front of the right bookers, using only their own facts, so rising athletes and local heroes get noticed like the pros.")}
     </div>
+    ${playbook()}
     <div class="how-foot">You stay in charge: your contact details unlock only when you say yes.</div>
   </section>`;
 }
@@ -249,13 +276,80 @@ document.addEventListener("change", (e) => {
   render();
 });
 
+// ---------------------------------------------------------------- Sign-in (demo: email link, no passwords stored)
+state.user = (() => { try { return JSON.parse(localGet("np_user")) || null; } catch { return null; } })();
+const initials = (n) => String(n || "?").split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
+function drawAcct() {
+  const u = state.user;
+  $("#acct").innerHTML = u
+    ? `<button class="acct-btn" id="acct-btn" aria-haspopup="true"><span class="avatar">${esc(initials(u.name))}</span><span class="acct-name">${esc(u.name.split(" ")[0])}</span></button>`
+    : `<button class="signin-btn" id="acct-btn">Sign in</button>`;
+  $("#acct-btn").onclick = () => (state.user ? acctMenu() : signIn());
+}
+function acctMenu() {
+  const u = state.user;
+  openModal(`<div class="signin"><span class="avatar big">${esc(initials(u.name))}</span><h2>${esc(u.name)}</h2>
+    <p class="sub">${esc(u.email)} · ${u.role === "athlete" ? "Athlete" : "Booking talent"}</p>
+    <div class="row-btns"><button class="btn" data-acct-go>${u.role === "athlete" ? "Go to my inbox" : "Go to my requests"}</button><button class="btn ghost" data-signout>Sign out</button></div></div>`);
+}
+function signIn(opts = {}) {
+  const { title = "Sign in to NextPlay Pros", lead = "Track your requests, replies, and bookings from any device.", name = "", role = state.role } = opts;
+  openModal(`<div class="signin">
+    <div class="signin-logo">${$(".brand .logo").outerHTML}</div>
+    <h2>${esc(title)}</h2><p class="sub">${esc(lead)}</p>
+    <div class="seg" role="tablist"><button data-seg="booker" class="${role === "booker" ? "active" : ""}">I'm booking talent</button><button data-seg="athlete" class="${role === "athlete" ? "active" : ""}">I'm an athlete</button></div>
+    <label>Your name</label><input id="si-name" autocomplete="name" value="${esc(name)}" placeholder="First and last name">
+    <label>Email</label><input id="si-email" type="email" autocomplete="email" placeholder="you@school.org">
+    <button class="btn wide" id="si-go">Email me a sign-in link</button>
+    <div class="or"><span>or</span></div>
+    <button class="btn ghost wide" id="si-google" title="Coming at launch">Continue with Google</button>
+    <p class="fine">No passwords. We email a one-time link, and your contact details stay private until you accept a booking.
+      <br><b>Class demo:</b> no email is sent; the link is simulated on the next screen.</p></div>`);
+  let r = role;
+  document.querySelectorAll("[data-seg]").forEach((b) => (b.onclick = () => { r = b.dataset.seg; document.querySelectorAll("[data-seg]").forEach((x) => x.classList.toggle("active", x === b)); }));
+  $("#si-google").onclick = () => toast("Google sign-in comes at launch. Use the email link for now.");
+  $("#si-go").onclick = () => {
+    const n = $("#si-name").value.trim(), e = $("#si-email").value.trim();
+    if (!n) return toast("Add your name.");
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) return toast("Add a valid email.");
+    $("#modal-body").innerHTML = `<div class="signin"><div class="mail">✉️</div><h2>Check your email</h2>
+      <p class="sub">We sent a sign-in link to <b>${esc(e)}</b>. It works once and expires in 15 minutes.</p>
+      <button class="btn wide" id="si-link">Open the link (demo)</button>
+      <p class="fine">In the real app this button is the link in your inbox.</p></div>`;
+    $("#si-link").onclick = () => {
+      state.user = { name: n, email: e, role: r };
+      localSet("np_user", JSON.stringify(state.user));
+      if (r === "booker") { state.bookerName = n; localSet("np_booker_name", n); }
+      $("#modal").hidden = true; drawAcct();
+      if (state.role !== r) { state.role = r; state.tab = TABS[r][0][0]; }
+      render(); toast(`Welcome, ${n.split(" ")[0]}! You're signed in.`);
+    };
+  };
+}
+document.addEventListener("click", (e) => {
+  if (e.target.closest("[data-signout]")) { state.user = null; try { localStorage.removeItem("np_user"); } catch {} $("#modal").hidden = true; drawAcct(); render(); toast("Signed out."); }
+  if (e.target.closest("[data-acct-go]")) { $("#modal").hidden = true; state.role = state.user.role; state.tab = state.role === "athlete" ? "inbox" : "mine"; render(); }
+  if (e.target.closest("[data-signin]")) signIn();
+});
+// After the first fill-in (a request sent or a profile published), ask them to make an account to follow up.
+function askToSave(kind, name) {
+  if (state.user) return;
+  setTimeout(() => signIn({ title: kind === "athlete" ? "You're live! Save your profile" : "Request sent! Save it to your account",
+    lead: kind === "athlete" ? "Create your free account so you can see requests, accept bookings, and get paid." : "Create your free account to see the athlete's reply and unlock their contact details when they accept.",
+    name, role: kind }), 1400);
+}
+function signInGate(what) {
+  return `<div class="gate card"><div class="gate-icon">🔒</div><h3>Sign in to see ${esc(what)}</h3>
+    <p class="sub">Your requests and bookings are private to your account.</p><button class="btn" data-signin>Sign in</button></div>`;
+}
+
 function viewFind() {
   $("#view").innerHTML = `${introBanner()}${locationBar()}${whoFor()}
   <div class="band" role="img" aria-label="Silhouettes of a basketball player, a golfer, a dancer, and a women's soccer player racing across the page"></div>
   <section class="hero" id="find-hero">
     <h1>Who do you want at your event?</h1>
     <p>Describe it like you'd tell a friend. Scout searches the roster, keeps you under budget, and explains every match.</p>
-    <div class="team-strip">${bot("scout", "happy", 46)}<span><b>Scout</b> finds</span>${bot("story_builder", "happy", 46)}<span><b>Story Builder</b> writes</span>${bot("gatekeeper", "happy", 46)}<span><b>Gatekeeper</b> guards your rider</span></div>
+    <div class="team-strip"><div class="ts">${bot("scout", "happy", 46)}<span><b>Scout</b> finds</span></div><div class="ts">${bot("story_builder", "happy", 46)}<span><b>Story Builder</b> promotes</span></div><div class="ts">${bot("gatekeeper", "happy", 46)}<span><b>Gatekeeper</b> guards your rider</span></div></div>
     <div class="form">
       <div><label for="q">Your event</label><textarea id="q" placeholder="e.g. Motivational speaker for our 200-person sales kickoff in Denver, someone who came back from an injury">${esc(state.lastQuery || "")}</textarea></div>
       <div class="row"><div style="flex:0 1 200px"><label for="budget">Max budget (optional, enforced)</label><input id="budget" type="number" min="0" step="100" placeholder="5000" value="${esc(state.lastBudget || "")}"></div>
@@ -372,11 +466,13 @@ function requestModal(athleteId) {
         : `<div class="alert good">✅ Sent to ${esc(a.name)}${r.status === "flagged" ? " (marked for a careful look)" : ""}. Track it under <b>My requests</b>.</div>`;
       $("#r-out").innerHTML += usageLine(s.usage);
       btn.textContent = "Sent";
+      if (r.status !== "blocked") askToSave("booker", body.booker_name);
     } catch (err) { $("#r-out").innerHTML = `<div class="alert bad">${esc(err.message)}</div>`; btn.disabled = false; btn.textContent = "Send request"; }
   };
 }
 
 async function viewMine() {
+  if (!state.user) { $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div><h1>My requests</h1>${signInGate("your requests")}`; return; }
   $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div><h1>My requests</h1><p class="sub">Contact details unlock only after an athlete accepts.</p><div id="list" class="grid"><div class="thinking"><span class="spinner"></span>Loading…</div></div>`;
   const list = await api(`/api/requests/booker/${state.bookerId}`);
   $("#list").innerHTML = list.length ? list.map((r) => `<div class="req">
@@ -467,7 +563,7 @@ function drawDraft() {
       fee_min: Number($("#d-min").value), fee_max: Number($("#d-max").value), email: $("#d-email").value.trim(), phone: $("#d-phone").value.trim() };
     if (!body.email) return toast("Add a private email so bookers can reach you after you accept.");
     try { const a = await api("/api/athletes", { method: "POST", body }); await loadRoster(); state.athleteId = a.id; localSet("np_athlete", a.id);
-      toast(`Published! ${a.name} is now on the roster.`); state.tab = "inbox"; render();
+      toast(`Published! ${a.name} is now on the roster.`); state.tab = "inbox"; render(); askToSave("athlete", a.name);
     } catch (err) { toast(err.message); }
   };
 }
@@ -574,17 +670,17 @@ function viewAbout() {
       ${a.credit ? `<div class="credit">${a.credit}</div>` : ""}
     </div></article>`;
   $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div>
-  <section class="hero about-hero">
+  <section class="hero about-hero">${XO(220, "xo-watermark")}
     <div class="about-crew">${bot("scout", "happy", 96)}${bot("story_builder", "happy", 96)}${bot("gatekeeper", "happy", 96)}</div>
     <h1>Every athlete's story deserves an audience</h1>
     <button class="story-btn" data-story>▶ Watch our 15-second story</button>
     <p>NextPlay Pros connects former, current, and rising athletes with the schools, companies, nonprofits, and local businesses that want them for talks, appearances, clinics, and events. We do the matching, the writing, and the scam screening. The athlete decides who gets their contact details.</p>
   </section>
   <h2 class="about-h">Meet your team</h2>
-  <p class="sub">Every pro has a team: a scout, a publicist, security. Most athletes never get one. NextPlay Pros gives every athlete a team of three.</p>
+  <p class="sub">Every pro has a team: a scout, a promoter, security. Most athletes never get one. NextPlay Pros gives every athlete a team of three.</p>
   <div class="grid three team">
     <div class="card team-card">${bot("scout", "happy", 140)}<div><h3>Scout</h3><div class="role">Your talent scout</div><p>Reads what a booker is planning, searches the roster, and puts you forward when your story fits: the theme, the city, the budget, and the day you're free.</p></div></div>
-    <div class="card team-card">${bot("story_builder", "happy", 140)}<div><h3>Story Builder</h3><div class="role">Your publicist</div><p>Turns your rough notes into a profile bookers want to hire, using only your facts, and flags every claim to verify before it goes live.</p></div></div>
+    <div class="card team-card">${bot("story_builder", "happy", 140)}<div><h3>Story Builder</h3><div class="role">Your promoter</div><p>She talks you up, loudly and accurately. She turns your rough notes into a profile bookers want to hire, using only your facts, and flags every claim to verify before it goes live.</p></div></div>
     <div class="card team-card">${bot("gatekeeper", "happy", 140)}<div><h3>Gatekeeper</h3><div class="role">Your appearance guardrails</div><p>Checks every request against your rider, your schedule, and your safety rules before you see it, and stops scams, tricks, and NIL problems.</p></div></div>
   </div>
   <h2 class="about-h">Who it serves</h2>
@@ -603,7 +699,7 @@ function viewAbout() {
   <div class="panel founder">
     <h2>Why I'm building this</h2>
     <p>I spent years doing design work alongside sports and event teams in Utah. Over and over I met athletes with incredible stories who were past their playing days, not household names, or still on the rise, and the businesses and events that would have loved to book them had no idea how to reach them. NextPlay Pros is the bridge I kept wishing existed.</p>
-    <p class="meta">Adrian Pucci · Yale SOM · MGT 409 final project</p>
+    <p class="meta">Adrian Vellinga · Yale SOM · MGT 409 final project</p>
   </div>
   <h2 class="about-h">Athletes who show why</h2>
   <p class="sub">Real athletes who show who NextPlay Pros is for. MG and Memo are from my own circle; Jeremy, Wyndham, Courtney, and Emma are Colorado stories everyone here knows. They are shown to illustrate the idea, not as members: they are not in the demo roster, and no fees or contact details are listed.</p>
