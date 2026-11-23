@@ -231,15 +231,17 @@ blockquote{font-size:.8em;border-left:5px solid var(--orange);margin:0 0 .5em;pa
       <path d="M160 120 L186 94 L200 128 L172 128 Z" fill="#f4f1ea" stroke="#9aa7bf" stroke-width="2" stroke-linejoin="round"/>
       <rect x="158" y="116" width="13" height="13" rx="3" fill="#0f1b2d"/>
       <path d="M202 92 L208 84 M204 110 L212 110 M196 78 L198 70" stroke="#ff5a1f" stroke-width="3" stroke-linecap="round"/>`,
-    // Gatekeeper: bouncer. Square, shades, earpiece, shield badge, velvet rope post.
+    // Gatekeeper: bouncer, Latino, medium-brown skin, short dark hair, mustache and stubble. Square, shades, earpiece, shield badge, velvet rope post.
     gatekeeper: (m) => `${legs("#6f7d99", "#232836")}
       <rect x="50" y="128" width="100" height="66" rx="6" fill="#232836"/>
       <path d="M100 128 L88 128 L100 150 L112 128 Z" fill="#f4f1ea"/><path d="M100 136 L96 150 L100 160 L104 150 Z" fill="#c62828"/>
       <path d="M124 142 L136 146 L136 155 Q136 163 124 168 Q112 163 112 155 L112 146 Z" fill="#e6c27a" stroke="#0b1630" stroke-width="2"/>
       <path d="M118 155 L123 160 L131 150" fill="none" stroke="#0b1630" stroke-width="2.5" stroke-linecap="round"/>
-      <rect x="88" y="118" width="24" height="12" rx="2" fill="#9aa7bf"/>
-      <rect x="52" y="56" width="96" height="66" rx="6" fill="#c9d3e3" stroke="#9aa7bf" stroke-width="2"/>
-      <rect x="52" y="52" width="96" height="12" rx="3" fill="#232836"/>
+      <rect x="88" y="118" width="24" height="12" rx="2" fill="#8a5a3a"/>
+      <rect x="52" y="56" width="96" height="66" rx="6" fill="#a8744f" stroke="#7a4e32" stroke-width="2"/>
+      <path d="M52 66 L52 58 Q52 48 64 48 L136 48 Q148 48 148 58 L148 66 Q140 58 100 58 Q60 58 52 66 Z" fill="#1a110c"/>
+      <path d="M70 112 Q100 126 130 112 L130 118 Q100 130 70 118 Z" fill="#1a110c" opacity=".55"/>
+      <path d="M90 101 Q100 97 110 101" fill="none" stroke="#1a110c" stroke-width="3.5" stroke-linecap="round"/>
       ${`<rect x="62" y="78" width="34" height="18" rx="6" fill="#0b1630"/><rect x="104" y="78" width="34" height="18" rx="6" fill="#0b1630"/>
       <line x1="96" y1="85" x2="104" y2="85" stroke="#0b1630" stroke-width="4"/>
       <rect x="${m === "thinking" ? 70 : 66}" y="82" width="10" height="4" rx="2" fill="#9fdcec" opacity=".8"/><rect x="${m === "thinking" ? 112 : 108}" y="82" width="10" height="4" rx="2" fill="#9fdcec" opacity=".8"/>`}
@@ -253,29 +255,44 @@ blockquote{font-size:.8em;border-left:5px solid var(--orange);margin:0 0 .5em;pa
   };
   const LABEL = { scout: "Scout, a talent-scout robot in an orange ball cap and sport shades, with binoculars and a clipboard",
     story_builder: "Story Builder, a confident African American promoter robot with an afro puff, sunglasses, gold hoops, a headset, an orange blazer, and a megaphone",
-    gatekeeper: "Gatekeeper, a square bouncer robot in black sunglasses with an earpiece, a shield badge and a velvet rope" };
+    gatekeeper: "Gatekeeper, a square Latino bouncer robot with medium-brown skin, a mustache, and black sunglasses with an earpiece, a shield badge and a velvet rope" };
   // Finish: brushed-metal heads, shaded bodies, soft drop shadow, so the robots read as polished at any size.
   let uid = 0;
   const FINISH = [
     ['fill="#dfe5ee"', "head"], ['fill="#c9d3e3"', "head"], ['fill="#0f1b2d"', "navy"], ['fill="#232836"', "suit"],
     ['fill="#f4f1ea"', "cream"], ['fill="#ff5a1f"', "orange"], ['fill="#c62828"', "red"], ['fill="#e6c27a"', "gold"],
+    ['fill="#6b4026"', "skin"], ['fill="#1a110c"', "hair"], ['fill="#8a96ad"', "leg"], ['fill="#6f7d99"', "leg"],
+    ['fill="#3b4763"', "shoe"], ['fill="#0b1630"', "lens"], ['fill="#d9440f"', "orange2"], ['fill="#a8744f"', "tan"], ['fill="#8a5a3a"', "tan"],
   ];
-  const grad = (id, top, bottom) => `<linearGradient id="${id}" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="${top}"/><stop offset="1" stop-color="${bottom}"/></linearGradient>`;
+  // "3D" finish: every part gets a radial light from the upper left (highlight -> base -> shadow edge),
+  // arms get a tube gradient, and body + head get a specular highlight and a contact shadow under the head.
+  const rad = (id, hi, mid, lo) => `<radialGradient id="${id}" cx=".32" cy=".25" r=".95" fx=".3" fy=".2"><stop offset="0" stop-color="${hi}"/><stop offset=".55" stop-color="${mid}"/><stop offset="1" stop-color="${lo}"/></radialGradient>`;
+  const tube = (id, hi, lo) => `<linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="12" y2="12" spreadMethod="reflect"><stop offset="0" stop-color="${hi}"/><stop offset="1" stop-color="${lo}"/></linearGradient>`;
   window.bot = function (name, mood = "classic", size = 48, cls = "") {
     const draw = BOTS[name] || BOTS.scout;
     const u = `b${++uid}`;
     let body = draw(mood);
     FINISH.forEach(([find, key]) => { body = body.split(find).join(`fill="url(#${key}-${u})"`); });
+    body = body.split('stroke="#b7c2d6" stroke-width="10"').join(`stroke="url(#arm-${u})" stroke-width="11"`)
+               .split('stroke="#9aa7bf" stroke-width="11"').join(`stroke="url(#arm-${u})" stroke-width="12"`)
+               .split('stroke="#6b4026" stroke-width="10"').join(`stroke="url(#skinarm-${u})" stroke-width="11"`);
     const defs = `<defs>
-      ${grad(`head-${u}`, "#f7f9fc", "#b9c4d6")}${grad(`navy-${u}`, "#24395a", "#0b1424")}${grad(`suit-${u}`, "#3a4256", "#161a24")}
-      ${grad(`cream-${u}`, "#ffffff", "#ddd6c8")}${grad(`orange-${u}`, "#ff7a45", "#d9440f")}${grad(`red-${u}`, "#e04545", "#9e1c1c")}
-      ${grad(`gold-${u}`, "#f3d89c", "#c49a45")}
-      <filter id="sh-${u}" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#0b1424" flood-opacity=".35"/></filter>
-      <radialGradient id="gl-${u}" cx=".35" cy=".25" r=".6"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+      ${rad(`head-${u}`, "#ffffff", "#d6dde9", "#8e9ab0")}${rad(`navy-${u}`, "#3a5580", "#14233c", "#060c18")}${rad(`suit-${u}`, "#55607a", "#262c3b", "#0c0f16")}
+      ${rad(`cream-${u}`, "#ffffff", "#efe9dd", "#b9b09e")}${rad(`orange-${u}`, "#ffb08a", "#ff5a1f", "#a8300a")}${rad(`orange2-${u}`, "#ff8a5c", "#d9440f", "#7a2306")}
+      ${rad(`red-${u}`, "#ff7b7b", "#c62828", "#6e1010")}${rad(`gold-${u}`, "#fff1c9", "#e6c27a", "#9c7530")}
+      ${rad(`skin-${u}`, "#a8714c", "#6b4026", "#3a1f10")}${rad(`hair-${u}`, "#4a3326", "#1a110c", "#000")}
+      ${rad(`leg-${u}`, "#c3cbdb", "#8a96ad", "#4f5a70")}${rad(`shoe-${u}`, "#6b7898", "#3b4763", "#151a26")}
+      ${rad(`tan-${u}`, "#d9a37a", "#a8744f", "#5e3820")}${rad(`lens-${u}`, "#4a6a9a", "#0b1630", "#000")}
+      ${tube(`arm-${u}`, "#eef2f8", "#8793a9")}${tube(`skinarm-${u}`, "#9a6542", "#4a2a16")}
+      <filter id="sh-${u}" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="2" dy="5" stdDeviation="4" flood-color="#0b1424" flood-opacity=".45"/></filter>
+      <radialGradient id="gl-${u}" cx=".35" cy=".25" r=".6"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+      <radialGradient id="ao-${u}" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".35"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
     </defs>`;
-    // a soft highlight over the head gives the "glossy" finish
-    const gloss = `<ellipse cx="92" cy="78" rx="30" ry="14" fill="url(#gl-${u})" pointer-events="none"/>`;
-    return `<svg viewBox="0 0 210 230" width="${size}" height="${Math.round(size * 230 / 210)}" class="bot ${cls}" role="img" aria-label="${LABEL[name] || name}">${defs}<g filter="url(#sh-${u})">${body}${gloss}</g></svg>`;
+    // specular highlights on head and body, a soft contact shadow where the head meets the body
+    const gloss = `<ellipse cx="100" cy="128" rx="34" ry="7" fill="url(#ao-${u})" pointer-events="none"/>
+      <ellipse cx="84" cy="74" rx="20" ry="8" fill="url(#gl-${u})" pointer-events="none"/>
+      <ellipse cx="76" cy="140" rx="14" ry="8" fill="url(#gl-${u})" opacity=".7" pointer-events="none"/>`;
+    return `<svg viewBox="0 0 215 230" width="${size}" height="${Math.round(size * 230 / 215)}" class="bot ${cls}" role="img" aria-label="${LABEL[name] || name}">${defs}<g filter="url(#sh-${u})">${body}${gloss}</g></svg>`;
   };
   window.BOT_NAMES = { scout: "Scout", story_builder: "Story Builder", gatekeeper: "Gatekeeper" };
 })();
