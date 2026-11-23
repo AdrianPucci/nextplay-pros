@@ -357,6 +357,7 @@ async function viewBehind() {
 // Facts come from the public sources listed on the page. They are NOT in the demo roster (no fees, no contacts).
 const FEATURED = [
   { name: "MG Vellinga", alt: "Maryguenn Vellinga", role: "Professional boxer · Park City, Utah", photo: "/static/img/mg.jpg", initials: "MG", hue: 330,
+    credit: "Photo courtesy of MG Vellinga",
     facts: [
       "Started boxing at 28 and climbed to No. 2 nationally in the Elite Female 112-lb division at the 2017 USA Boxing National Championships [1]",
       "Competed for Utah at the 2018 National Golden Gloves, part of the first full Utah women's team sent to the tournament [2]",

@@ -85,4 +85,5 @@ Contact details live in a separate vault table that no agent can read. They reac
 ## Credits
 
 - About page photo of Mehmet Okur: Stephanie Young Merzel, [CC BY 2.0](https://commons.wikimedia.org/wiki/File:Mehmet_Okur_(cropped).jpg) via Wikimedia Commons.
+- About page photo of MG Vellinga: courtesy of MG Vellinga.
 - About page facts are cited on the page itself.
