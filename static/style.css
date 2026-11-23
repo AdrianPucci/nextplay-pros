@@ -480,3 +480,5 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .chip-f { display: inline-flex; align-items: center; gap: 6px; }
 .chip-f .ui-ic { color: var(--brand); } .chip-f.on .ui-ic { color: #ff8a5c; }
 .pill.charity { display: inline-flex; align-items: center; gap: 4px; }
+
+@media (max-width: 640px) { .role-switch .long { display: none; } }

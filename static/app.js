@@ -319,7 +319,7 @@ function signIn(opts = {}) {
   openModal(`<div class="signin">
     <div class="signin-logo">${$(".brand .logo").outerHTML}</div>
     <h2>${esc(title)}</h2><p class="sub">${esc(lead)}</p>
-    <div class="seg" role="tablist"><button data-seg="booker" class="${role === "booker" ? "active" : ""}">I'm booking talent</button><button data-seg="athlete" class="${role === "athlete" ? "active" : ""}">I'm an athlete</button></div>
+    <div class="seg" role="tablist"><button data-seg="booker" class="${role === "booker" ? "active" : ""}">Booking talent for an event</button><button data-seg="athlete" class="${role === "athlete" ? "active" : ""}">I'm an athlete</button></div>
     <label>Your name</label><input id="si-name" autocomplete="name" value="${esc(name)}" placeholder="First and last name">
     <label>Email</label><input id="si-email" type="email" autocomplete="email" placeholder="you@school.org">
     <button class="btn wide" id="si-go">Email me a sign-in link</button>
@@ -528,7 +528,7 @@ async function drawInbox() {
     ${r.payout ? commitPanel(r, "athlete") : ""}
     ${["pending", "flagged"].includes(r.status) ? `<div class="row" style="justify-content:flex-start"><button class="btn good small" style="flex:0 0 auto" data-decide="${r.id}" data-accept="1">Accept & share my contact</button><button class="btn ghost small" style="flex:0 0 auto" data-decide="${r.id}" data-accept="0">Decline</button></div>` : ""}
   </div>`;
-  $("#inbox").innerHTML = (open.map(reqHtml).join("") || `<div class="empty">No requests yet. Switch to <b>I'm booking talent</b> and send this athlete one.</div>`)
+  $("#inbox").innerHTML = (open.map(reqHtml).join("") || `<div class="empty">No requests yet. Switch to <b>Booking talent for an event or appearance</b> and send this athlete one.</div>`)
     + (blocked.length ? `<details><summary>🛡️ ${blocked.length} request(s) blocked by Gatekeeper</summary><div class="grid">${blocked.map(reqHtml).join("")}</div></details>` : "");
   document.querySelectorAll("[data-checkin]").forEach((b) => (b.onclick = async () => {
     try { await api(`/api/requests/${b.dataset.checkin}/checkin`, { method: "POST", body: { athlete_id: state.athleteId } });
