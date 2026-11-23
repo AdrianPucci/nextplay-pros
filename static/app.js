@@ -103,7 +103,9 @@ const TABS = {
   booker: [["find", "Find talent"], ["browse", "Browse roster"], ["mine", "My requests"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
   athlete: [["inbox", "My inbox"], ["rider", "My profile & rider"], ["build", "Build my profile"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
 };
-const STAFF = new URLSearchParams(location.search).has("staff");  // ?staff=1 shows "Behind the scenes" (for grading)
+const STAFF = new URLSearchParams(location.search).has("staff");
+{ const go = new URLSearchParams(location.search).get("go");  // links from the story video's end card
+  if (go === "build") { state.role = "athlete"; state.tab = "build"; } else if (go === "find") { state.role = "booker"; state.tab = "find"; } }  // ?staff=1 shows "Behind the scenes" (for grading)
 function renderTabs() {
   $("#tabs").innerHTML = TABS[state.role].filter(([k]) => STAFF || k !== "behind").map(([k, l]) => `<button data-tab="${k}" class="${state.tab === k ? "active" : ""}">${l}</button>`).join("");
   document.querySelectorAll(".role-switch button").forEach((b) => b.classList.toggle("active", b.dataset.role === state.role));
@@ -115,7 +117,7 @@ document.addEventListener("click", (e) => { const r = e.target.closest("[data-re
 document.addEventListener("click", (e) => { if (e.target.closest("[data-story]")) openStory(); });
 function openStory() {
   const o = document.createElement("div"); o.className = "story-overlay";
-  o.innerHTML = `<iframe src="/static/story.html?autoplay=1&v=12" title="NextPlay Pros 15-second story" allow="autoplay"></iframe>`;
+  o.innerHTML = `<iframe src="/static/story.html?autoplay=1&v=13" title="NextPlay Pros 15-second story" allow="autoplay"></iframe>`;
   document.body.appendChild(o);
   const close = () => { o.remove(); window.removeEventListener("message", onMsg); document.removeEventListener("keydown", onKey); };
   const onMsg = (m) => { if (m.data === "close-story") close(); };
@@ -135,6 +137,7 @@ const EXAMPLES = [
 ];
 // ---------------------------------------------------------------- intro banner (home): crossfading athletes + tagline
 const INTRO_SLIDES = [  // generated images: athlete types, not names, no one looking at the camera
+  ["gen/mg.jpg", "MG Vellinga", "Pro boxer · Park City, Utah"],
   ["gen/boxer2.jpg", "Boxing", "Fighters with comeback stories"],
   ["gen/basketball.jpg", "Basketball", "Former college & pro players"],
   ["gen/wheelchair.jpg", "Adaptive sports", "Paralympians & wheelchair athletes"],
