@@ -195,3 +195,13 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
 .nil-box { background: #eef3fb; border: 1px solid #c9d6ea; border-radius: 12px; padding: 12px 14px; font-size: 14px; }
 .nil-box ul { margin: 6px 0 8px; padding-left: 18px; }
+
+.commit { background: #f3fbf7; border: 1px solid #cfe9dc; border-radius: 12px; padding: 12px 14px; font-size: 14px; display: grid; gap: 8px; }
+.commit .label { font-size: 12px; font-weight: 800; color: var(--good); text-transform: uppercase; letter-spacing: .05em; }
+.commit .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.pay-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.pay-grid div { background: #fff; border-radius: 8px; padding: 8px; display: grid; }
+.pay-grid b { font-size: 16px; color: var(--ink); }
+.pay-grid span { font-size: 11.5px; color: var(--muted); }
+.commit .btn { justify-self: start; }
+@media (max-width: 640px) { .pay-grid { grid-template-columns: 1fr 1fr; } }

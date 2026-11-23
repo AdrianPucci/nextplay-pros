@@ -155,6 +155,43 @@ def t_nil_rules():
             and rider.nil_flags(college, "Open our running store's 5K and sign posters.") == []),         f"college={rider.nil_flags(college, bad)}, pro={rider.nil_flags(pro, bad)}"
 
 
+@test("C1", "Pay rules: on-time keeps 95%, late returns 25% to the booker, no check-in pays standard", "Code: payout rules",
+      "no-shows / follow-through")
+def t_payout():
+    from app import payout
+    base = {"budget": 1000, "event_date": "2027-03-03", "event_time": "18:00"}
+    on = payout.plan({**base, "checked_in": "2027-03-03T16:45"})
+    short = payout.plan({**base, "checked_in": "2027-03-03T17:30"})
+    late = payout.plan({**base, "checked_in": "2027-03-03T18:20"})
+    ok = (on["athlete_payout"] == 950 and short["athlete_payout"] == 900
+          and late["booker_refund"] == 250 and late["athlete_payout"] == 675)
+    return ok, f"on time {on['athlete_payout']}, <60 min {short['athlete_payout']}, late {late['athlete_payout']} (+{late['booker_refund']} refund)"
+
+
+@test("C2", "Check-in: only the booked athlete, only after accepting, only once", "Code: access check", "wrong action")
+def t_checkin():
+    _fresh_db()
+    r = store.create_request("ath_001", "bk_a", {"message": "hi", "budget": 1000}, "pending", {})
+    results = []
+    for who in ("ath_001",):
+        try:
+            store.check_in(r["id"], who); results.append("checked in before accept")
+        except ValueError:
+            results.append("refused before accept")
+    store.decide(r["id"], "ath_001", True)
+    try:
+        store.check_in(r["id"], "ath_002"); results.append("other athlete checked in")
+    except PermissionError:
+        results.append("other athlete refused")
+    store.check_in(r["id"], "ath_001"); results.append("booked athlete checked in")
+    try:
+        store.check_in(r["id"], "ath_001"); results.append("double check-in allowed")
+    except ValueError:
+        results.append("double check-in refused")
+    want = ["refused before accept", "other athlete refused", "booked athlete checked in", "double check-in refused"]
+    return results == want, "; ".join(results)
+
+
 # ================================================================== live: attacks on the agents
 
 @test("A1", "Scout: blunt injection asking for every athlete's email", "Code: input block", "prompt injection", live=True)

@@ -54,6 +54,7 @@ class RequestIn(BaseModel):
     org: str
     event_type: str
     event_date: str = ""
+    event_time: str = ""  # start time, HH:MM (for the 60-minutes-early check-in rule)
     city: str = ""
     budget: int | None = Field(None, ge=0)
     message: str
@@ -190,6 +191,18 @@ def athlete_inbox(athlete_id: str):
 @app.get("/api/requests/booker/{booker_id}")
 def booker_requests(booker_id: str):
     return store.requests_for_booker(booker_id)
+
+
+class CheckInIn(BaseModel):
+    athlete_id: str
+
+
+@app.post("/api/requests/{rid}/checkin")
+def checkin(rid: str, body: CheckInIn):
+    try:
+        return store.check_in(rid, body.athlete_id)
+    except Exception as e:  # noqa: BLE001
+        _err(e)
 
 
 @app.post("/api/requests/{rid}/decide")

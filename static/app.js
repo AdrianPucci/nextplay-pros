@@ -177,7 +177,7 @@ function requestModal(athleteId) {
     <div class="form">
       <div class="row"><div><label>Your name</label><input id="r-name" value="${esc(state.bookerName)}"></div><div><label>Organization</label><input id="r-org"></div></div>
       <div class="row"><div><label>Type</label><select id="r-type">${a.categories.map((c) => `<option value="${c}">${CAT[c]}</option>`).join("")}</select></div>
-        <div><label>Date</label><input id="r-date" type="date"></div></div>
+        <div><label>Date</label><input id="r-date" type="date"></div><div><label>Start time</label><input id="r-time" type="time"></div></div>
       <div class="row"><div><label>City</label><input id="r-city" value="${esc(b.city || "")}"></div><div><label>Budget offered ($)</label><input id="r-budget" type="number" step="100" value="${esc(b.budget_max ?? state.lastBudget ?? "")}"></div></div>
       <div><label>Message</label><textarea id="r-msg" rows="4" placeholder="Tell ${esc(a.name.split(" ")[0])} about the event, audience, and what you'd like them to do."></textarea></div>
       <div class="meta">Fee range: ${money(a.fee_min)}–${money(a.fee_max)}</div>
@@ -204,7 +204,7 @@ function requestModal(athleteId) {
     if (!$("#r-agree").checked) return toast("Please agree to the Event Rider and Terms first.");
     if ($("#r-nil") && !$("#r-nil").checked) return toast("Please confirm the NIL rules first.");
     const body = { agreed_nil: !!$("#r-nil"), agreed_terms: true, transport_offered: $("#r-transport").value, athlete_id: a.id, booker_id: state.bookerId, booker_name: $("#r-name").value.trim(), org: $("#r-org").value.trim(),
-      event_type: $("#r-type").value, event_date: $("#r-date").value, city: $("#r-city").value.trim(),
+      event_type: $("#r-type").value, event_date: $("#r-date").value, event_time: $("#r-time").value, city: $("#r-city").value.trim(),
       budget: $("#r-budget").value ? Number($("#r-budget").value) : null, message: $("#r-msg").value.trim() };
     if (!body.booker_name || !body.org || !body.message) return toast("Name, organization, and message are required.");
     state.bookerName = body.booker_name; localSet("np_booker_name", body.booker_name);
@@ -227,6 +227,7 @@ async function viewMine() {
   $("#list").innerHTML = list.length ? list.map((r) => `<div class="req">
     <div class="req-top"><div><b>${esc(r.athlete_name)}</b> · <span class="meta">${esc(CAT[r.event_type] || r.event_type)} · ${esc(r.event_date || "date TBD")} · ${money(r.budget)}</span></div><span class="status ${r.status}">${r.status}</span></div>
     <p class="msg">${esc(r.message)}</p>
+    ${r.payout ? commitPanel(r, "booker") : ""}
     ${r.contact ? `<div class="contact">🔓 <b>Contact unlocked:</b> ${esc(r.contact.email)}${r.contact.phone ? " · " + esc(r.contact.phone) : ""}</div>`
       : r.status === "blocked" ? `<div class="alert bad">🛡️ Blocked by Gatekeeper: ${esc(r.screening.summary)}</div>`
       : `<div class="locked">🔒 Contact details stay private until ${esc(r.athlete_name.split(" ")[0])} accepts.</div>`}
@@ -251,10 +252,15 @@ async function drawInbox() {
     <div class="gate"><div class="label">${bot("gatekeeper", r.status === "blocked" ? "classic" : "happy", 22)} Gatekeeper summary</div>${(r.screening.rider_conflicts || []).length ? `<div class="conflict">⚠️ Conflicts with your Event Rider: ${esc(r.screening.rider_conflicts.join("; "))}</div>` : ""}${esc(r.screening.summary)}<br><span class="meta">${esc(r.screening.fee_note)}</span>
       ${(r.screening.risk_flags || []).length || (r.screening.rule_flags || []).length ? `<br><span class="meta">⚠️ ${esc([...(r.screening.risk_flags || []), ...(r.screening.rule_flags || [])].join(", "))}</span>` : ""}</div>
     <details><summary>Read full message</summary><p class="msg">${esc(r.message)}</p></details>
+    ${r.payout ? commitPanel(r, "athlete") : ""}
     ${["pending", "flagged"].includes(r.status) ? `<div class="row" style="justify-content:flex-start"><button class="btn good small" style="flex:0 0 auto" data-decide="${r.id}" data-accept="1">Accept & share my contact</button><button class="btn ghost small" style="flex:0 0 auto" data-decide="${r.id}" data-accept="0">Decline</button></div>` : ""}
   </div>`;
   $("#inbox").innerHTML = (open.map(reqHtml).join("") || `<div class="empty">No requests yet. Switch to <b>I'm booking talent</b> and send this athlete one.</div>`)
     + (blocked.length ? `<details><summary>🛡️ ${blocked.length} request(s) blocked by Gatekeeper</summary><div class="grid">${blocked.map(reqHtml).join("")}</div></details>` : "");
+  document.querySelectorAll("[data-checkin]").forEach((b) => (b.onclick = async () => {
+    try { await api(`/api/requests/${b.dataset.checkin}/checkin`, { method: "POST", body: { athlete_id: state.athleteId } });
+      toast("Checked in. Thanks for being early!"); drawInbox(); } catch (err) { toast(err.message); }
+  }));
   document.querySelectorAll("[data-decide]").forEach((b) => (b.onclick = async () => {
     try { await api(`/api/requests/${b.dataset.decide}/decide`, { method: "POST", body: { athlete_id: state.athleteId, accept: b.dataset.accept === "1" } });
       toast(b.dataset.accept === "1" ? "Accepted. The booker can now see your contact details." : "Declined."); drawInbox();
@@ -492,6 +498,14 @@ function viewTerms() {
       <li><b>Your contact details are yours.</b> They stay in a private vault and are shared only with a booker whose request you accept.</li>
     </ul></div>
   </div>
+  <div class="panel" style="margin-top:16px"><h2>🤝 Commitment &amp; pay</h2><ul class="terms">
+    <li><b>Escrow.</b> When an athlete accepts, the booker's full fee is held by NextPlay Pros. The money is real and waiting before anyone travels.</li>
+    <li><b>Arrive one hour early.</b> Athletes check in with one tap at least <b>60 minutes before the start</b>.</li>
+    <li><b>On-time reward.</b> Checking in on time cuts the athlete's platform fee from 10% to <b>5%</b>, so the athlete keeps more. On-time bookings build a reliability record that helps athletes get booked again.</li>
+    <li><b>Late.</b> Checking in after the start sends <b>25% of the fee back to the booker</b>.</li>
+    <li><b>No-show.</b> The booker gets <b>100% back</b>, the athlete gets nothing and a strike. Two strikes in 12 months pauses the account for 90 days. Real emergencies are reviewed case by case.</li>
+    <li><b>Payout.</b> Released to the athlete 48 hours after the event unless the booker opens a dispute.</li>
+  </ul></div>
   <div class="panel" style="margin-top:16px"><h2>🎓 NIL rules for college athletes</h2><ul class="terms">
     <li><b>18 and over only.</b> NextPlay Pros does not list high school or minor athletes.</li>
     <li><b>Your school's rules come first.</b> College athletes must follow their school, conference, and NCAA rules and tell their compliance office about NIL deals the way their school requires.</li>
@@ -509,6 +523,28 @@ function viewTerms() {
     <li><b>No endorsement.</b> Listing an athlete or booker does not mean we endorse them.</li>
     <li><b>Demo data.</b> The 40 athletes in this demo are fictional. Real athletes shown on the About page are there to illustrate the idea, with sources cited.</li>
   </ul></div>`;
+}
+
+// ---------------------------------------------------------------- commitment + pay (accepted bookings)
+function commitPanel(r, side) {
+  const p = r.payout, ci = p.checkin, when = [r.event_date, r.event_time].filter(Boolean).join(" at ") || "date TBD";
+  const step = (done, txt) => `<li class="${done ? "done" : ""}">${done ? "✅" : "⬜"} ${txt}</li>`;
+  const checked = ci.status !== "not_checked_in";
+  return `<div class="commit"><div class="label">🤝 Commitment &amp; pay · ${esc(when)}</div>
+    <ol class="steps">
+      ${step(true, `Booker's ${money(p.escrow)} is held in escrow`)}
+      ${step(checked, `Athlete checks in at least 60 minutes before the start <span class="meta">(${esc(ci.label)})</span>`)}
+      ${step(false, "Payout released 48 hours after the event, unless the booker opens a dispute")}
+    </ol>
+    <div class="pay-grid">
+      <div><b>${money(p.on_time_payout)}</b><span>athlete keeps if on time (5% fee)</span></div>
+      <div><b>${money(p.standard_payout)}</b><span>if under 60 min early (10% fee)</span></div>
+      <div><b>${money(Math.round(p.fee * 0.75 * 0.9))}</b><span>if late (25% back to booker)</span></div>
+      <div><b>$0</b><span>no-show: booker refunded 100%, plus a strike</span></div>
+    </div>
+    ${side === "athlete" && !checked ? `<button class="btn good small" data-checkin="${r.id}">📍 I'm here: check in</button>` : ""}
+    ${checked ? `<div class="meta">Current payout: <b>${money(p.athlete_payout)}</b>${p.booker_refund ? ` · ${money(p.booker_refund)} back to booker` : ""}</div>` : ""}
+  </div>`;
 }
 
 const VIEWS = { rider: viewRider, terms: viewTerms, about: viewAbout, find: viewFind, browse: viewBrowse, mine: viewMine, board: viewBoard, behind: viewBehind, inbox: viewInbox, build: viewBuild };

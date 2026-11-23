@@ -11,7 +11,7 @@ import threading
 import uuid
 from datetime import datetime, timezone
 
-from . import rider as riders
+from . import payout, rider as riders
 from .config import DATA, DATA_DIR
 
 DB_PATH = DATA_DIR / "app.db"  # one database per roster folder
@@ -42,6 +42,10 @@ def init_db(reset: bool = False) -> None:
                 org TEXT, event_type TEXT, event_date TEXT, city TEXT, budget INTEGER, message TEXT,
                 status TEXT NOT NULL, screening TEXT, created TEXT, decided TEXT);
         """)
+        cols = {r[1] for r in c.execute("PRAGMA table_info(requests)")}
+        for col in ("event_time", "checked_in"):  # added for the commitment rules
+            if col not in cols:
+                c.execute(f"ALTER TABLE requests ADD COLUMN {col} TEXT")
         if c.execute("SELECT COUNT(*) FROM athletes").fetchone()[0] == 0:
             athletes = json.loads((DATA_DIR / "athletes.json").read_text(encoding="utf-8"))
             contacts = json.loads((DATA_DIR / "contacts.json").read_text(encoding="utf-8"))
@@ -144,10 +148,12 @@ def search(sport: str | None = None, categories: list[str] | None = None, near_c
 def create_request(athlete_id: str, booker_id: str, form: dict, status: str, screening: dict) -> dict:
     rid = f"req_{uuid.uuid4().hex[:8]}"
     with _lock, connect() as c:
-        c.execute("INSERT INTO requests VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
+        c.execute("INSERT INTO requests (id, athlete_id, booker_id, booker_name, org, event_type, event_date, city, "
+                  "budget, message, status, screening, created, decided, event_time, checked_in) "
+                  "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
             rid, athlete_id, booker_id, form.get("booker_name"), form.get("org"), form.get("event_type"),
             form.get("event_date"), form.get("city"), form.get("budget"), form.get("message"),
-            status, json.dumps(screening), now(), None))
+            status, json.dumps(screening), now(), None, form.get("event_time") or None, None))
     return get_request(rid)
 
 
@@ -156,7 +162,24 @@ def _row(r: sqlite3.Row) -> dict:
     d["screening"] = json.loads(d["screening"] or "{}")
     a = get_athlete(d["athlete_id"])
     d["athlete_name"] = a["name"] if a else d["athlete_id"]
+    if d["status"] == "accepted":
+        d["payout"] = payout.plan(d)
     return d
+
+
+def check_in(rid: str, athlete_id: str) -> dict:
+    """The athlete taps "I'm here". Only the booked athlete, only on an accepted booking, only once."""
+    req = get_request(rid)
+    if not req or req["athlete_id"] != athlete_id:
+        raise PermissionError("This booking isn't yours.")
+    if req["status"] != "accepted":
+        raise ValueError("You can only check in to an accepted booking.")
+    if req.get("checked_in"):
+        raise ValueError("Already checked in.")
+    from datetime import datetime
+    with _lock, connect() as c:
+        c.execute("UPDATE requests SET checked_in = ? WHERE id = ?", (datetime.now().isoformat(timespec="minutes"), rid))
+    return get_request(rid)
 
 
 def get_request(rid: str) -> dict | None:
