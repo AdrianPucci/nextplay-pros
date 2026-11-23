@@ -18,10 +18,10 @@
   .row { display: flex; gap: clamp(10px, 2vw, 24px); justify-content: center; flex-wrap: wrap; margin-top: 3vh; }
 
   /* scene 1: athlete cards fly in */
-  .pcard { width: clamp(96px, 15vw, 190px); aspect-ratio: 3/4; border-radius: 16px; overflow: hidden; position: relative; background: var(--navy2);
+  .pcard { width: clamp(90px, 13vw, 170px); aspect-ratio: 3/4; border-radius: 16px; overflow: hidden; position: relative; background: var(--navy2);
            box-shadow: 0 10px 40px rgba(0,0,0,.45); transform: translateY(40px) scale(.92); opacity: 0; transition: all .8s cubic-bezier(.2,.8,.2,1); }
   .on .pcard { transform: none; opacity: 1; }
-  .on .pcard:nth-child(2) { transition-delay: .25s; } .on .pcard:nth-child(3) { transition-delay: .5s; } .on .pcard:nth-child(4) { transition-delay: .75s; }
+  .on .pcard:nth-child(2) { transition-delay: .25s; } .on .pcard:nth-child(3) { transition-delay: .5s; } .on .pcard:nth-child(4) { transition-delay: .75s; } .on .pcard:nth-child(5) { transition-delay: 1s; } .on .pcard:nth-child(6) { transition-delay: 1.25s; }
   .pcard img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
   .pcard .init { position: absolute; inset: 0; display: grid; place-items: center; font-size: clamp(28px, 4vw, 52px); font-weight: 800; color: rgba(255,255,255,.9); }
   .pcard .tag { position: absolute; left: 8px; bottom: 8px; right: 8px; font-size: clamp(9px, 1.1vw, 13px); font-weight: 700; background: rgba(15,27,45,.8); border-radius: 8px; padding: 4px 6px; }
@@ -73,7 +73,8 @@
     h1 { font-size: 13vw; }
     .big { font-size: 8.4vw; }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 4vw; margin-top: 4vh; }
-    .pcard { width: 38vw; }
+    #s1 .row { grid-template-columns: 1fr 1fr 1fr; gap: 3vw; }
+    .pcard { width: 38vw; } #s1 .pcard { width: 28vw; }
     .pcard .tag { font-size: 3.2vw; }
     .pcard .init { font-size: 12vw; }
     .town { width: 88vw; height: 40vh; }
@@ -100,8 +101,10 @@
     <div class="row">
       <div class="pcard"><img src="img/mg.jpg" alt="MG Vellinga"><div class="tag">Pro boxer · Park City</div></div>
       <div class="pcard"><img src="img/okur.jpg" alt="Mehmet Okur"><div class="tag">NBA champ · Utah Jazz</div></div>
+      <div class="pcard"><img src="img/bloom.jpg" alt="Jeremy Bloom"><div class="tag">Olympic skier · NFL draft</div></div>
+      <div class="pcard"><img src="img/clark.jpg" alt="Wyndham Clark"><div class="tag">2x U.S. Open champ</div></div>
+      <div class="pcard"><img src="img/dauwalter.jpg" alt="Courtney Dauwalter"><div class="tag">Ultrarunner · ex-teacher</div></div>
       <div class="pcard" style="background:linear-gradient(160deg,#5a3a8a,#0f1b2d)"><div class="init">BC</div><div class="tag">Rising · D-I track</div></div>
-      <div class="pcard" style="background:linear-gradient(160deg,#2f6d58,#0f1b2d)"><div class="init">JO</div><div class="tag">Former D-I hoops</div></div>
     </div>
   </div></section>
 

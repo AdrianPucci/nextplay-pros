@@ -428,6 +428,14 @@ const FEATURED = [
       "Won his second U.S. Open in June 2026 at Shinnecock Hills, leading wire to wire [9]",
     ],
     why: "A Denver kid who became a two-time major champion. Even at the top of the game, his hometown's junior clinics, school assemblies, and charity events have no simple way to ask. That's the gap NextPlay Pros closes, and it's even bigger for local golf pros who never made the Tour."},
+  { name: "Courtney Dauwalter", alt: "Courtney Dauwalter", role: "Ultrarunner · former teacher · Leadville, CO", photo: "/static/img/dauwalter.jpg", initials: "CD", hue: 20,
+    credit: 'Photo: Heike Maria Seitz, <a href="https://commons.wikimedia.org/wiki/File:Courtney_Dauwalter_(2019).jpg" target="_blank" rel="noopener">CC BY-SA 4.0</a>',
+    facts: [
+      "Grew up in Minnesota, won four state titles in Nordic skiing, and skied for the University of Denver on scholarship [10]",
+      "Taught middle and high school before running full time starting in 2017 [10]",
+      "In 2023, became the first person to win Western States, Hardrock, and UTMB in the same year, with course records [10][11]",
+    ],
+    why: "A teacher who became the best in the world, and still talks like a teacher. Schools, running clubs, and companies would line up to hear that story, and local trail races would love her at the start line. NextPlay Pros makes that one request away." },
 ];
 function viewAbout() {
   const card = (a) => `<article class="feature">
@@ -474,7 +482,7 @@ function viewAbout() {
     <p class="meta">Adrian Pucci · Yale SOM · MGT 409 final project</p>
   </div>
   <h2 class="about-h">Athletes who show why</h2>
-  <p class="sub">Real athletes who show who NextPlay Pros is for. MG and Memo are from my own circle; Jeremy and Wyndham are Colorado stories everyone here knows. They are shown to illustrate the idea, not as members: they are not in the demo roster, and no fees or contact details are listed.</p>
+  <p class="sub">Real athletes who show who NextPlay Pros is for. MG and Memo are from my own circle; Jeremy, Wyndham, and Courtney are Colorado stories everyone here knows. They are shown to illustrate the idea, not as members: they are not in the demo roster, and no fees or contact details are listed.</p>
   <div class="grid">${FEATURED.map(card).join("")}</div>
   <div class="panel sources"><b>Sources</b><ol>
     <li><a href="https://www.sltrib.com/sports/2017/12/04/park-citys-maryguenn-vellinga-is-utahs-best-hope-for-glory-as-salt-palace-hosts-usa-boxing-national-championships-this-week" target="_blank" rel="noopener">Salt Lake Tribune, Dec 2017</a></li>
@@ -486,6 +494,8 @@ function viewAbout() {
     <li><a href="https://en.wikipedia.org/wiki/Jeremy_Bloom" target="_blank" rel="noopener">Wikipedia: Jeremy Bloom</a></li>
     <li><a href="https://en.wikipedia.org/wiki/Wyndham_Clark" target="_blank" rel="noopener">Wikipedia: Wyndham Clark</a></li>
     <li><a href="https://www.cbsnews.com/news/wyndham-clark-u-s-open-2026-golf/" target="_blank" rel="noopener">CBS News, Jun 2026</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Courtney_Dauwalter" target="_blank" rel="noopener">Wikipedia: Courtney Dauwalter</a></li>
+    <li><a href="https://ultrarunning.com/featured/2023-ultrarunner-of-the-year-courtney-dauwalter/" target="_blank" rel="noopener">UltraRunning Magazine, 2023 Ultrarunner of the Year</a></li>
   </ol></div>`;
 }
 
