@@ -1,0 +1,62 @@
+[
+  {
+    "id": "opp_001",
+    "org": "Front Range Credit Union",
+    "type": "speaking",
+    "city": "Denver",
+    "title": "Keynote for 250-person all-staff meeting",
+    "budget_max": 5000,
+    "date": "2027-01-22",
+    "details": "Theme is 'bouncing back.' 30-minute talk plus Q&A. Prefer someone local to Colorado."
+  },
+  {
+    "id": "opp_002",
+    "org": "Englewood Youth Sports League",
+    "type": "clinic",
+    "city": "Englewood",
+    "title": "Saturday basketball clinic for ages 10-14",
+    "budget_max": 800,
+    "date": "2026-12-12",
+    "details": "Two-hour clinic, about 60 kids. Nonprofit budget."
+  },
+  {
+    "id": "opp_003",
+    "org": "Mile High Auto Group",
+    "type": "appearance",
+    "city": "Denver",
+    "title": "Grand-opening meet and greet",
+    "budget_max": 2500,
+    "date": "2026-12-05",
+    "details": "Three hours signing autographs and taking photos. Football or hockey preferred."
+  },
+  {
+    "id": "opp_004",
+    "org": "Yale SOM Women in Business",
+    "type": "speaking",
+    "city": "New Haven",
+    "title": "Fireside chat on women in leadership",
+    "budget_max": 3000,
+    "date": "2027-02-10",
+    "details": "45-minute fireside chat; virtual is fine."
+  },
+  {
+    "id": "opp_005",
+    "org": "Lone Star Children's Hospital Gala",
+    "type": "comedy_entertainment",
+    "city": "Dallas",
+    "title": "Emcee / comedy set for charity gala",
+    "budget_max": 4000,
+    "date": "2027-03-14",
+    "details": "Host the live auction and do a 15-minute set. Clean material only."
+  },
+  {
+    "id": "opp_006",
+    "org": "Peak Outdoor Co.",
+    "type": "endorsement",
+    "city": "Boulder",
+    "title": "Local ambassador for a new trail-running shoe",
+    "budget_max": 1500,
+    "date": "2027-01-05",
+    "details": "Six social posts and two store events over three months."
+  }
+]

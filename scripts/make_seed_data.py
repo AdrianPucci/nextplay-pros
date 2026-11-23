@@ -1,0 +1,242 @@
+"""Build the demo dataset: a fictional roster of athletes, their (fake) contact vault, and booker posts.
+
+Every person here is made up. Emails use example.com and phones use the 555-01xx range, so nothing
+in the demo can reach a real person.
+
+    python scripts/make_seed_data.py          # writes data/athletes.json, data/contacts.json, data/opportunities.json
+"""
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+DATA = ROOT / "data"
+
+CITIES = {  # city -> (state, lat, lon)
+    "Denver": ("CO", 39.74, -104.99), "Colorado Springs": ("CO", 38.83, -104.82), "Boulder": ("CO", 40.01, -105.27),
+    "Fort Collins": ("CO", 40.59, -105.08), "Englewood": ("CO", 39.65, -104.99), "Phoenix": ("AZ", 33.45, -112.07),
+    "Salt Lake City": ("UT", 40.76, -111.89), "Dallas": ("TX", 32.78, -96.80), "Austin": ("TX", 30.27, -97.74),
+    "Houston": ("TX", 29.76, -95.37), "Chicago": ("IL", 41.88, -87.63), "New Haven": ("CT", 41.31, -72.92),
+    "Hartford": ("CT", 41.76, -72.69), "Boston": ("MA", 42.36, -71.06), "New York": ("NY", 40.71, -74.01),
+    "Philadelphia": ("PA", 39.95, -75.17), "Atlanta": ("GA", 33.75, -84.39), "Miami": ("FL", 25.76, -80.19),
+    "Tampa": ("FL", 27.95, -82.46), "Nashville": ("TN", 36.16, -86.78), "Los Angeles": ("CA", 34.05, -118.24),
+    "San Diego": ("CA", 32.72, -117.16), "San Francisco": ("CA", 37.77, -122.42), "Seattle": ("WA", 47.61, -122.33),
+    "Portland": ("OR", 45.52, -122.68), "Minneapolis": ("MN", 44.98, -93.27), "Kansas City": ("MO", 39.10, -94.58),
+    "Columbus": ("OH", 39.96, -83.00), "Charlotte": ("NC", 35.23, -80.84), "Las Vegas": ("NV", 36.17, -115.14),
+}
+
+# name, sport, level, career, city, categories, topics, story, fee_min, fee_max, virtual, travel_miles
+A = [
+    ("Marcus Hale", "Football", "Former Pro", "Linebacker, 6 NFL seasons; 2 knee reconstructions", "Denver",
+     ["speaking", "appearance", "mentoring"], ["resilience", "comebacks", "leadership"],
+     "Cut twice and told his career was over after his second ACL tear, Marcus rehabbed for 14 months and played four more seasons. Now he coaches sales teams on bouncing back from rejection.",
+     2500, 6000, True, 500),
+    ("Tasha Reyes", "Soccer", "Former Pro", "NWSL midfielder, 5 seasons; youth national team", "Denver",
+     ["speaking", "clinic", "mentoring"], ["women in leadership", "teamwork", "youth development"],
+     "First in her family to go to college, Tasha captained her pro team while finishing an MBA at night. She runs girls' leadership camps across the Front Range.",
+     1500, 4000, True, 300),
+    ("Jordan Okafor", "Basketball", "Former College", "D-I guard, 4 years; 1,400 career points", "Englewood",
+     ["speaking", "clinic", "appearance"], ["discipline", "student success", "first-gen college"],
+     "Grew up in foster care and walked on at a D-I program, earning a scholarship by his sophomore year. Jordan now speaks to high schools and youth nonprofits about building your own support system.",
+     600, 1500, True, 150),
+    ("Kenji Mori", "Skiing", "Olympian", "Two-time Winter Olympian, moguls", "Boulder",
+     ["speaking", "appearance", "endorsement"], ["fear and focus", "high performance", "mental health"],
+     "Kenji crashed out of his first Olympics on live TV, opened up about the panic attacks that followed, and returned four years later to finish fifth. He talks candidly about performance anxiety.",
+     3000, 8000, True, 2000),
+    ("Brianna Cole", "Track & Field", "Rising (College)", "D-I 400m runner, conference champion, senior", "Fort Collins",
+     ["appearance", "endorsement", "mentoring"], ["goal setting", "balancing school and sport"],
+     "A conference champion working 20 hours a week to cover rent, Brianna is open to NIL appearances and local business partnerships while she chases an Olympic Trials qualifier.",
+     200, 800, True, 100),
+    ("Danny \"Deke\" Kowalski", "Hockey", "Former Pro", "AHL/ECHL winger, 9 seasons", "Colorado Springs",
+     ["appearance", "comedy_entertainment", "clinic"], ["minor-league life", "team culture", "humor"],
+     "Nine seasons, seven cities, and one legendary bus breakdown in a blizzard. Deke's stand-up set about minor-league hockey life is a hit at banquets and golf outings.",
+     800, 2500, False, 400),
+    ("Luis Navarro", "Baseball", "Former Pro", "MLB pitcher, 3 seasons; 7 years in the minors", "Phoenix",
+     ["speaking", "clinic", "appearance"], ["persistence", "bilingual leadership", "the long road"],
+     "Luis spent seven years in the minors and was called up at 29. He gives talks in English and Spanish about patience, and runs pitching clinics for Little Leagues.",
+     2000, 5000, True, 800),
+    ("Aaliyah Brooks", "Basketball", "Former Pro", "WNBA guard, 4 seasons; overseas in Turkey and Spain", "Atlanta",
+     ["speaking", "appearance", "mentoring"], ["women in sport", "adapting to change", "financial literacy"],
+     "After her WNBA salary barely covered living costs, Aaliyah played five winters overseas and taught herself investing. She now speaks on money skills for young professionals.",
+     2500, 6000, True, 1000),
+    ("Sam Whitfield", "Swimming", "Paralympian", "Paralympic bronze medalist, 100m butterfly S9", "San Diego",
+     ["speaking", "appearance", "endorsement"], ["adaptability", "disability inclusion", "resilience"],
+     "Sam lost his lower left leg in a boating accident at 15 and was racing internationally three years later. He works with companies on accessibility and inclusive teams.",
+     3000, 7500, True, 2000),
+    ("Riley Chen", "Esports", "Current Pro", "Pro Valorant player, 2 seasons", "Los Angeles",
+     ["appearance", "endorsement", "comedy_entertainment"], ["gaming careers", "online community", "teamwork"],
+     "Riley went from streaming in a dorm room to a pro roster in 18 months. Great for youth events, gaming nights, and brands trying to reach Gen Z.",
+     700, 2000, True, 300),
+    ("Grace Delaney", "Volleyball", "Former College", "D-I outside hitter, 2x All-American", "Minneapolis",
+     ["speaking", "clinic", "mentoring"], ["confidence", "team chemistry", "coaching"],
+     "Two-time All-American turned high-school coach, Grace built a losing program into a state finalist in three years. She speaks on building team culture from scratch.",
+     500, 1500, True, 300),
+    ("Terrell \"T-Bone\" Jackson", "Football", "Former Pro", "NFL running back, 3 seasons; Canadian league 4 seasons", "Dallas",
+     ["comedy_entertainment", "appearance", "speaking"], ["humor", "life after football", "career change"],
+     "T-Bone traded the end zone for comedy clubs. His set about the CFL, cold weather, and Texas BBQ fits corporate parties and charity roasts.",
+     1500, 4000, False, 600),
+    ("Elena Petrova", "Figure Skating", "Former Pro", "National champion; 6 years touring with an ice show", "Chicago",
+     ["speaking", "appearance", "clinic"], ["perfectionism", "immigrant story", "grace under pressure"],
+     "Elena came to the U.S. at 12 speaking no English and won a national title at 19. She speaks on perfectionism and burnout, especially to women's networks.",
+     2000, 5000, True, 1000),
+    ("Mike Brennan", "Golf", "Former Pro", "Korn Ferry Tour, 5 seasons", "Phoenix",
+     ["appearance", "clinic", "comedy_entertainment"], ["focus", "golf outings", "storytelling"],
+     "A five-year grinder on the developmental tour, Mike is the ideal celebrity host for a charity golf outing: clinic in the morning, funny stories at the dinner.",
+     1200, 3000, False, 1000),
+    ("Destiny Morales", "Boxing", "Current Pro", "Pro boxer, 14-1; former Golden Gloves champion", "Houston",
+     ["speaking", "appearance", "mentoring"], ["overcoming adversity", "self-defense", "youth outreach"],
+     "Destiny started boxing at a community gym to stay out of trouble and is now ranked nationally. She returns to that gym every week to mentor teens.",
+     800, 2500, True, 400),
+    ("Owen Gallagher", "Lacrosse", "Former Pro", "Pro lacrosse defenseman, 6 seasons", "Boston",
+     ["clinic", "appearance", "speaking"], ["work ethic", "leadership", "sports business"],
+     "Owen played pro lacrosse for $15K a season while working full time in finance. He talks about doing two careers at once and runs youth clinics around New England.",
+     800, 2000, True, 300),
+    ("Priya Nair", "Tennis", "Former College", "D-I singles player; now sports-medicine physician", "New Haven",
+     ["speaking", "mentoring"], ["injury prevention", "women in medicine", "student-athletes"],
+     "A former D-I tennis player who is now a sports-medicine doctor. Priya speaks to schools and clinics about keeping young athletes healthy.",
+     700, 1800, True, 200),
+    ("Calvin Wright", "Basketball", "Former Pro", "NBA journeyman, 6 teams in 8 seasons; G League", "Hartford",
+     ["speaking", "appearance", "comedy_entertainment", "clinic"], ["handling change", "role players", "humor"],
+     "Traded five times in eight years, Calvin is an expert at showing up somewhere new and fitting in fast. His talk on being a great role player lands with corporate teams.",
+     4000, 9000, True, 1500),
+    ("Hannah Svensson", "Cross-Country Skiing", "Rising (College)", "D-I Nordic skier, junior; World Juniors team", "Salt Lake City",
+     ["appearance", "endorsement", "mentoring"], ["outdoors", "endurance", "climate and snow sports"],
+     "A World Juniors skier studying environmental science, Hannah is looking for outdoor-brand partners and school talks about climate and winter sports.",
+     200, 700, True, 200),
+    ("Andre Lewis", "Football", "Former College", "D-II quarterback; Army veteran", "Colorado Springs",
+     ["speaking", "mentoring", "appearance"], ["veterans", "leadership under pressure", "discipline"],
+     "Andre played D-II quarterback, then served two tours as an Army officer. He blends military leadership and locker-room lessons for corporate and veteran groups.",
+     1000, 3000, True, 600),
+    ("Mia Thompson", "Gymnastics", "Former College", "D-I gymnast; NCAA event finalist", "Nashville",
+     ["speaking", "clinic", "mentoring"], ["mental health", "body image", "athlete wellbeing"],
+     "Mia stepped away from gymnastics for a year for her mental health and came back to make an NCAA final. She speaks to schools and parent groups about pressure on young athletes.",
+     800, 2200, True, 500),
+    ("Big Lou Fontaine", "Wrestling", "Former Pro", "Pro wrestler, 12 years on the independent circuit", "Kansas City",
+     ["comedy_entertainment", "appearance"], ["showmanship", "humor", "crowd work"],
+     "Twelve years of body slams in high-school gyms and county fairs. Big Lou is a crowd-pleasing emcee for fundraisers, car-dealership events, and grand openings.",
+     700, 2000, False, 500),
+    ("Sofia Alvarez", "Softball", "Olympian", "Olympic softball silver medalist, catcher", "Austin",
+     ["speaking", "clinic", "endorsement"], ["communication", "team leadership", "women in sport"],
+     "As a catcher, Sofia called every pitch for an Olympic silver-medal team. She uses that to teach managers how to communicate under pressure.",
+     3500, 8000, True, 1500),
+    ("Jamal Peters", "Track & Field", "Former Pro", "Pro sprinter; 2x U.S. championship finalist", "Charlotte",
+     ["speaking", "clinic", "appearance"], ["speed of execution", "small margins", "faith and sport"],
+     "Jamal missed an Olympic team by 0.02 seconds. His talk on how tiny margins decide outcomes is popular with sales and operations teams.",
+     1500, 4000, True, 800),
+    ("Nora Fitzgerald", "Rowing", "Former College", "D-I rower; now nonprofit founder", "Philadelphia",
+     ["speaking", "mentoring"], ["teamwork", "nonprofits", "access to sport"],
+     "Nora founded a nonprofit that brings rowing to city kids who'd never been on the water. She speaks on teamwork and building community programs.",
+     500, 1500, True, 300),
+    ("Ty Whitehorse", "Rodeo", "Current Pro", "Pro bull rider, national finals qualifier", "Fort Collins",
+     ["appearance", "speaking", "endorsement"], ["courage", "Native American youth", "rural communities"],
+     "A Lakota bull rider who made the national finals, Ty visits reservation schools and rural communities and is a natural for western-wear brands.",
+     1000, 3000, False, 800),
+    ("Chris Donovan", "Baseball", "Rising (Minor League)", "Single-A outfielder, 2nd season", "Denver",
+     ["appearance", "clinic", "endorsement"], ["chasing a dream", "youth baseball"],
+     "Drafted in the 14th round and making about $1,500 a month, Chris runs off-season hitting clinics and is open to local business appearances.",
+     150, 600, True, 100),
+    ("Ava Kim", "Climbing", "Current Pro", "National team sport climber", "Boulder",
+     ["speaking", "appearance", "endorsement"], ["problem solving", "risk", "outdoor industry"],
+     "Ava treats every climbing route like a puzzle to solve. Her talk on breaking big problems into small moves works for engineering and product teams.",
+     1500, 4000, True, 1000),
+    ("Rob \"Rocket\" Martinez", "Soccer", "Former Pro", "MLS forward, 7 seasons", "Seattle",
+     ["appearance", "clinic", "speaking"], ["teamwork", "Latino youth", "community"],
+     "Rocket scored 40 MLS goals and never forgot the public field where he learned the game. He runs free clinics and speaks at community events in Spanish and English.",
+     2000, 5000, True, 800),
+    ("Leah Goldberg", "Fencing", "Olympian", "Olympic fencer, épée", "New York",
+     ["speaking", "appearance"], ["strategy", "negotiation", "reading opponents"],
+     "An Olympic fencer turned corporate negotiator, Leah teaches how to read the other side and pick the right moment to act.",
+     3000, 7000, True, 1000),
+    ("Dwayne Carter Jr.", "Football", "Rising (College)", "D-I offensive lineman, senior; team captain", "Columbus",
+     ["appearance", "endorsement", "mentoring"], ["leadership", "community service"],
+     "Team captain and a three-time community-service award winner, Dwayne is open to NIL deals with local businesses and youth mentoring.",
+     300, 1200, True, 150),
+    ("Kelsey Moore", "Triathlon", "Former Pro", "Pro triathlete; 3 Ironman wins", "Boulder",
+     ["speaking", "clinic", "endorsement"], ["endurance", "time management", "health and wellness"],
+     "Kelsey trained 25 hours a week while raising two kids. Her talk on time management fits wellness weeks and working-parent groups.",
+     1800, 4500, True, 1000),
+    ("Victor Santos", "MMA", "Former Pro", "Pro MMA fighter, 18-6", "Las Vegas",
+     ["speaking", "appearance", "comedy_entertainment"], ["discipline", "comebacks", "humor"],
+     "Victor lost three straight fights, nearly quit, and then won seven in a row. Equal parts motivational and funny, he's a strong emcee for Vegas corporate events.",
+     1500, 4000, True, 600),
+    ("Jasmine Patel", "Cricket", "Current Pro", "U.S. national women's cricket team", "Dallas",
+     ["speaking", "clinic", "appearance"], ["growing a new sport", "South Asian community", "women in sport"],
+     "Jasmine is helping grow cricket in America. She's a great fit for cultural festivals, schools, and companies with South Asian employee groups.",
+     600, 1800, True, 1000),
+    ("Ben Archer", "Hockey", "Former College", "D-I goalie; now high-school teacher", "Minneapolis",
+     ["speaking", "clinic", "mentoring"], ["handling pressure", "education", "mistakes"],
+     "A goalie learns to let a bad goal go in seconds. Ben teaches students and teams how to recover from mistakes fast.",
+     400, 1200, True, 200),
+    ("Gina Russo", "Bowling", "Former Pro", "PWBA tour, 6 titles", "Chicago",
+     ["appearance", "comedy_entertainment", "clinic"], ["fun team events", "consistency"],
+     "Six-time pro bowling champ and a natural host. Gina runs team-building bowling nights with mini-lessons and plenty of trash talk.",
+     500, 1500, False, 300),
+    ("Isaiah Grant", "Basketball", "Rising (College)", "D-II forward, junior; 3.9 GPA", "Kansas City",
+     ["appearance", "mentoring", "speaking"], ["academics and athletics", "first-gen college"],
+     "A first-gen college student with a 3.9 GPA in engineering, Isaiah speaks to middle schools about STEM and sports and is open to local NIL deals.",
+     150, 500, True, 100),
+    ("Megan O'Leary", "Snowboarding", "Former Pro", "X Games medalist, slopestyle", "Denver",
+     ["appearance", "speaking", "endorsement"], ["risk and creativity", "outdoor brands", "recovery from injury"],
+     "An X Games medalist who broke her back and learned to walk again, Megan now designs boards and talks about creativity and calculated risk.",
+     2500, 6000, True, 1500),
+    ("Coach Ray Dunbar", "Football", "Former Pro", "NFL special teams, 5 seasons; 20 years coaching", "Tampa",
+     ["speaking", "comedy_entertainment", "mentoring"], ["leadership", "coaching", "humor"],
+     "Forty years in football and a story for every one. Ray's mix of coaching wisdom and dad jokes plays well at banquets and leadership retreats.",
+     1500, 3500, True, 800),
+    ("Zoe Martin", "Skateboarding", "Rising (Pro-Am)", "Pro-am street skater, 19", "Portland",
+     ["appearance", "endorsement", "comedy_entertainment"], ["creativity", "youth culture"],
+     "Zoe's skate videos have 200K followers. She's looking for local brand partners, demos at events, and youth outreach.",
+     300, 1000, True, 200),
+]
+
+FIRSTWORD_EMAIL = lambda name: "".join(c for c in name.lower() if c.isalpha() or c == " ").split()
+
+
+def build():
+    athletes, contacts = [], {}
+    for i, (name, sport, level, career, city, cats, topics, story, fmin, fmax, virtual, travel) in enumerate(A, 1):
+        state, lat, lon = CITIES[city]
+        aid = f"ath_{i:03d}"
+        athletes.append({
+            "id": aid, "name": name, "sport": sport, "level": level, "career": career,
+            "city": city, "state": state, "lat": lat, "lon": lon,
+            "categories": cats, "topics": topics, "story": story,
+            "fee_min": fmin, "fee_max": fmax, "virtual_ok": virtual, "travel_miles": travel,
+        })
+        parts = FIRSTWORD_EMAIL(name)
+        contacts[aid] = {
+            "email": f"{parts[0]}.{parts[-1]}@example.com",
+            "phone": f"(303) 555-01{i:02d}",
+            "manager": None,
+        }
+
+    opportunities = [
+        {"id": "opp_001", "org": "Front Range Credit Union", "type": "speaking", "city": "Denver",
+         "title": "Keynote for 250-person all-staff meeting", "budget_max": 5000, "date": "2027-01-22",
+         "details": "Theme is 'bouncing back.' 30-minute talk plus Q&A. Prefer someone local to Colorado."},
+        {"id": "opp_002", "org": "Englewood Youth Sports League", "type": "clinic", "city": "Englewood",
+         "title": "Saturday basketball clinic for ages 10-14", "budget_max": 800, "date": "2026-12-12",
+         "details": "Two-hour clinic, about 60 kids. Nonprofit budget."},
+        {"id": "opp_003", "org": "Mile High Auto Group", "type": "appearance", "city": "Denver",
+         "title": "Grand-opening meet and greet", "budget_max": 2500, "date": "2026-12-05",
+         "details": "Three hours signing autographs and taking photos. Football or hockey preferred."},
+        {"id": "opp_004", "org": "Yale SOM Women in Business", "type": "speaking", "city": "New Haven",
+         "title": "Fireside chat on women in leadership", "budget_max": 3000, "date": "2027-02-10",
+         "details": "45-minute fireside chat; virtual is fine."},
+        {"id": "opp_005", "org": "Lone Star Children's Hospital Gala", "type": "comedy_entertainment", "city": "Dallas",
+         "title": "Emcee / comedy set for charity gala", "budget_max": 4000, "date": "2027-03-14",
+         "details": "Host the live auction and do a 15-minute set. Clean material only."},
+        {"id": "opp_006", "org": "Peak Outdoor Co.", "type": "endorsement", "city": "Boulder",
+         "title": "Local ambassador for a new trail-running shoe", "budget_max": 1500, "date": "2027-01-05",
+         "details": "Six social posts and two store events over three months."},
+    ]
+    DATA.mkdir(exist_ok=True)
+    (DATA / "athletes.json").write_text(json.dumps(athletes, indent=2), encoding="utf-8")
+    (DATA / "contacts.json").write_text(json.dumps(contacts, indent=2), encoding="utf-8")
+    (DATA / "opportunities.json").write_text(json.dumps(opportunities, indent=2), encoding="utf-8")
+    (DATA / "cities.json").write_text(json.dumps(
+        {c: {"state": s, "lat": la, "lon": lo} for c, (s, la, lo) in CITIES.items()}, indent=2), encoding="utf-8")
+    print(f"Wrote {len(athletes)} athletes, {len(opportunities)} opportunities.")
+
+
+if __name__ == "__main__":
+    build()
