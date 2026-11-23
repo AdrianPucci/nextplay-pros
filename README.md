@@ -88,7 +88,8 @@ Contact details live in a separate vault table that no agent can read. They reac
 - Photo of Mehmet Okur: Lordcolus (Flickr), [CC BY 2.0](https://commons.wikimedia.org/wiki/File:Mehmo.jpg) via Wikimedia Commons.
 - About page photo of MG Vellinga: courtesy of MG Vellinga.
 - Photo of Jeremy Bloom: Web Summit / Sportsfile, [CC BY 2.0](https://commons.wikimedia.org/wiki/File:Sportsfile_(Web_Summit)_(15090782254).jpg).
-- Photo of Wyndham Clark: Titleist, [CC BY 3.0](https://commons.wikimedia.org/wiki/File:Wyndham_Clark_2023_01.png).
+- Photos of Wyndham Clark: Titleist, [CC BY 3.0](https://commons.wikimedia.org/wiki/File:Wyndham_Clark_2023_01.png) and [CC BY 3.0](https://commons.wikimedia.org/wiki/File:Wyndham_Clark_2023_02.png).
+- Second photo of Jeremy Bloom: Web Summit / Sportsfile, [CC BY 2.0](https://commons.wikimedia.org/wiki/File:Sportsfile_(Web_Summit)_(15524680229).jpg).
 - Photo of Courtney Dauwalter: Heike Maria Seitz, [CC BY-SA 4.0](https://commons.wikimedia.org/wiki/File:Courtney_Dauwalter_(2019).jpg).
 - Photo of Emma Coburn: jenaragon94 (Flickr), [CC BY 2.0](https://commons.wikimedia.org/wiki/File:2018_USA_Indoor_Track_and_Field_Championships_(26466189318).jpg).
 - About page facts are cited on the page itself.

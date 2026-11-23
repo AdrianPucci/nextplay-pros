@@ -137,8 +137,10 @@ const INTRO_SLIDES = [  // two photos per athlete where we have them: action sho
   ["mg2.jpg", "MG Vellinga", "Pro boxer · Park City"],
   ["mg.jpg", "MG Vellinga", "Pro boxer · Park City"],
   ["okur.jpg", "Mehmet Okur", "NBA champion · Utah Jazz"],
+  ["bloom2.jpg", "Jeremy Bloom", "Olympic skier · NFL draft pick"],
   ["bloom.jpg", "Jeremy Bloom", "Olympic skier · NFL draft pick"],
   ["clark.jpg", "Wyndham Clark", "2x U.S. Open champion"],
+  ["clark2.jpg", "Wyndham Clark", "2x U.S. Open champion"],
   ["dauwalter.jpg", "Courtney Dauwalter", "Ultrarunner · former teacher"],
   ["coburn.jpg", "Emma Coburn", "Steeplechase world champion · CO"],
 ];
@@ -225,7 +227,7 @@ function inLoc(a) {
 }
 function locLabel() {
   const { st, rg } = state.loc;
-  if (!st) return "everywhere";
+  if (!st || !state.regions || !state.regions[st]) return "everywhere";
   return rg ? `${rg}, ${state.regions[st].name}` : state.regions[st].name;
 }
 function locationBar(id = "loc") {
@@ -788,6 +790,8 @@ function availWarnings(a, date, time) {
 const VIEWS = { rider: viewRider, terms: viewTerms, about: viewAbout, find: viewFind, browse: viewBrowse, mine: viewMine, board: viewBoard, behind: viewBehind, inbox: viewInbox, build: viewBuild };
 
 async function loadRoster() { state.athletes = await api("/api/athletes"); }
-(async () => { [state.cities, state.riderOpts, state.regions] = await Promise.all([api("/api/cities"), api("/api/rider-options"), api("/api/regions"), loadRoster()]);
+(async () => { const soft = (pr) => pr.catch(() => null);
+  [state.cities, state.riderOpts, state.regions] = await Promise.all([soft(api("/api/cities")), soft(api("/api/rider-options")), soft(api("/api/regions")), soft(loadRoster())]);
+  state.cities = state.cities || []; if (!state.regions) state.loc = { st: "", rg: "" };
   if (state.loc.st && !state.regions[state.loc.st]) state.loc = { st: "CO", rg: "" };
   render(); })();
