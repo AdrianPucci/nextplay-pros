@@ -82,9 +82,28 @@
   const LABEL = { scout: "Scout, a talent-scout robot in an orange ball cap with binoculars and a clipboard",
     story_builder: "Story Builder, a writer robot in a red beret with a pencil and an open notebook",
     gatekeeper: "Gatekeeper, a square bouncer robot in sunglasses with an earpiece, a shield badge and a velvet rope" };
+  // Finish: brushed-metal heads, shaded bodies, soft drop shadow, so the robots read as polished at any size.
+  let uid = 0;
+  const FINISH = [
+    ['fill="#dfe5ee"', "head"], ['fill="#c9d3e3"', "head"], ['fill="#0f1b2d"', "navy"], ['fill="#232836"', "suit"],
+    ['fill="#f4f1ea"', "cream"], ['fill="#ff5a1f"', "orange"], ['fill="#c62828"', "red"], ['fill="#e6c27a"', "gold"],
+  ];
+  const grad = (id, top, bottom) => `<linearGradient id="${id}" x1="0" y1="0" x2="0.35" y2="1"><stop offset="0" stop-color="${top}"/><stop offset="1" stop-color="${bottom}"/></linearGradient>`;
   window.bot = function (name, mood = "classic", size = 48, cls = "") {
     const draw = BOTS[name] || BOTS.scout;
-    return `<svg viewBox="0 0 210 230" width="${size}" height="${Math.round(size * 230 / 210)}" class="bot ${cls}" role="img" aria-label="${LABEL[name] || name}">${draw(mood)}</svg>`;
+    const u = `b${++uid}`;
+    let body = draw(mood);
+    FINISH.forEach(([find, key]) => { body = body.split(find).join(`fill="url(#${key}-${u})"`); });
+    const defs = `<defs>
+      ${grad(`head-${u}`, "#f7f9fc", "#b9c4d6")}${grad(`navy-${u}`, "#24395a", "#0b1424")}${grad(`suit-${u}`, "#3a4256", "#161a24")}
+      ${grad(`cream-${u}`, "#ffffff", "#ddd6c8")}${grad(`orange-${u}`, "#ff7a45", "#d9440f")}${grad(`red-${u}`, "#e04545", "#9e1c1c")}
+      ${grad(`gold-${u}`, "#f3d89c", "#c49a45")}
+      <filter id="sh-${u}" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#0b1424" flood-opacity=".35"/></filter>
+      <radialGradient id="gl-${u}" cx=".35" cy=".25" r=".6"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
+    </defs>`;
+    // a soft highlight over the head gives the "glossy" finish
+    const gloss = `<ellipse cx="92" cy="78" rx="30" ry="14" fill="url(#gl-${u})" pointer-events="none"/>`;
+    return `<svg viewBox="0 0 210 230" width="${size}" height="${Math.round(size * 230 / 210)}" class="bot ${cls}" role="img" aria-label="${LABEL[name] || name}">${defs}<g filter="url(#sh-${u})">${body}${gloss}</g></svg>`;
   };
   window.BOT_NAMES = { scout: "Scout", story_builder: "Story Builder", gatekeeper: "Gatekeeper" };
 })();

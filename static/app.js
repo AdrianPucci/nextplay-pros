@@ -103,13 +103,25 @@ const TABS = {
   booker: [["find", "Find talent (AI Scout)"], ["browse", "Browse roster"], ["mine", "My requests"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
   athlete: [["inbox", "My inbox"], ["rider", "My profile & rider"], ["build", "Build my profile (AI)"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
 };
+const STAFF = new URLSearchParams(location.search).has("staff");  // ?staff=1 shows "Behind the scenes" (for grading)
 function renderTabs() {
-  $("#tabs").innerHTML = TABS[state.role].map(([k, l]) => `<button data-tab="${k}" class="${state.tab === k ? "active" : ""}">${l}</button>`).join("");
+  $("#tabs").innerHTML = TABS[state.role].filter(([k]) => STAFF || k !== "behind").map(([k, l]) => `<button data-tab="${k}" class="${state.tab === k ? "active" : ""}">${l}</button>`).join("");
   document.querySelectorAll(".role-switch button").forEach((b) => b.classList.toggle("active", b.dataset.role === state.role));
 }
 document.querySelectorAll(".role-switch button").forEach((b) => (b.onclick = () => { state.role = b.dataset.role; state.tab = TABS[state.role][0][0]; render(); }));
 $("#tabs").onclick = (e) => { const t = e.target.closest("[data-tab]"); if (t) { state.tab = t.dataset.tab; render(); } };
 document.addEventListener("click", (e) => { const r = e.target.closest("[data-request]"); if (r) requestModal(r.dataset.request); });
+// The 25-second story: full-screen, like a video, with subtitles
+document.addEventListener("click", (e) => { if (e.target.closest("[data-story]")) openStory(); });
+function openStory() {
+  const o = document.createElement("div"); o.className = "story-overlay";
+  o.innerHTML = `<iframe src="/static/story.html?autoplay=1&v=12" title="NextPlay Pros 25-second story" allow="autoplay"></iframe>`;
+  document.body.appendChild(o);
+  const close = () => { o.remove(); window.removeEventListener("message", onMsg); document.removeEventListener("keydown", onKey); };
+  const onMsg = (m) => { if (m.data === "close-story") close(); };
+  const onKey = (k) => { if (k.key === "Escape") close(); };
+  window.addEventListener("message", onMsg); document.addEventListener("keydown", onKey);
+}
 
 function render() { renderTabs(); (VIEWS[state.tab] || VIEWS.find)(); }
 
@@ -125,7 +137,8 @@ function viewFind() {
   <section class="hero">
     <h1>Who do you want at your event?</h1>
     <p>Describe it like you'd tell a friend. Scout searches the roster, keeps you under budget, and explains every match.</p>
-    <div class="team-strip">${bot("scout", "classic", 30)}<span><b>Scout</b> finds</span>${bot("story_builder", "classic", 30)}<span><b>Story Builder</b> writes</span>${bot("gatekeeper", "classic", 30)}<span><b>Gatekeeper</b> protects</span></div>
+    <button class="story-btn" data-story>▶ Watch our 25-second story</button>
+    <div class="team-strip">${bot("scout", "happy", 46)}<span><b>Scout</b> finds</span>${bot("story_builder", "happy", 46)}<span><b>Story Builder</b> writes</span>${bot("gatekeeper", "happy", 46)}<span><b>Gatekeeper</b> guards your rider</span></div>
     <div class="form">
       <div><label for="q">Your event</label><textarea id="q" placeholder="e.g. Motivational speaker for our 200-person sales kickoff in Denver, someone who came back from an injury">${esc(state.lastQuery || "")}</textarea></div>
       <div class="row"><div style="flex:0 1 200px"><label for="budget">Max budget (optional, enforced)</label><input id="budget" type="number" min="0" step="100" placeholder="5000" value="${esc(state.lastBudget || "")}"></div>
@@ -391,7 +404,7 @@ const FEATURED = [
     ],
     why: "A late starter who became a national contender, then built a business and a charity around the sport. That story fits keynotes on grit and second acts, women-in-sport panels, and hands-on clinics, and she is exactly the kind of athlete bookers don't know how to find." },
   { name: "Mehmet “Memo” Okur", alt: "Mehmet Okur", role: "Former NBA center · Utah Jazz 2004–2011", photo: "/static/img/okur.jpg", initials: "MO", hue: 210,
-    credit: 'Photo: Stephanie Young Merzel, <a href="https://commons.wikimedia.org/wiki/File:Mehmet_Okur_(cropped).jpg" target="_blank" rel="noopener">CC BY 2.0</a>',
+    credit: 'Photo: Lordcolus (Flickr), <a href="https://commons.wikimedia.org/wiki/File:Mehmo.jpg" target="_blank" rel="noopener">CC BY 2.0</a>',
     facts: [
       "NBA champion with the 2004 Detroit Pistons, then signed with the Utah Jazz in July 2004 and played seven seasons in Salt Lake City [5]",
       "2007 NBA All-Star [5]",
@@ -413,16 +426,17 @@ function viewAbout() {
     </div></article>`;
   $("#view").innerHTML = `
   <section class="hero about-hero">
-    <div class="about-crew">${bot("scout", "happy", 70)}${bot("story_builder", "classic", 70)}${bot("gatekeeper", "classic", 70)}</div>
+    <div class="about-crew">${bot("scout", "happy", 96)}${bot("story_builder", "happy", 96)}${bot("gatekeeper", "happy", 96)}</div>
     <h1>Every athlete's story deserves an audience</h1>
+    <button class="story-btn" data-story>▶ Watch our 25-second story</button>
     <p>NextPlay Pros connects former, current, and rising athletes with the schools, companies, nonprofits, and local businesses that want them for talks, appearances, clinics, and events. AI does the matching, the writing, and the scam screening. The athlete decides who gets their contact details.</p>
   </section>
   <h2 class="about-h">Meet your team</h2>
   <p class="sub">Every pro has a team: a scout, a publicist, security. Most athletes never get one. NextPlay Pros gives every athlete three AI teammates.</p>
   <div class="grid three team">
-    <div class="card team-card">${bot("scout", "happy", 84)}<div><h3>Scout</h3><div class="role">Your talent scout</div><p>Reads what a booker is planning, searches the roster, and puts you forward when your story fits: the theme, the city, the budget, and the day you're free.</p></div></div>
-    <div class="card team-card">${bot("story_builder", "happy", 84)}<div><h3>Story Builder</h3><div class="role">Your publicist</div><p>Turns your rough notes into a profile bookers want to hire, using only your facts, and flags every claim to verify before it goes live.</p></div></div>
-    <div class="card team-card">${bot("gatekeeper", "happy", 84)}<div><h3>Gatekeeper</h3><div class="role">Your security</div><p>Screens every request before you see it: scams, AI tricks, anything that breaks your Event Rider or your availability, and NIL problems for college athletes.</p></div></div>
+    <div class="card team-card">${bot("scout", "happy", 140)}<div><h3>Scout</h3><div class="role">Your talent scout</div><p>Reads what a booker is planning, searches the roster, and puts you forward when your story fits: the theme, the city, the budget, and the day you're free.</p></div></div>
+    <div class="card team-card">${bot("story_builder", "happy", 140)}<div><h3>Story Builder</h3><div class="role">Your publicist</div><p>Turns your rough notes into a profile bookers want to hire, using only your facts, and flags every claim to verify before it goes live.</p></div></div>
+    <div class="card team-card">${bot("gatekeeper", "happy", 140)}<div><h3>Gatekeeper</h3><div class="role">Your appearance guardrails</div><p>Checks every request against your rider, your schedule, and your safety rules before you see it, and stops scams, AI tricks, and NIL problems.</p></div></div>
   </div>
   <h2 class="about-h">Who it serves</h2>
   <div class="grid three serve">

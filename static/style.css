@@ -233,7 +233,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .profile-panel { margin-bottom: 0; }
 
 /* Meet your team */
-.team-card { flex-direction: row; align-items: flex-start; gap: 12px; }
+.team-card { flex-direction: column; align-items: center; text-align: center; gap: 6px; }
 .team-card h3 { margin: 0; }
 .team-card .role { font-size: 12px; font-weight: 800; color: var(--brand); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
 .team-card p { margin: 0; font-size: 14px; }
@@ -265,3 +265,11 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
   .team-card { flex-direction: column; }
   .req-top { align-items: flex-start; }
 }
+
+.story-btn { border: 0; border-radius: 999px; background: #fff; color: var(--navy); font-weight: 800; padding: 10px 18px; margin: 0 0 14px; box-shadow: 0 6px 20px rgba(0,0,0,.18); }
+.story-btn:hover { background: var(--brand-soft); }
+.story-overlay { position: fixed; inset: 0; z-index: 50; background: #0f1b2d; }
+.story-overlay iframe { width: 100%; height: 100%; border: 0; }
+
+.team-card .bot { margin-top: -4px; }
+.team-strip { gap: 6px 12px; }

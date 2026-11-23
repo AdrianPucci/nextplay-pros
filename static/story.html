@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NextPlay Pros Story</title>
+<style>
+  :root { --navy: #0f1b2d; --navy2: #1d2c44; --orange: #ff5a1f; --ice: #9fdcec; --gold: #e6c27a; --ink: #eef1f8; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { height: 100%; background: var(--navy); color: var(--ink); font-family: Inter, "Segoe UI", Arial, sans-serif; overflow: hidden; }
+  .stage { position: fixed; inset: 0; background: radial-gradient(900px 500px at 20% 0%, rgba(159,220,236,.14), transparent), linear-gradient(180deg, #13223a, var(--navy)); }
+  .scene { position: absolute; inset: 0; display: grid; place-items: center; padding: 6vh 6vw 16vh; opacity: 0; transition: opacity .7s ease; pointer-events: none; }
+  .scene.on { opacity: 1; }
+  .kicker { color: var(--orange); font-weight: 800; letter-spacing: .2em; text-transform: uppercase; font-size: clamp(12px, 1.6vw, 16px); text-align: center; }
+  h1 { font-size: clamp(30px, 6.2vw, 76px); letter-spacing: -.03em; line-height: 1.05; text-align: center; }
+  h1 .o { color: var(--orange); }
+  .big { font-size: clamp(26px, 4.6vw, 58px); font-weight: 800; letter-spacing: -.02em; text-align: center; line-height: 1.15; }
+  .row { display: flex; gap: clamp(10px, 2vw, 24px); justify-content: center; flex-wrap: wrap; margin-top: 3vh; }
+
+  /* scene 1: athlete cards fly in */
+  .pcard { width: clamp(96px, 15vw, 190px); aspect-ratio: 3/4; border-radius: 16px; overflow: hidden; position: relative; background: var(--navy2);
+           box-shadow: 0 10px 40px rgba(0,0,0,.45); transform: translateY(40px) scale(.92); opacity: 0; transition: all .8s cubic-bezier(.2,.8,.2,1); }
+  .on .pcard { transform: none; opacity: 1; }
+  .on .pcard:nth-child(2) { transition-delay: .25s; } .on .pcard:nth-child(3) { transition-delay: .5s; } .on .pcard:nth-child(4) { transition-delay: .75s; }
+  .pcard img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .pcard .init { position: absolute; inset: 0; display: grid; place-items: center; font-size: clamp(28px, 4vw, 52px); font-weight: 800; color: rgba(255,255,255,.9); }
+  .pcard .tag { position: absolute; left: 8px; bottom: 8px; right: 8px; font-size: clamp(9px, 1.1vw, 13px); font-weight: 700; background: rgba(15,27,45,.8); border-radius: 8px; padding: 4px 6px; }
+
+  /* scene 2/3: community dots + question marks */
+  .town { position: relative; width: min(80vw, 760px); height: min(34vh, 300px); margin-top: 2vh; }
+  .dot { position: absolute; width: 18px; height: 18px; border-radius: 50%; background: var(--ice); box-shadow: 0 0 0 0 rgba(159,220,236,.6); animation: ping 1.8s infinite; }
+  .dot.me { width: 30px; height: 30px; background: var(--orange); box-shadow: 0 0 0 0 rgba(255,90,31,.6); left: 46%; top: 40%; }
+  .q { position: absolute; font-size: clamp(22px, 3.4vw, 44px); font-weight: 800; color: var(--gold); opacity: 0; transition: opacity .6s; }
+  .on .q { opacity: 1; }
+  @keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(159,220,236,.5); } 70% { box-shadow: 0 0 0 18px rgba(159,220,236,0); } 100% { box-shadow: 0 0 0 0 rgba(159,220,236,0); } }
+  .gap { position: absolute; left: 50%; top: 50%; width: 0; height: 3px; background: repeating-linear-gradient(90deg, var(--gold) 0 10px, transparent 10px 18px); transform: translateY(-50%); }
+
+  /* scene 4: logo + team */
+  .logo { display: inline-grid; place-items: center; width: clamp(46px, 6vw, 72px); height: clamp(46px, 6vw, 72px); background: var(--orange); border-radius: 14px; font-size: clamp(20px, 2.6vw, 32px); margin-bottom: 2vh; transform: scale(.4); opacity: 0; transition: all .7s cubic-bezier(.2,1.4,.4,1); }
+  .on .logo { transform: none; opacity: 1; }
+  .team { display: flex; gap: clamp(16px, 4vw, 60px); justify-content: center; margin-top: 3vh; }
+  .member { text-align: center; opacity: 0; transform: translateY(20px); transition: all .7s; font-size: clamp(12px, 1.5vw, 18px); }
+  .on .member { opacity: 1; transform: none; }
+  .on .member:nth-child(1) { transition-delay: .9s; } .on .member:nth-child(2) { transition-delay: 1.3s; } .on .member:nth-child(3) { transition-delay: 1.7s; }
+  .member b { display: block; color: #fff; } .member span { color: var(--ice); }
+  .member svg { width: clamp(80px, 12vw, 150px); height: auto; }
+
+  /* scene 5: paid gigs */
+  .gig { background: #fff; color: #14181f; border-radius: 14px; padding: 12px 16px; min-width: clamp(150px, 20vw, 240px); opacity: 0; transform: translateY(30px) rotate(-2deg); transition: all .7s cubic-bezier(.2,.8,.2,1); text-align: left; }
+  .on .gig { opacity: 1; transform: none; }
+  .on .gig:nth-child(2) { transition-delay: .35s; } .on .gig:nth-child(3) { transition-delay: .7s; }
+  .gig .t { font-size: clamp(11px, 1.2vw, 14px); color: #5d6675; font-weight: 600; } .gig .n { font-size: clamp(15px, 1.8vw, 21px); font-weight: 800; }
+  .gig .p { font-size: clamp(20px, 2.6vw, 32px); font-weight: 800; color: #12865b; }
+  .cta { margin-top: 4vh; display: inline-block; background: var(--orange); color: #fff; font-weight: 800; padding: 14px 26px; border-radius: 999px; font-size: clamp(15px, 1.8vw, 22px); opacity: 0; transition: opacity .6s 1.4s; }
+  .on .cta { opacity: 1; }
+
+  /* subtitles */
+  .subs { position: fixed; left: 50%; bottom: 7vh; transform: translateX(-50%); width: min(92vw, 1000px); text-align: center; font-size: clamp(16px, 2.3vw, 28px); font-weight: 700; line-height: 1.3; }
+  .subs span { background: rgba(0,0,0,.72); padding: .2em .55em; border-radius: 8px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+  .bar { position: fixed; left: 0; bottom: 0; height: 5px; background: var(--orange); width: 0; }
+  .ctrl { position: fixed; top: 14px; right: 14px; display: flex; gap: 8px; z-index: 5; }
+  .ctrl button { border: 0; border-radius: 999px; background: rgba(255,255,255,.14); color: #fff; font: 600 14px Inter, Arial; padding: 8px 14px; cursor: pointer; }
+  .ctrl button:hover { background: rgba(255,255,255,.24); }
+  .start { position: fixed; inset: 0; display: grid; place-items: center; z-index: 6; background: rgba(15,27,45,.6); }
+  .start[hidden] { display: none; }
+  .start button { border: 0; border-radius: 999px; background: var(--orange); color: #fff; font: 800 22px Inter, Arial; padding: 18px 34px; cursor: pointer; box-shadow: 0 10px 40px rgba(255,90,31,.4); }
+  body.rec .ctrl, body.rec .start { display: none; }
+  @media (prefers-reduced-motion: reduce) { .dot { animation: none; } }
+  /* Phones / vertical video: everything bigger, cards in a 2x2 grid, gigs stacked */
+  @media (orientation: portrait) {
+    .scene { padding: 8vh 6vw 20vh; }
+    .kicker { font-size: 4vw; }
+    h1 { font-size: 13vw; }
+    .big { font-size: 8.4vw; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 4vw; margin-top: 4vh; }
+    .pcard { width: 38vw; }
+    .pcard .tag { font-size: 3.2vw; }
+    .pcard .init { font-size: 12vw; }
+    .town { width: 88vw; height: 40vh; }
+    .dot { width: 4vw; height: 4vw; } .dot.me { width: 7vw; height: 7vw; }
+    .q { font-size: 9vw; }
+    .logo { width: 16vw; height: 16vw; font-size: 7vw; }
+    .team { flex-direction: column; gap: 2.5vh; align-items: center; }
+    .member { display: flex; align-items: center; gap: 4vw; text-align: left; font-size: 4.6vw; }
+    .member svg { width: 26vw; }
+    #s5 { padding-bottom: 26vh; align-items: start; padding-top: 6vh; }
+    #s5 .row { grid-template-columns: 1fr; gap: 1.4vh; margin-top: 2.5vh; }
+    #s5 .cta { margin-top: 2.5vh; }
+    .gig { min-width: 0; width: 80vw; padding: 1.2vh 5vw; }
+    .gig .t { font-size: 3.6vw; } .gig .n { font-size: 5vw; } .gig .p { font-size: 7vw; }
+    .cta { font-size: 5vw; padding: 2vh 7vw; }
+    .subs { font-size: 5vw; bottom: 8vh; }
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <section class="scene" id="s1"><div>
+    <div class="kicker">Rising athletes · Retired pros · Local heroes</div>
+    <div class="row">
+      <div class="pcard"><img src="img/mg.jpg" alt="MG Vellinga"><div class="tag">Pro boxer · Park City</div></div>
+      <div class="pcard"><img src="img/okur.jpg" alt="Mehmet Okur"><div class="tag">NBA champ · Utah Jazz</div></div>
+      <div class="pcard" style="background:linear-gradient(160deg,#5a3a8a,#0f1b2d)"><div class="init">BC</div><div class="tag">Rising · D-I track</div></div>
+      <div class="pcard" style="background:linear-gradient(160deg,#2f6d58,#0f1b2d)"><div class="init">JO</div><div class="tag">Former D-I hoops</div></div>
+    </div>
+  </div></section>
+
+  <section class="scene" id="s2"><div style="width:100%">
+    <div class="big">Your community wants you.</div>
+    <div class="town" style="margin-left:auto;margin-right:auto">
+      <div class="dot" style="left:8%;top:20%"></div><div class="dot" style="left:22%;top:70%"></div><div class="dot" style="left:78%;top:18%"></div>
+      <div class="dot" style="left:88%;top:66%"></div><div class="dot" style="left:64%;top:80%"></div><div class="dot" style="left:30%;top:8%"></div>
+      <div class="dot me"></div>
+      <div class="q" style="left:14%;top:38%">?</div><div class="q" style="left:80%;top:40%">?</div><div class="q" style="left:58%;top:4%">?</div>
+    </div>
+  </div></section>
+
+  <section class="scene" id="s3"><div>
+    <div class="big">Schools. Teams. Businesses. Charities.</div>
+    <div class="big" style="color:var(--gold);margin-top:2vh">They just can't find you.</div>
+  </div></section>
+
+  <section class="scene" id="s4"><div style="text-align:center">
+    <div class="logo">▶</div>
+    <h1>NextPlay <span class="o">Pros</span></h1>
+    <div class="team">
+      <div class="member" id="m1"></div><div class="member" id="m2"></div><div class="member" id="m3"></div>
+    </div>
+  </div></section>
+
+  <section class="scene" id="s5"><div style="text-align:center">
+    <div class="big">Paid opportunities to show up and give back.</div>
+    <div class="row">
+      <div class="gig"><div class="t">Front Range Credit Union</div><div class="n">Keynote · Denver</div><div class="p">$4,500</div></div>
+      <div class="gig"><div class="t">Englewood Youth League</div><div class="n">Kids' clinic</div><div class="p">$800</div></div>
+      <div class="gig"><div class="t">Mile High Auto</div><div class="n">Grand opening</div><div class="p">$2,500</div></div>
+    </div>
+    <div class="cta">Your next play starts here ▶</div>
+  </div></section>
+</div>
+
+<div class="subs" aria-live="polite"><span id="sub"></span></div>
+<div class="bar" id="bar"></div>
+<div class="ctrl"><button id="replay">↺ Replay</button><button id="close">✕ Close</button></div>
+<div class="start" id="start"><button id="play">▶ Play the 25-second story</button></div>
+
+<script src="bots.js?v=14"></script>
+<script>
+// [scene id, seconds on screen, subtitle]
+const SCRIPT = [
+  ["s1", 5, "Rising athletes. Retired pros. Local heroes. This is for you."],
+  ["s2", 5, "Your community wants you… but doesn't know you're available."],
+  ["s3", 4, "And they don't know how to reach you."],
+  ["s4", 6, "NextPlay Pros connects you to your community, with an AI team in your corner."],
+  ["s5", 5, "Paid opportunities to show up, give back, and be seen. Your next play starts here."],
+];
+const TOTAL = SCRIPT.reduce((n, s) => n + s[1], 0);
+document.getElementById("m1").innerHTML = bot("scout", "happy", 150) + "<b>Scout</b><span>finds the gigs</span>";
+document.getElementById("m2").innerHTML = bot("story_builder", "happy", 150) + "<b>Story Builder</b><span>tells your story</span>";
+document.getElementById("m3").innerHTML = bot("gatekeeper", "happy", 150) + "<b>Gatekeeper</b><span>guards your rider</span>";
+
+let timers = [], t0 = 0, raf = 0;
+function show(id) { document.querySelectorAll(".scene").forEach((s) => s.classList.toggle("on", s.id === id)); }
+function sub(text) { document.getElementById("sub").textContent = text; }
+function tick() { const p = Math.min(1, (performance.now() - t0) / (TOTAL * 1000)); document.getElementById("bar").style.width = p * 100 + "%"; if (p < 1) raf = requestAnimationFrame(tick); }
+function play() {
+  timers.forEach(clearTimeout); timers = []; cancelAnimationFrame(raf);
+  document.getElementById("start").hidden = true;
+  let at = 0;
+  SCRIPT.forEach(([id, secs, text]) => { timers.push(setTimeout(() => { show(id); sub(text); }, at * 1000)); at += secs; });
+  t0 = performance.now(); tick();
+}
+document.getElementById("play").onclick = play;
+document.getElementById("replay").onclick = play;
+document.getElementById("close").onclick = () => parent.postMessage("close-story", "*");
+// ?autoplay=1 starts right away (used by the in-app button and the video recorder); ?rec=1 hides the controls
+const q = new URLSearchParams(location.search);
+if (q.get("rec")) document.body.classList.add("rec");
+if (q.get("autoplay")) play(); else { show("s1"); sub("Rising athletes. Retired pros. Local heroes."); }
+</script>
+</body>
+</html>

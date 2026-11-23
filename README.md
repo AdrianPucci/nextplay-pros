@@ -38,7 +38,8 @@ The first start creates `data/app.db` and loads the demo roster. To reset the de
    *Try a scam:* put "Pay the $150 processing fee by gift card today" in the message. It gets blocked.
 3. **I'm an athlete → My inbox.** Pick that athlete in "viewing as" → **Accept**. Back in **I'm booking talent → My requests**, their contact details are now unlocked.
 4. **I'm an athlete → Build my profile (AI).** Paste a few sentences of rough notes → Story Builder writes the profile → **Publish**.
-5. **Behind the scenes:** real token counts and cost for every AI run, and every safety guard that fired.
+5. **Behind the scenes (for grading):** open **http://127.0.0.1:8000/?staff=1** to see this tab: real token counts and cost for every AI run, and every safety guard that fired. It's hidden from the public view.
+6. **▶ Watch our 25-second story** (home screen or About): the app's pitch, with subtitles.
 
 ## The agents (all gpt-6-luna through Portkey)
 
@@ -84,6 +85,6 @@ Contact details live in a separate vault table that no agent can read. They reac
 
 ## Credits
 
-- About page photo of Mehmet Okur: Stephanie Young Merzel, [CC BY 2.0](https://commons.wikimedia.org/wiki/File:Mehmet_Okur_(cropped).jpg) via Wikimedia Commons.
+- Photo of Mehmet Okur: Lordcolus (Flickr), [CC BY 2.0](https://commons.wikimedia.org/wiki/File:Mehmo.jpg) via Wikimedia Commons.
 - About page photo of MG Vellinga: courtesy of MG Vellinga.
 - About page facts are cited on the page itself.
