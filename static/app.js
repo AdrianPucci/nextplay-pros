@@ -657,6 +657,11 @@ const FEATURED = [
     ],
     why: "A small-mountain-town kid who became a world champion. Every Colorado high school track team, running club, and girls-in-sports program would love an hour with her. That's exactly the local pull NextPlay Pros is built for." },
 ];
+const FACES = [  // About hero: face shots that scroll right to left
+  ["mg.jpg", "MG Vellinga", "center 20%"], ["bloom.jpg", "Jeremy Bloom", "center 20%"], ["clark.jpg", "Wyndham Clark", "center 20%"],
+  ["mg2.jpg", "MG Vellinga", "center 20%"], ["dauwalter.jpg", "Courtney Dauwalter", "center 20%"], ["coburn.jpg", "Emma Coburn", "center 20%"],
+  ["bloom2.jpg", "Jeremy Bloom", "center 20%"], ["clark2.jpg", "Wyndham Clark", "center 20%"],
+];
 function viewAbout() {
   const card = (a) => `<article class="feature">
     <div class="feature-photo" style="--h:${a.hue}">
@@ -671,7 +676,8 @@ function viewAbout() {
     </div></article>`;
   $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div>
   <section class="hero about-hero">${XO(220, "xo-watermark")}
-    <div class="about-crew">${bot("scout", "happy", 96)}${bot("story_builder", "happy", 96)}${bot("gatekeeper", "happy", 96)}</div>
+    <div class="faces" aria-label="Athletes featured on NextPlay Pros"><div class="faces-track">${[0, 1].map((copy) => FACES.map(([img, name, pos]) =>
+      `<figure ${copy ? 'aria-hidden="true"' : ""}><img src="/static/img/${img}" alt="${copy ? "" : esc(name)}" style="object-position:${pos}"><figcaption>${esc(name)}</figcaption></figure>`).join("")).join("")}</div></div>
     <h1>Every athlete's story deserves an audience</h1>
     <button class="story-btn" data-story>▶ Watch our 15-second story</button>
     <p>NextPlay Pros connects former, current, and rising athletes with the schools, companies, nonprofits, and local businesses that want them for talks, appearances, clinics, and events. We do the matching, the writing, and the scam screening. The athlete decides who gets their contact details.</p>
