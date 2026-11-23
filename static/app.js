@@ -101,10 +101,10 @@ function athleteCard(a, extra = "") {
 // ---------------------------------------------------------------- tabs
 // Layered menus: "My dashboard" (signed in) -> numbered steps -> "more" tabs on the right.
 const TABS = {
-  booker: [["home", "My dashboard"], ["find", "1 · Find talent"], ["mine", "2 · Requests & bookings"], ["|"], ["browse", "Browse roster"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
-  athlete: [["home", "My dashboard"], ["board", "1 · Find gigs"], ["build", "2 · Build my profile"], ["rider", "3 · Rider & availability"], ["inbox", "4 · Requests & bookings"], ["|"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"], ["about", "About"]],
+  booker: [["about", "About"], ["home", "My dashboard"], ["find", "1 · Find talent"], ["mine", "2 · Requests & bookings"], ["|"], ["browse", "Browse roster"], ["board", "Opportunity board"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"]],
+  athlete: [["about", "About"], ["home", "My dashboard"], ["board", "1 · Find gigs"], ["build", "2 · Build my profile"], ["rider", "3 · Rider & availability"], ["inbox", "4 · Requests & bookings"], ["|"], ["behind", "Behind the scenes"], ["terms", "Terms & Safety"]],
 };
-const firstTab = (role) => (state.user ? "home" : TABS[role][1][0]);
+const firstTab = (role) => (state.user ? "home" : TABS[role].find(([, l]) => /^\d/.test(l || ""))[0]);
 const tabLabel = (l) => { const m = /^(\d) · (.*)$/.exec(l); return m ? `<i>${m[1]}</i>${m[2]}` : l; };
 const STAFF = new URLSearchParams(location.search).has("staff");
 { const go = new URLSearchParams(location.search).get("go");  // links from the story video's end card
@@ -891,7 +891,8 @@ function viewAbout() {
   </ol>
   <div class="panel founder">
     <h2>Why I'm building this</h2>
-    <p>I spent years doing design work alongside sports and event teams in Utah. Over and over I met athletes with incredible stories who were past their playing days, not household names, or still on the rise, and the businesses and events that would have loved to book them had no idea how to reach them. NextPlay Pros is the bridge I kept wishing existed.</p>
+    <p>As a designer, I worked with the NBA, MLB, and NFL and on more than five Olympic Games. I've seen stars rise and fade, and I've seen how much fans love both the memories and the journeys behind them.</p>
+    <p>NextPlay Pros is the platform I've long wanted to build: real business opportunities for stars past their prime, a way to reconnect with their fans and inspire people who want to hear their stories, and a moment to shine for up-and-coming athletes, with audiences who want to know who they are.</p>
     <p class="meta">Adrian Vellinga · Yale SOM · MGT 409 final project</p>
   </div>
   <h2 class="about-h">Athletes who show why</h2>
