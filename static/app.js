@@ -132,12 +132,66 @@ const EXAMPLES = [
   "Funny emcee for a children's hospital charity gala in Dallas, clean material, up to $4,000.",
   "Virtual fireside chat on women in leadership for a business school club, budget $3,000.",
 ];
+// ---------------------------------------------------------------- intro banner (home): crossfading athletes + tagline
+const INTRO_SLIDES = [
+  ["mg.jpg", "MG Vellinga", "Pro boxer · Park City"],
+  ["okur.jpg", "Mehmet Okur", "NBA champion · Utah Jazz"],
+  ["bloom.jpg", "Jeremy Bloom", "Olympic skier · NFL draft pick"],
+  ["clark.jpg", "Wyndham Clark", "2x U.S. Open champion"],
+  ["dauwalter.jpg", "Courtney Dauwalter", "Ultrarunner · former teacher"],
+];
+function introBanner() {
+  const n = INTRO_SLIDES.length, step = 4;  // seconds per athlete
+  return `<section class="intro" style="--n:${n};--cycle:${n * step}s" aria-label="NextPlay Pros">
+    <div class="intro-pics" aria-hidden="true">${INTRO_SLIDES.map(([img, name, role], i) =>
+      `<figure style="animation-delay:${i * step - n * step}s"><img src="/static/img/${img}" alt=""><figcaption><b>${esc(name)}</b>${esc(role)}</figcaption></figure>`).join("")}</div>
+    <div class="intro-copy">
+      <h1>You were a star, <span>or you're becoming one.</span></h1>
+      <p>Let us help you connect with your community, get paid, and inspire through your story.</p>
+      <p class="intro-ask">They're waiting… are you ready?</p>
+      <div class="intro-cta"><button class="btn" data-go-athlete>I'm ready: build my profile</button><button class="story-btn" data-story>▶ Watch our 25-second story</button></div>
+    </div>
+  </section>`;
+}
+document.addEventListener("click", (e) => {
+  if (e.target.closest("[data-go-athlete]")) { state.role = "athlete"; state.tab = "build"; render(); window.scrollTo(0, 0); }
+});
+
+function whoFor() {
+  return `<section class="who" aria-label="Who NextPlay Pros is for">
+    <div class="who-card athletes">
+      <div class="who-kicker">For athletes</div>
+      <h2>Rising, retired, or a local hero</h2>
+      <ul>
+        <li>💼 <b>Get paid</b> for talks, appearances, clinics, and events</li>
+        <li>✍️ <b>A profile written for you</b> from your own story</li>
+        <li>🛡️ <b>Your rules:</b> your rider, your schedule, your fees</li>
+        <li>🔒 <b>Your contact stays private</b> until you say yes</li>
+      </ul>
+      <button class="btn" data-go-athlete>Build my profile</button>
+    </div>
+    <div class="who-card bookers">
+      <div class="who-kicker">For communities &amp; bookers</div>
+      <h2>Schools, teams, businesses, charities</h2>
+      <ul>
+        <li>🔎 <b>Describe your event</b> in plain English</li>
+        <li>🎯 <b>Get athletes who fit</b> your theme, city, budget, and date</li>
+        <li>💵 <b>Fair, clear fees</b> with no bureau markup</li>
+        <li>🤝 <b>Protected bookings:</b> escrow, check-in, refunds</li>
+      </ul>
+      <button class="btn ghost-light" data-go-find>Find an athlete</button>
+    </div>
+  </section>`;
+}
+document.addEventListener("click", (e) => {
+  if (e.target.closest("[data-go-find]")) { const h = document.getElementById("find-hero"); if (h) h.scrollIntoView({ behavior: "smooth", block: "start" }); setTimeout(() => { const q = document.getElementById("q"); if (q) q.focus({ preventScroll: true }); }, 450); }
+});
+
 function viewFind() {
-  $("#view").innerHTML = `
-  <section class="hero">
+  $("#view").innerHTML = `${introBanner()}${whoFor()}
+  <section class="hero" id="find-hero">
     <h1>Who do you want at your event?</h1>
     <p>Describe it like you'd tell a friend. Scout searches the roster, keeps you under budget, and explains every match.</p>
-    <button class="story-btn" data-story>▶ Watch our 25-second story</button>
     <div class="team-strip">${bot("scout", "happy", 46)}<span><b>Scout</b> finds</span>${bot("story_builder", "happy", 46)}<span><b>Story Builder</b> writes</span>${bot("gatekeeper", "happy", 46)}<span><b>Gatekeeper</b> guards your rider</span></div>
     <div class="form">
       <div><label for="q">Your event</label><textarea id="q" placeholder="e.g. Motivational speaker for our 200-person sales kickoff in Denver, someone who came back from an injury">${esc(state.lastQuery || "")}</textarea></div>

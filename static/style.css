@@ -273,3 +273,50 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 
 .team-card .bot { margin-top: -4px; }
 .team-strip { gap: 6px 12px; }
+
+/* Intro banner: about a quarter of the screen, athletes crossfading behind the tagline */
+.intro { position: relative; min-height: max(25vh, 270px); border-radius: var(--radius); overflow: hidden; margin-bottom: 18px;
+         background: #0b1424; color: #fff; display: flex; align-items: center; isolation: isolate; }
+.intro-pics { position: absolute; inset: 0 0 0 38%; z-index: -1; }
+.intro-pics::after { content: ""; position: absolute; inset: 0 0 0 -1px; background: linear-gradient(90deg, #0b1424 0%, #0b1424 4%, rgba(11,20,36,.7) 26%, rgba(11,20,36,0) 62%); }
+.intro-pics figure { position: absolute; inset: 0; margin: 0; opacity: 0; overflow: hidden; animation: introFade var(--cycle) linear infinite; }
+.intro-pics img { width: 100%; height: 100%; object-fit: cover; object-position: center 22%; animation: introZoom var(--cycle) linear infinite; animation-delay: inherit; }
+.intro-pics figcaption { position: absolute; right: 14px; bottom: 12px; text-align: right; font-size: 12px; color: #c5d1e3; text-shadow: 0 1px 6px rgba(0,0,0,.7); }
+.intro-pics figcaption b { display: block; color: #fff; font-size: 14px; }
+@keyframes introFade { 0% { opacity: 0; } 5% { opacity: 1; } 20% { opacity: 1; } 26% { opacity: 0; } 100% { opacity: 0; } }
+@keyframes introZoom { 0% { transform: scale(1.12); } 26% { transform: scale(1); } 100% { transform: scale(1); } }
+.intro-copy { position: relative; padding: 26px 28px; max-width: 560px; }
+.intro-copy h1 { color: #fff; font-size: clamp(26px, 3.2vw, 38px); line-height: 1.1; margin: 0 0 10px; }
+.intro-copy h1 span { color: var(--brand); display: block; }
+.intro-copy p { color: #dbe4f1; margin: 0 0 6px; font-size: 16px; max-width: 440px; }
+.intro-copy .intro-ask { color: #fff; font-weight: 800; font-size: 18px; margin: 10px 0 14px; }
+.intro-cta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.intro-cta .story-btn { margin: 0; }
+@media (max-width: 640px) {
+  .intro { min-height: 520px; align-items: flex-end; }
+  .intro-pics { inset: 0; }
+  .intro-pics::after { background: linear-gradient(0deg, #0b1424 0%, rgba(11,20,36,.85) 45%, rgba(11,20,36,.1) 100%); }
+  .intro-pics figcaption { top: 12px; bottom: auto; }
+  .intro-copy { padding: 18px 16px; }
+  .intro-cta .btn, .intro-cta .story-btn { flex: 1 1 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro-pics figure, .intro-pics img { animation: none; }
+  .intro-pics figure:first-child { opacity: 1; }
+}
+
+/* Who it's for (home) */
+.who { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+.who-card { border-radius: var(--radius); padding: 20px 22px; display: flex; flex-direction: column; gap: 6px; box-shadow: var(--shadow); }
+.who-card.athletes { background: #0f1b2d; color: #e8edf5; }
+.who-card.bookers { background: #fff0e9; color: var(--ink); border: 1px solid #ffd9c8; }
+.who-kicker { font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--brand); }
+.who-card h2 { margin: 0 0 4px; font-size: 21px; color: inherit; }
+.who-card ul { list-style: none; padding: 0; margin: 0 0 12px; display: grid; gap: 7px; font-size: 15px; }
+.who-card.athletes b { color: #fff; }
+.who-card .btn { align-self: flex-start; margin-top: auto; }
+.btn.ghost-light { background: var(--navy); color: #fff; }
+@media (max-width: 640px) { .who { grid-template-columns: 1fr; } .who-card .btn { align-self: stretch; } }
+
+.intro-pics { -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 38%); mask-image: linear-gradient(90deg, transparent 0%, #000 38%); }
+@media (max-width: 640px) { .intro-pics { -webkit-mask-image: linear-gradient(0deg, transparent 0%, #000 55%); mask-image: linear-gradient(0deg, transparent 0%, #000 55%); } }
