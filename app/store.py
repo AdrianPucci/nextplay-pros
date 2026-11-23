@@ -272,7 +272,42 @@ def get_request(rid: str) -> dict | None:
 def requests_for_athlete(athlete_id: str) -> list[dict]:
     with connect() as c:
         rows = c.execute("SELECT * FROM requests WHERE athlete_id = ? ORDER BY created DESC", (athlete_id,)).fetchall()
+    if not rows and get_athlete(athlete_id):  # demo: nobody opens an empty inbox
+        demo_request(athlete_id)
+        with connect() as c:
+            rows = c.execute("SELECT * FROM requests WHERE athlete_id = ? ORDER BY created DESC", (athlete_id,)).fetchall()
     return [_row(r) for r in rows]
+
+
+# Demo inbox: one realistic, already-screened request per athlete so every inbox has something to open.
+# Clearly marked as demo (booker_id "demo_booker", screening.demo = true); it skips the AI call, so it costs nothing.
+DEMO_BOOKERS = {
+    "speaking": [("Jordan Ellis", "{city} Public Schools", "School assembly", "Our middle school is holding a spring assembly on resilience and goal setting for about 400 students. Your story would mean a lot to our kids. Could you speak for 30 minutes plus Q&A?"),
+                 ("Priya Shah", "Front Range Credit Union", "Corporate keynote", "We're planning our annual all-staff kickoff (about 150 people) and want a keynote on teamwork and bouncing back from setbacks. 40 minutes, then a short meet-and-greet.")],
+    "clinic": [("Coach Dana Ruiz", "{city} Youth Sports League", "Youth clinic", "We'd love you to run a two-hour Saturday clinic for about 40 kids, ages 10 to 14. Parents and coaches will be there; we'll handle the field, water, and check-in.")],
+    "mentoring": [("Marcus Green", "Boys & Girls Club of {city}", "Mentoring session", "Our teen leadership group (15 students) meets weekly. Could you join one session to talk about discipline, school, and life after sports?")],
+    "appearance": [("Lauren Kim", "Summit Sporting Goods", "Store appearance", "We're celebrating our store's 10-year anniversary and would love you to sign autographs and take photos with customers for two hours.")],
+    "endorsement": [("Lauren Kim", "Summit Sporting Goods", "Local campaign", "We're a family-owned sporting goods store looking for a local athlete for a small spring social campaign: one photo shoot and three posts.")],
+    "comedy_entertainment": [("Sam Ortiz", "Mile High Charity Gala", "Emcee", "Our children's hospital gala needs a fun, warm emcee for the evening program (about 2 hours, 300 guests).")],
+}
+
+
+def demo_request(athlete_id: str) -> dict:
+    from datetime import timedelta
+    a = get_athlete(athlete_id)
+    cat = next((c for c in a.get("categories", []) if c in DEMO_BOOKERS), "speaking")
+    pick = DEMO_BOOKERS[cat][sum(map(ord, athlete_id)) % len(DEMO_BOOKERS[cat])]
+    city = a.get("city") or "Denver"
+    lo, hi = int(a.get("fee_min") or 1000), int(a.get("fee_max") or a.get("fee_min") or 2000)
+    budget = int(round(((lo + hi) / 2) / 100) * 100)
+    days = 21 + sum(map(ord, athlete_id)) % 21
+    date = (datetime.now() + timedelta(days=days)).date().isoformat()
+    screening = {"verdict": "deliver", "demo": True, "risk_flags": [], "rule_flags": [], "rider_conflicts": [],
+                 "summary": "Looks legitimate: a named organization, a clear event and audience, and no requests for money, gift cards, or off-platform payment. (Demo request.)",
+                 "fee_note": f"Offer of ${budget:,} is inside your ${lo:,}–${hi:,} range.", "usage": {}}
+    form = {"booker_name": pick[0], "org": pick[1].format(city=city), "event_type": pick[2], "event_date": date,
+            "event_time": "10:00", "city": city, "budget": budget, "message": pick[3]}
+    return create_request(athlete_id, "demo_booker", form, "pending", screening)
 
 
 def requests_for_booker(booker_id: str) -> list[dict]:

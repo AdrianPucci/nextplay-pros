@@ -459,3 +459,5 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .band { background-position: center 25%; }
 .band.slim { height: clamp(120px, 15vw, 220px); background-position: center 30%; }
 @media (max-width: 640px) { .band.slim { height: 110px; background-size: auto 260%; background-position: 30% 8%; } .band { background-position: 30% 10%; } }
+
+.status.demo { background: #eef2f8; color: #5d6675; }
