@@ -114,6 +114,15 @@ function availLine(a) {
   return `🗓️ ${esc(days)} · ${esc(times)} · ${av.notice_days} days' notice`;
 }
 const idBadge = (a) => (a.id_status ? `<span class="pill idok" title="Government ID on file with NextPlay Pros (never shown)">🪪 ID on file</span>` : "");
+// Plain-language status badges, with a short explanation on hover.
+const STATUS = {
+  pending: ["Awaiting reply", "Screened and clean. Waiting for the athlete to answer."],
+  flagged: ["Needs a look", "Delivered, but something to double-check first: see the flag on the card."],
+  accepted: ["Booked", "The athlete said yes. The fee is held in escrow and contact details are unlocked."],
+  declined: ["Declined", "The athlete passed on this one."],
+  blocked: ["Blocked: scam stopped", "Gatekeeper stopped this request. It was never delivered."],
+};
+const statusBadge = (st) => { const [label, tip] = STATUS[st] || [st, ""]; return `<span class="status ${st}" title="${esc(tip)}">${esc(label)}</span>`; };
 function athleteCard(a, extra = "") {
   return `<div class="card pro">
     <div class="pro-top">${photoBox(a)}${(a.photos_extra || []).filter(Boolean).length ? `<div class="pro-extras">${a.photos_extra.filter(Boolean).map((u) => `<img src="${esc(u)}" alt="">`).join("")}</div>` : ""}${extra.score || ""}</div>
@@ -758,7 +767,7 @@ async function viewMine() {
   $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div><h1>My requests</h1><p class="sub">Contact details unlock only after an athlete accepts.</p><div id="list" class="grid"><div class="thinking"><span class="spinner"></span>Loading…</div></div>`;
   const list = await api(`/api/requests/booker/${state.bookerId}`);
   $("#list").innerHTML = list.length ? list.map((r) => `<div class="req">
-    <div class="req-top"><div><b>${esc(r.athlete_name)}</b> · <span class="meta">${esc(CAT[r.event_type] || r.event_type)} · ${esc(r.event_date || "date TBD")} · ${money(r.budget)}</span></div><span>${r.screening.demo ? `<span class="status demo" title="Sample request so every inbox has something to try">demo</span> ` : ""}<span class="status ${r.status}">${r.status}</span></span></div>
+    <div class="req-top"><div><b>${esc(r.athlete_name)}</b> · <span class="meta">${esc(CAT[r.event_type] || r.event_type)} · ${esc(r.event_date || "date TBD")} · ${money(r.budget)}</span></div><span>${r.screening.demo ? `<span class="status demo" title="Sample request so every inbox has something to try">demo</span> ` : ""}${statusBadge(r.status)}</span></div>
     <p class="msg">${esc(r.message)}</p>
     ${prepPanel(r, "booker")}
     ${r.payout ? commitPanel(r, "booker") : ""}
@@ -783,7 +792,7 @@ async function drawInbox() {
   if (who !== state.athleteId || !$("#inbox")) return; // a newer selection already drew
   const open = list.filter((r) => r.status !== "blocked"), blocked = list.filter((r) => r.status === "blocked");
   const reqHtml = (r) => `<div class="req">
-    <div class="req-top"><div><b>${esc(r.org)}</b> ${r.org_type ? `<span class="pill orgtype">${esc(ORG_LABEL[r.org_type] || r.org_type)}</span>` : ""} <span class="meta">· ${esc(r.booker_name)} · ${esc(r.city || "")} · ${esc(r.event_date || "date TBD")}</span></div><span>${r.screening.demo ? `<span class="status demo" title="Sample request so every inbox has something to try">demo</span> ` : ""}<span class="status ${r.status}">${r.status}</span></span></div>
+    <div class="req-top"><div><b>${esc(r.org)}</b> ${r.org_type ? `<span class="pill orgtype">${esc(ORG_LABEL[r.org_type] || r.org_type)}</span>` : ""} <span class="meta">· ${esc(r.booker_name)} · ${esc(r.city || "")} · ${esc(r.event_date || "date TBD")}</span></div><span>${r.screening.demo ? `<span class="status demo" title="Sample request so every inbox has something to try">demo</span> ` : ""}${statusBadge(r.status)}</span></div>
     ${r.screening.address ? (r.screening.address.status === "verified"
       ? `<div class="addr ok">${uiIcon("shield", 14)} ${esc(r.screening.address.label)}${r.screening.address.matched && r.screening.address.matched !== "Virtual" ? ": " + esc(r.screening.address.matched) : ""}</div>`
       : `<div class="addr red">🚩 <b>Red flag:</b> ${esc(r.screening.address.label)}${r.event_address ? ` (“${esc(r.event_address)}”)` : ""}. Confirm the location on a prep call before you accept.</div>`) : ""}
