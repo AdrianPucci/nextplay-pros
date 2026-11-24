@@ -73,9 +73,16 @@ function usageLine(g, open = false) {
       ${(g.reasoning || []).length ? `<ol class="trace">${g.reasoning.map((r) => `<li><span>💭</span>${esc(r)}</li>`).join("")}</ol>` : `<p class="meta">No reasoning summary came back this run (structured answers usually skip it).</p>`}
     </div></details>`;
 }
+// Loading message; pass a list of steps and it walks through them while the agent works.
 function thinking(agent, text) {
-  return `<div class="thinking">${bot(agent, "thinking", 56, "bouncing")}<div>${esc(text)}<span class="dots"><i></i><i></i><i></i></span></div></div>`;
+  const steps = Array.isArray(text) ? text : [text];
+  return `<div class="thinking" data-steps='${esc(JSON.stringify(steps))}' data-i="0">${bot(agent, "thinking", 56, "bouncing")}<div><span class="t-step">${esc(steps[0])}</span><span class="dots"><i></i><i></i><i></i></span></div></div>`;
 }
+setInterval(() => document.querySelectorAll(".thinking[data-steps]").forEach((el) => {
+  const steps = JSON.parse(el.dataset.steps), i = Math.min(Number(el.dataset.i) + 1, steps.length - 1);
+  if (i === Number(el.dataset.i)) return;
+  el.dataset.i = i; const t = el.querySelector(".t-step"); if (t) t.textContent = steps[i];
+}), 2200);
 function photoBox(a, cls = "pro-photo") {
   const hue = [...a.name].reduce((h, c) => h + c.charCodeAt(0), 0) % 360;
   const init = a.name.replace(/".*?"/g, "").split(/\s+/).filter(Boolean).map((w) => w[0]).slice(0, 2).join("");
@@ -493,7 +500,7 @@ async function runScout() {
   if (!text) return toast("Describe your event first.");
   state.lastQuery = text; state.lastBudget = b;
   const btn = $("#go"); btn.disabled = true; btn.innerHTML = `<span class="spinner"></span>Scouting…`;
-  $("#results").innerHTML = thinking("scout", `Scout is reading your request and searching ${state.athletes.length} athletes`);
+  $("#results").innerHTML = thinking("scout", ["Scout is reading your event", `Searching ${state.athletes.length} athletes near you`, "Checking availability and budget", "Ranking the best fits and writing why", "Almost there"]);
   try {
     state.lastScout = await api("/api/scout", { method: "POST", body: { text, budget: b ? Number(b) : null, state: state.loc.st || null, region: state.loc.rg || null } });
     $("#results").innerHTML = scoutResults(state.lastScout);
@@ -725,7 +732,7 @@ function viewBuild() {
       notes: [story, extra].filter(Boolean).join("\n\n"), off_limits: $("#q-off").value.trim() };
     if (!body.name || !body.sport || body.notes.length < 30) return toast("Add your name, sport, and a few sentences about your story (or answer a few questions below).");
     const btn = $("#s-go"); btn.disabled = true; btn.innerHTML = `<span class="spinner"></span>Writing…`;
-    $("#s-out").innerHTML = thinking("story_builder", "Story Builder is writing your profile");
+    $("#s-out").innerHTML = thinking("story_builder", ["Story Builder is reading your story", "Writing your headline and bio", "Picking topics bookers search for", "Flagging anything to double-check"]);
     try { const r = await api("/api/story", { method: "POST", body }); state.draft = { ...body, ...r }; drawDraft(); }
     catch (err) { $("#s-out").innerHTML = `<div class="alert bad">${esc(err.message)}</div>`; }
     btn.disabled = false; btn.textContent = "Rewrite";

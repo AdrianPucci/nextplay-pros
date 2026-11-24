@@ -872,5 +872,62 @@
       "slot": 0,
       "categories": []
     }
+  },
+  {
+    "time": "2026-11-24T04:38:46+00:00",
+    "guard": "rules_raised_verdict",
+    "where": "gatekeeper",
+    "detail": {
+      "model": "deliver",
+      "rules": "flag",
+      "flags": [
+        "rider_conflict"
+      ],
+      "run_id": "b6fd785d52"
+    }
+  },
+  {
+    "time": "2026-11-24T04:39:42+00:00",
+    "guard": "rules_raised_verdict",
+    "where": "gatekeeper",
+    "detail": {
+      "model": "deliver",
+      "rules": "flag",
+      "flags": [
+        "rider_conflict"
+      ],
+      "run_id": "71f6ca96d9"
+    }
+  },
+  {
+    "time": "2026-11-24T04:40:06+00:00",
+    "guard": "daily_spend_cap",
+    "where": "any agent",
+    "detail": {
+      "spent_usd": 0.0156,
+      "cap_usd": 0.0
+    }
+  },
+  {
+    "time": "2026-11-24T04:40:07+00:00",
+    "guard": "photo_blocked",
+    "where": "photo upload",
+    "detail": {
+      "athlete_id": "ath_001",
+      "slot": 1,
+      "categories": [
+        "sexual"
+      ]
+    }
+  },
+  {
+    "time": "2026-11-24T04:40:07+00:00",
+    "guard": "photo_check_unavailable",
+    "where": "photo upload",
+    "detail": {
+      "athlete_id": "ath_001",
+      "slot": 0,
+      "categories": []
+    }
   }
 ]

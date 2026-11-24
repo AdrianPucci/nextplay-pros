@@ -213,7 +213,7 @@ def miles(lat1, lon1, lat2, lon2) -> float:
 
 def search(sport: str | None = None, categories: list[str] | None = None, near_city: str | None = None,
            radius_miles: int | None = None, state: str | None = None, max_fee: int | None = None,
-           virtual_only: bool = False, keywords: list[str] | None = None, limit: int = 12,
+           virtual_only: bool = False, keywords: list[str] | None = None, limit: int = 8,
            day: str | None = None, time_of_day: str | None = None) -> list[dict]:
     """Plain Python filter + keyword score over the roster. Returns public fields only (no contacts)."""
     origin = CITIES.get(near_city or "")
@@ -247,7 +247,8 @@ def search(sport: str | None = None, categories: list[str] | None = None, near_c
             "city": a["city"], "state": a["state"], "distance_miles": dist,
             "categories": a["categories"], "topics": a["topics"],
             "fee_range": f"${a['fee_min']:,}-${a['fee_max']:,}", "fee_min": a["fee_min"],
-            "virtual_ok": a["virtual_ok"], "keyword_hits": score, "story": a["story"],
+            "virtual_ok": a["virtual_ok"], "keyword_hits": score,
+            "story": a["story"] if len(a["story"]) <= 400 else a["story"][:400].rsplit(" ", 1)[0] + "…",
             "availability": riders.describe_availability(a["availability"]),
         })
     results.sort(key=lambda r: (-r["keyword_hits"], r["distance_miles"] if r["distance_miles"] is not None else 9999))

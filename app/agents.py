@@ -9,6 +9,7 @@ provider's prompt cache can reuse them. Every run is logged to output/usage_log.
 and output/audit_trail.json (every tool call), and Python checks the model's output before it is used.
 """
 import json
+import os
 import re
 import time
 import uuid
@@ -120,7 +121,7 @@ def scout_agent() -> Agent:
             return json.dumps(rows) if rows else "No athletes matched. Try fewer filters."
 
         search_athletes.__doc__ = (
-            "Search the NextPlay Pros roster. Returns up to 12 athletes with public profile fields "
+            "Search the NextPlay Pros roster. Returns up to 8 athletes with public profile fields "
             "(never contact details). near_city must be one of: " + ", ".join(store.CITIES) + ". "
             "day (mon-sun) and time_of_day (morning, afternoon, evening) keep only athletes available then.")
         agent.tool(search_athletes)
@@ -175,7 +176,10 @@ async def _run(agent: Agent, agent_name: str, prompt: str, deps=None) -> tuple:
     content = [f"NextPlay Pros {agent_name} task.", CachePoint(), prompt]
     result = await agent.run(content, deps=deps, usage_limits=LIMITS,
                              model_settings={"openai_prompt_cache_key": f"nextplay-{agent_name}",
-                                             "openai_reasoning_summary": "detailed"})
+                                             # Speed: these are focused tasks (rank, write, screen), so low effort is enough;
+                                             # Python still enforces the roster, budget, and safety rules after every run.
+                                             "openai_reasoning_effort": os.getenv("NEXTPLAY_REASONING_EFFORT", "low"),
+                                             "openai_reasoning_summary": "concise"})
     u = result.usage
     messages = result.all_messages()
     reasoning = [p.content.strip() for m in messages if isinstance(m, ModelResponse)
