@@ -642,3 +642,8 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .role-label .ui-ic { color: var(--brand); }
 .role-label[hidden], .role-switch[hidden] { display: none; }
 @media (max-width: 640px) { .role-label { order: 3; width: 100%; justify-content: center; } }
+
+.role-label { padding: 4px 4px 4px 14px; gap: 10px; }
+.rl-mode { display: inline-flex; align-items: center; gap: 6px; }
+.rl-switch { border: 0; background: var(--brand); color: #fff; font-weight: 700; border-radius: 999px; padding: 6px 12px; cursor: pointer; font-size: 13px; }
+.rl-switch:hover { filter: brightness(1.08); }
