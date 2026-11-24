@@ -765,5 +765,27 @@
       "spent_usd": 0.0286,
       "cap_usd": 0.0
     }
+  },
+  {
+    "time": "2026-11-24T02:28:19+00:00",
+    "guard": "rules_raised_verdict",
+    "where": "gatekeeper",
+    "detail": {
+      "model": "deliver",
+      "rules": "flag",
+      "flags": [
+        "rider_conflict"
+      ],
+      "run_id": "3cf7b941df"
+    }
+  },
+  {
+    "time": "2026-11-24T03:57:28+00:00",
+    "guard": "daily_spend_cap",
+    "where": "any agent",
+    "detail": {
+      "spent_usd": 0.0044,
+      "cap_usd": 0.0
+    }
   }
 ]

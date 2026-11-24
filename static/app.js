@@ -41,6 +41,13 @@ function avatar(a) {
 const STEP_ICON = { read: "👀", tool: "🔧", check: "🛡️", block: "⛔", done: "✅" };
 function usageLine(g, open = false) {
   if (!g) return "";
+  if (!STAFF) {  // public view: a short, plain line; the full Glass box (trace + model reasoning) is for staff/grading
+    if (g.blocked) return `<div class="glass-lite">${uiIcon("shield", 14)} Stopped by our safety rules before any AI ran.</div>`;
+    const LITE = { scout: "Every match is checked against the real roster, your budget, and our safety rules.",
+      story_builder: "Written only from your own notes. Anything to double-check is flagged for you.",
+      gatekeeper: "Screened against the athlete's rider and our safety rules." };
+    return `<div class="glass-lite">${uiIcon("shield", 14)} ${LITE[g.agent] || "Checked by our safety rules."}</div>`;
+  }
   const name = BOT_NAMES[g.agent] || g.agent;
   const trace = `<ol class="trace">${(g.trace || []).map((t) => `<li class="${t.kind}"><span>${STEP_ICON[t.kind] || "•"}</span>${esc(t.text)}</li>`).join("")}</ol>`;
   if (g.blocked) {

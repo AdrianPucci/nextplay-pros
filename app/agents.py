@@ -153,7 +153,14 @@ def _short(v, limit=200) -> str:
 def _tool_calls(messages) -> list[dict]:
     results = {p.tool_call_id: p.content for m in messages if isinstance(m, ModelRequest)
                for p in m.parts if isinstance(p, ToolReturnPart)}
-    return [{"tool": p.tool_name, "arguments": p.args_as_dict(), "result": _short(results.get(p.tool_call_id, ""))}
+    def count(content) -> int:  # how many athletes the tool really returned (the preview below is cut short)
+        try:
+            data = json.loads(content) if isinstance(content, str) else content
+            return len(data) if isinstance(data, list) else 0
+        except (TypeError, ValueError):
+            return 0
+    return [{"tool": p.tool_name, "arguments": p.args_as_dict(), "result": _short(results.get(p.tool_call_id, "")),
+             "count": count(results.get(p.tool_call_id, ""))}
             for m in messages if isinstance(m, ModelResponse)
             for p in m.parts if isinstance(p, ToolCallPart) and p.tool_name != "final_result"]
 
@@ -198,8 +205,8 @@ def glass(usage: dict, steps: list[tuple[str, str]]) -> dict:
     trace = [{"kind": k, "text": t} for k, t in steps if k in ("read", "block")]
     for c in calls:
         args = ", ".join(f"{k}={v}" for k, v in c["arguments"].items() if v not in (None, [], False))
-        n = c["result"].count('"id"')
-        trace.append({"kind": "tool", "text": f"{c['tool']}({args}) → {n} athletes" if n else f"{c['tool']}({args}) → none"})
+        n = c.get("count", 0)
+        trace.append({"kind": "tool", "text": f"{c['tool']}({args}) → {n} athlete{'s' if n != 1 else ''}" if n else f"{c['tool']}({args}) → none"})
     trace += [{"kind": k, "text": t} for k, t in steps if k not in ("read", "block")]
     return {**usage, "tools": [c["tool"] for c in calls], "reasoning": reasoning, "trace": trace}
 

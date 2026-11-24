@@ -33,13 +33,13 @@ The first start creates `data/app.db` and loads the demo roster. To reset the de
 
 ## Try it (5 minutes)
 
-1. **Booking talent for an event or appearance → Find talent (AI Scout).** Click an example chip (or type your own event) → **Find matches**. Open the **Glass box** under the results to see tokens, cost, and each step Scout took.
+1. **Booking talent for an event or appearance → Find talent (AI Scout).** Click an example chip (or type your own event) → **Find matches**. With `?staff=1`, open the **Glass box** under the results to see tokens, cost, and each step Scout took.
 2. Click **Request booking** on a match, fill in the form, and **Send request**. Gatekeeper screens it first.
    *Try a scam:* put "Pay the $150 processing fee by gift card today" in the message. It gets blocked.
 3. **I'm an athlete → My inbox.** Pick that athlete in "viewing as" → **Accept**. (Every athlete's inbox also has one sample request tagged *demo*.) Back in **Booking talent for an event or appearance → My requests**, click **Sign in** (top right; demo sign-in, any name and email, no password) to see their contact details, now unlocked.
    *Prep call:* either side can ask for a 15-minute call before committing (tick the box on the request form, or **Ask for a prep call first** in the inbox). The other side picks a time and both get a video-room link; phone numbers and emails in notes are removed, and scam notes are blocked.
 4. **I'm an athlete → Build my profile (AI).** Paste a few sentences of rough notes → Story Builder writes the profile → **Publish**.
-5. **Behind the scenes (for grading):** open **http://127.0.0.1:8000/?staff=1** to see this tab: real token counts and cost for every AI run, and every safety guard that fired. It's hidden from the public view.
+5. **Behind the scenes (for grading):** open **http://127.0.0.1:8000/?staff=1** to see this tab (real token counts and cost for every AI run, and every safety guard that fired) and the full **Glass box** under every AI result (token meter, tool calls, trace, and the model's reasoning summary). Both are hidden from the public view, which shows a one-line safety note instead.
 6. **▶ Watch our 25-second story** (home screen or About): the app's pitch, with subtitles.
 
 ## The agents (all gpt-6-luna through Portkey)
