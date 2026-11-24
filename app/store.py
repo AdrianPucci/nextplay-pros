@@ -324,6 +324,16 @@ DEMO_BOOKERS = {
 }
 
 
+ORG_KIND = {"school": "a school", "nonprofit": "a nonprofit", "company": "a local business", "team": "a youth sports league"}
+
+
+def demo_summary(org: str, event_type: str, city: str, budget: int) -> str:
+    kind = ("a school" if "School" in org else "a nonprofit" if any(w in org for w in ("Club", "Gala", "Foundation"))
+            else "a youth sports league" if "League" in org else "a local business")
+    return (f"Safe to consider. {org} is {kind} booking a {event_type.lower()} in {city}, with a clear audience and a "
+            f"${budget:,} fee inside your range. No red flags: nothing asks you to pay upfront, use gift cards, or move off NextPlay Pros.")
+
+
 def demo_request(athlete_id: str) -> dict:
     from datetime import timedelta
     a = get_athlete(athlete_id)
@@ -335,7 +345,7 @@ def demo_request(athlete_id: str) -> dict:
     days = 21 + sum(map(ord, athlete_id)) % 21
     date = (datetime.now() + timedelta(days=days)).date().isoformat()
     screening = {"verdict": "deliver", "demo": True, "risk_flags": [], "rule_flags": [], "rider_conflicts": [],
-                 "summary": "Looks legitimate: a named organization, a clear event and audience, and no requests for money, gift cards, or off-platform payment. (Demo request.)",
+                 "summary": demo_summary(pick[1].format(city=city), pick[2], city, budget),
                  "fee_note": f"Offer of ${budget:,} is inside your ${lo:,}–${hi:,} range.", "usage": {}}
     org = pick[1].format(city=city)
     org_type = ("school" if "School" in org else "nonprofit" if any(w in org for w in ("Club", "Gala", "Foundation")) else

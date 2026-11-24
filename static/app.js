@@ -711,6 +711,7 @@ function viewBuild() {
       <div><label>Charities and organizations you've supported</label><textarea id="q-charity" rows="2" placeholder="Causes you care about and events you've done for them"></textarea></div>
       <div><label>Off the table</label><textarea id="q-off" rows="2" placeholder="Topics or experiences you don't want to discuss. We'll keep them out of your profile."></textarea></div>
     </details>
+    <p class="meta" style="margin:0">${uiIcon("pen", 14)} After you publish, you'll add up to three photos and set your rider.</p>
     <button class="btn" id="s-go">Write my profile</button>
   </div><div id="s-out" class="panel"><div class="empty">Your draft will appear here.</div></div></div>`;
   $("#s-city").value = "Denver";
@@ -752,7 +753,9 @@ function drawDraft() {
       fee_min: Number($("#d-min").value), fee_max: Number($("#d-max").value), email: $("#d-email").value.trim(), phone: $("#d-phone").value.trim() };
     if (!body.email) return toast("Add a private email so bookers can reach you after you accept.");
     try { const a = await api("/api/athletes", { method: "POST", body }); await loadRoster(); state.athleteId = a.id; localSet("np_athlete", a.id); localSet("np_published", "1");
-      toast(`Published! ${a.name} is now on the roster.`); state.tab = "inbox"; render(); askToSave("athlete", a.name);
+      toast(`Published! Next: add your photos and set your rider.`); state.tab = "rider"; render();
+      setTimeout(() => { const ph = document.querySelector(".photo-slots"); if (ph) ph.scrollIntoView({ behavior: "smooth", block: "center" }); }, 900);
+      askToSave("athlete", a.name);
     } catch (err) { toast(err.message); }
   };
 }
