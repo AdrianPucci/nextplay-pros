@@ -151,14 +151,17 @@ function renderTabs() {
     if (!lbl) { lbl = document.createElement("div"); lbl.id = "role-label"; lbl.className = "role-label"; sw.after(lbl); }
     lbl.hidden = !state.user;
     if (state.user) {
-      const athlete = state.user.role === "athlete";
+      const athlete = state.user.role === "athlete", other = athlete ? "booker" : "athlete";
+      const both = rolesOf(state.user).includes(other);
       lbl.innerHTML = `<span class="rl-mode">${athlete ? uiIcon("star", 14) + " Athlete mode" : uiIcon("search", 14) + " Booking mode"}</span>
-        <button class="rl-switch" data-switch-mode>${athlete ? "Switch to booking" : "Switch to athlete"}</button>`;
+        <button class="rl-switch ${both ? "" : "add"}" data-switch-mode>${both ? (athlete ? "Switch to booking" : "Switch to athlete") : (athlete ? "+ Also book talent" : "+ Add athlete profile")}</button>`;
       lbl.querySelector("[data-switch-mode]").onclick = () => {
-        state.user = { ...state.user, role: athlete ? "booker" : "athlete" };
-        localSet("np_user", JSON.stringify(state.user));
-        state.role = state.user.role; state.tab = "home"; render(); window.scrollTo(0, 0);
-        toast(athlete ? "Switched to booking mode." : "Switched to athlete mode.");
+        saveUser({ ...state.user, role: other, roles: [...rolesOf(state.user), other] });
+        state.role = other;
+        state.tab = both ? "home" : other === "athlete" ? "build" : "find";
+        render(); window.scrollTo(0, 0);
+        toast(both ? (athlete ? "Switched to booking mode." : "Switched to athlete mode.")
+          : (other === "athlete" ? "Athlete side added to your account. Let's build your profile." : "Booking side added to your account. Describe your event to get started."));
       };
     }
   }
@@ -479,6 +482,14 @@ document.addEventListener("change", (e) => {
 // ---------------------------------------------------------------- Sign-in (demo: email link, no passwords stored)
 state.user = (() => { try { return JSON.parse(localGet("np_user")) || null; } catch { return null; } })();
 const initials = (n) => String(n || "?").split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
+const ACCTS = () => { try { return JSON.parse(localGet("np_accounts")) || {}; } catch { return {}; } };
+const rolesOf = (u) => (u && Array.isArray(u.roles) && u.roles.length ? u.roles : u ? [u.role] : []);
+function saveUser(u) {
+  const roles = [...new Set([...(ACCTS()[u.email] || []), ...rolesOf(u)])];
+  state.user = { ...u, roles };
+  const all = ACCTS(); all[u.email] = roles; localSet("np_accounts", JSON.stringify(all));
+  localSet("np_user", JSON.stringify(state.user));
+}
 function drawAcct() {
   const u = state.user;
   $("#acct").innerHTML = u
@@ -490,7 +501,7 @@ function acctMenu() {
   const u = state.user;
   openModal(`<div class="signin"><span class="avatar big">${esc(initials(u.name))}</span><h2>${esc(u.name)}</h2>
     <p class="sub">${esc(u.email)} · ${u.role === "athlete" ? "Athlete" : esc([u.org, ORG_LABEL[u.org_type]].filter(Boolean).join(" · ") || "Booking talent")}</p>
-    <p class="fine">You're in ${u.role === "athlete" ? "athlete" : "booking"} mode. Use <b>Switch to ${u.role === "athlete" ? "booking" : "athlete"}</b> at the top anytime; it's the same account.</p>
+    <p class="fine">${rolesOf(u).length > 1 ? `This account books talent <b>and</b> has an athlete profile. Use the switch at the top anytime.` : `You're in ${u.role === "athlete" ? "athlete" : "booking"} mode. Want the other side too? Use <b>${u.role === "athlete" ? "+ Also book talent" : "+ Add athlete profile"}</b> at the top; it's the same email.`}</p>
     <div class="row-btns"><button class="btn" data-acct-go>${u.role === "athlete" ? "Go to my inbox" : "Go to my requests"}</button><button class="btn ghost" data-signout>Sign out</button></div></div>`);
 }
 function signIn(opts = {}) {
@@ -520,8 +531,7 @@ function signIn(opts = {}) {
       <button class="btn wide" id="si-link">Open the link (demo)</button>
       <p class="fine">In the real app this button is the link in your inbox.</p></div>`;
     $("#si-link").onclick = () => {
-      state.user = { name: n, email: e, role: r, org_type: r === "booker" ? ot : "", org: r === "booker" ? on : "" };
-      localSet("np_user", JSON.stringify(state.user));
+      saveUser({ name: n, email: e, role: r, roles: [r], org_type: r === "booker" ? ot : "", org: r === "booker" ? on : "" });
       if (r === "booker") { state.bookerName = n; localSet("np_booker_name", n); }
       $("#modal").hidden = true; drawAcct();
       state.role = r; state.tab = "home";

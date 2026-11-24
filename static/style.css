@@ -647,3 +647,6 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .rl-mode { display: inline-flex; align-items: center; gap: 6px; }
 .rl-switch { border: 0; background: var(--brand); color: #fff; font-weight: 700; border-radius: 999px; padding: 6px 12px; cursor: pointer; font-size: 13px; }
 .rl-switch:hover { filter: brightness(1.08); }
+
+.rl-switch.add { background: transparent; border: 1.5px solid rgba(255,255,255,.45); }
+.rl-switch.add:hover { background: rgba(255,255,255,.12); filter: none; }
