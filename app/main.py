@@ -192,6 +192,37 @@ def cities():
     return sorted(store.CITIES)
 
 
+class InterestIn(BaseModel):
+    athlete_id: str  # demo sign-in: the athlete raising their hand
+    note: str = Field("", max_length=500)
+
+
+@app.post("/api/opportunities/{opp_id}/interest")
+def opportunity_interest(opp_id: str, body: InterestIn):
+    """An athlete says "I'm interested" in a posted gig. The note gets the same scam/injection screen as requests,
+    and contact details are removed: they unlock only through an accepted booking."""
+    if not any(o["id"] == opp_id for o in opportunities()):
+        raise HTTPException(404, "No such opportunity")
+    note = body.note.strip()
+    if note:
+        flags = [f for f in scan_text(note) if f != "contact_or_link_in_text"]
+        if flags:
+            log_safety("interest_note_blocked", "opportunity board", {"opp_id": opp_id, "flags": flags})
+            raise HTTPException(400, "That note was blocked by our safety rules. Keep it about the event and why you're a fit.")
+        note, removed = redact_contacts(note)
+        if removed:
+            log_safety("redacted_contact", "opportunity board", {"opp_id": opp_id, "removed": removed})
+    try:
+        return store.add_interest(opp_id, body.athlete_id, note)
+    except ValueError as e:
+        raise HTTPException(404, str(e))
+
+
+@app.get("/api/opportunities/interests/{athlete_id}")
+def my_interests(athlete_id: str):
+    return store.interests_for_athlete(athlete_id)
+
+
 @app.get("/api/opportunities")
 def opportunities():
     path = store.DATA_DIR / "opportunities.json"

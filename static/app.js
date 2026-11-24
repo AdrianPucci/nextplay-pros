@@ -898,6 +898,7 @@ const BOARD_FILTERS = [  // activity types on the Opportunity board
 ];
 async function viewBoard() {
   const list = await api("/api/opportunities");
+  const mine = state.role === "athlete" ? await api(`/api/opportunities/interests/${state.athleteId}`).catch(() => []) : [];
   state.boardFilter = state.boardFilter || "all";
   $("#view").innerHTML = `<div class="band slim" aria-hidden="true"></div><h1>Opportunity board</h1><p class="sub">Open gigs posted by local businesses, schools, and nonprofits.</p>
     <div class="board-filters" role="toolbar" aria-label="Filter by type of activity"></div><div id="board" class="grid two"></div>`;
@@ -909,9 +910,30 @@ async function viewBoard() {
     $("#board").innerHTML = shown.map((o) => `<div class="card"><div class="req-top"><b>${esc(o.title)}</b><span>${o.charitable ? `<span class="pill charity">${uiIcon("heart", 13)} Charitable</span> ` : ""}<span class="pill cat">${CAT[o.type]}</span></span></div>
       <div class="meta">${esc(o.org)} · ${esc(o.city)} · ${esc(o.date)}</div><p class="story">${esc(o.details)}</p>
       <div class="card-foot"><span class="fee">${o.budget_max ? `Up to ${money(o.budget_max)}` : "Volunteer"}</span>
-      ${state.role === "booker" ? `<button class="btn small ghost" data-scout-opp="${o.id}">Find matches with Scout</button>` : ""}</div></div>`).join("")
+      ${state.role === "booker" ? `<button class="btn small ghost" data-scout-opp="${o.id}">Find matches with Scout</button>`
+        : mine.includes(o.id) ? `<span class="interest-sent">${uiIcon("star", 14)} Interest sent</span>`
+        : `<button class="btn small" data-interest="${o.id}">I'm interested</button>`}</div></div>`).join("")
       || `<div class="empty">No open gigs of this type right now.</div>`;
     document.querySelectorAll("[data-bf]").forEach((b) => (b.onclick = () => { state.boardFilter = b.dataset.bf; draw(); }));
+    document.querySelectorAll("[data-interest]").forEach((b) => (b.onclick = () => {
+      const o = list.find((x) => x.id === b.dataset.interest);
+      const me = state.athletes.find((a) => a.id === state.athleteId);
+      openModal(`<div class="form"><h2 style="margin:0">I'm interested</h2>
+        <p class="sub" style="margin:0"><b>${esc(o.title)}</b><br>${esc(o.org)} · ${esc(o.city)} · ${esc(o.date)} · ${o.budget_max ? "up to " + money(o.budget_max) : "volunteer"}</p>
+        <p class="meta" style="margin:0">Sending as <b>${esc(me ? me.name : "your profile")}</b>. ${esc(o.org)} sees your public profile, not your contact details.</p>
+        <div><label>Why you're a fit (optional)</label><textarea id="int-note" rows="3" maxlength="500" placeholder="e.g. I coach youth basketball in Denver and love working with this age group."></textarea></div>
+        <button class="btn" id="int-send">Send my interest</button></div>`);
+      $("#int-send").onclick = async () => {
+        try {
+          await api(`/api/opportunities/${o.id}/interest`, { method: "POST", body: { athlete_id: state.athleteId, note: $("#int-note").value.trim() } });
+          celebrate({ kind: "athlete", name: me ? me.name : "",
+            title: "Interest sent!", sub: `${esc(o.org)} will see your profile for “${esc(o.title)}.”`,
+            steps: ["If they want you, they'll send a booking request to your inbox.", "Gatekeeper screens it first, and you can ask for a prep call before accepting.",
+                    "Keep your rider and availability current so the details line up."],
+            primary: ["board", "See more gigs"], secondary: ["inbox", "Go to my inbox"] });
+        } catch (err) { toast(err.message); }
+      };
+    }));
     document.querySelectorAll("[data-scout-opp]").forEach((b) => (b.onclick = () => {
       const o = list.find((x) => x.id === b.dataset.scoutOpp);
       state.lastQuery = `${o.title} for ${o.org} in ${o.city} on ${o.date}. ${o.details}`; state.lastBudget = o.budget_max || null; state.lastScout = null;

@@ -659,3 +659,6 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .id-box .meta .ui-ic { vertical-align: -2px; }
 .id-demo { font-size: 12.5px; color: #b3400f; margin: 4px 0 0; }
 .pill.idok { background: #e5f4e4; color: #0f6b46; }
+
+.interest-sent { display: inline-flex; align-items: center; gap: 5px; font-weight: 700; color: #12865b; font-size: 14px; }
+.interest-sent .ui-ic { color: #12865b; }

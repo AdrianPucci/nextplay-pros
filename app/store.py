@@ -63,6 +63,9 @@ def init_db(reset: bool = False) -> None:
         c.executescript("""
             CREATE TABLE IF NOT EXISTS athletes (id TEXT PRIMARY KEY, data TEXT NOT NULL, source TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS contacts (athlete_id TEXT PRIMARY KEY, email TEXT, phone TEXT);
+            CREATE TABLE IF NOT EXISTS interests (
+                id TEXT PRIMARY KEY, opp_id TEXT NOT NULL, athlete_id TEXT NOT NULL, note TEXT, created TEXT,
+                UNIQUE (opp_id, athlete_id));
             CREATE TABLE IF NOT EXISTS requests (
                 id TEXT PRIMARY KEY, athlete_id TEXT NOT NULL, booker_id TEXT NOT NULL, booker_name TEXT,
                 org TEXT, event_type TEXT, event_date TEXT, city TEXT, budget INTEGER, message TEXT,
@@ -440,6 +443,22 @@ def prep_action(rid: str, actor: str, actor_id: str, action: str, slots: list[st
     with _lock, connect() as c:
         c.execute(f"UPDATE requests SET {', '.join(k + ' = ?' for k in fields)} WHERE id = ?", (*fields.values(), rid))
     return get_request(rid)
+
+
+# ------------------------------------------------------------------ opportunity board: athletes raise their hand
+
+def add_interest(opp_id: str, athlete_id: str, note: str = "") -> dict:
+    if not get_athlete(athlete_id):
+        raise ValueError("No such athlete")
+    with _lock, connect() as c:
+        c.execute("INSERT OR REPLACE INTO interests (id, opp_id, athlete_id, note, created) VALUES (?,?,?,?,?)",
+                  (f"int_{uuid.uuid4().hex[:8]}", opp_id, athlete_id, note, now()))
+    return {"opp_id": opp_id, "athlete_id": athlete_id, "note": note, "status": "sent"}
+
+
+def interests_for_athlete(athlete_id: str) -> list[str]:
+    with connect() as c:
+        return [r[0] for r in c.execute("SELECT opp_id FROM interests WHERE athlete_id = ?", (athlete_id,)).fetchall()]
 
 
 def contact_for_booker(rid: str, booker_id: str) -> dict | None:
