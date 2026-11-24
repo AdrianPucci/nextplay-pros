@@ -1,0 +1,19 @@
+# Render blueprint: a permanent public link for testers (free plan; it sleeps when idle and wakes in ~30-60 s).
+# The OpenAI key is entered in Render's dashboard (sync: false), never committed.
+services:
+  - type: web
+    name: nextplay-pros
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python run.py --host 0.0.0.0
+    healthCheckPath: /api/regions
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: MODEL_PROVIDER
+        value: openai
+      - key: DAILY_SPEND_CAP_USD
+        value: "2.00"
+      - key: OPENAI_API_KEY
+        sync: false
