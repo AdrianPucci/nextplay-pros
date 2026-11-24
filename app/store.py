@@ -328,10 +328,10 @@ ORG_KIND = {"school": "a school", "nonprofit": "a nonprofit", "company": "a loca
 
 
 def demo_summary(org: str, event_type: str, city: str, budget: int) -> str:
-    kind = ("a school" if "School" in org else "a nonprofit" if any(w in org for w in ("Club", "Gala", "Foundation"))
-            else "a youth sports league" if "League" in org else "a local business")
-    return (f"Safe to consider. {org} is {kind} booking a {event_type.lower()} in {city}, with a clear audience and a "
-            f"${budget:,} fee inside your range. No red flags: nothing asks you to pay upfront, use gift cards, or move off NextPlay Pros.")
+    kind = ("School" if "School" in org else "Nonprofit" if any(w in org for w in ("Club", "Gala", "Foundation"))
+            else "Youth league" if "League" in org else "Local business")
+    return (f"Checks out. {kind} · {event_type.lower()} in {city} · ${budget:,} fits your range. "
+            f"No red flags: no upfront payment, gift cards, or off-app contact.")
 
 
 def demo_request(athlete_id: str) -> dict:
