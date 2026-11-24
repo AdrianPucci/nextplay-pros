@@ -636,3 +636,9 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
               animation: confetti 1.8s ease-in var(--d) 2 forwards; }
 @keyframes confetti { 0% { opacity: 1; transform: translateY(0) rotate(0); } 100% { opacity: 0; transform: translateY(320px) rotate(540deg); } }
 @media (prefers-reduced-motion: reduce) { .confetti { display: none; } .cel-badge { animation: none; } }
+
+/* Signed in: role is fixed to the account */
+.role-label { display: inline-flex; align-items: center; gap: 6px; background: #1d2c44; color: #e8edf5; border-radius: 999px; padding: 8px 16px; font-weight: 700; font-size: 14px; }
+.role-label .ui-ic { color: var(--brand); }
+.role-label[hidden], .role-switch[hidden] { display: none; }
+@media (max-width: 640px) { .role-label { order: 3; width: 100%; justify-content: center; } }

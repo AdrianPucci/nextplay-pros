@@ -143,6 +143,17 @@ const STAFF = new URLSearchParams(location.search).has("staff");
   if (go === "build") { state.role = "athlete"; state.tab = "build"; } else if (go === "find") { state.role = "booker"; state.tab = "find"; state.bookingHero = true; }
   if (go) history.replaceState(null, "", location.pathname + location.search.replace(/[?&]go=[^&]*/, "").replace(/^&/, "?") + location.hash); }  // ?staff=1 shows "Behind the scenes" (for grading)
 function renderTabs() {
+  if (state.user && state.role !== state.user.role) { state.role = state.user.role; if (!TABS[state.role].some(([k]) => k === state.tab)) state.tab = "home"; }
+  const sw = document.querySelector(".role-switch");
+  if (sw) {
+    sw.hidden = !!state.user;
+    let lbl = document.getElementById("role-label");
+    if (!lbl) { lbl = document.createElement("div"); lbl.id = "role-label"; lbl.className = "role-label"; sw.after(lbl); }
+    lbl.hidden = !state.user;
+    if (state.user) lbl.innerHTML = state.user.role === "athlete"
+      ? `${uiIcon("star", 14)} Athlete account` : `${uiIcon("search", 14)} Booking account${state.user.org ? " · " + esc(state.user.org) : ""}`;
+    lbl.title = "Signed in. To use the other side of NextPlay Pros, sign out first.";
+  }
   $("#tabs").innerHTML = TABS[state.role].filter(([k]) => (STAFF || k !== "behind") && (k !== "home" || state.user))
     .map(([k, l]) => k === "|" ? `<span class="tab-sep" aria-hidden="true"></span>`
       : `<button data-tab="${k}" class="${state.tab === k ? "active" : ""} ${/^\d/.test(l) ? "step-tab" : ""}">${tabLabel(l)}</button>`).join("");
@@ -471,6 +482,7 @@ function acctMenu() {
   const u = state.user;
   openModal(`<div class="signin"><span class="avatar big">${esc(initials(u.name))}</span><h2>${esc(u.name)}</h2>
     <p class="sub">${esc(u.email)} · ${u.role === "athlete" ? "Athlete" : esc([u.org, ORG_LABEL[u.org_type]].filter(Boolean).join(" · ") || "Booking talent")}</p>
+    <p class="fine">This is ${u.role === "athlete" ? "an athlete" : "a booking"} account. To ${u.role === "athlete" ? "book talent" : "use the athlete side"}, sign out and continue as the other role.</p>
     <div class="row-btns"><button class="btn" data-acct-go>${u.role === "athlete" ? "Go to my inbox" : "Go to my requests"}</button><button class="btn ghost" data-signout>Sign out</button></div></div>`);
 }
 function signIn(opts = {}) {
