@@ -76,7 +76,25 @@ function usageLine(g, open = false) {
 // Loading message; pass a list of steps and it walks through them while the agent works.
 function thinking(agent, text) {
   const steps = Array.isArray(text) ? text : [text];
-  return `<div class="thinking" data-steps='${esc(JSON.stringify(steps))}' data-i="0">${bot(agent, "thinking", 56, "bouncing")}<div><span class="t-step">${esc(steps[0])}</span><span class="dots"><i></i><i></i><i></i></span></div></div>`;
+  return `<div class="thinking" data-steps='${esc(JSON.stringify(steps))}' data-i="0">${thinkStage(agent)}<div><span class="t-step">${esc(steps[0])}</span><span class="dots"><i></i><i></i><i></i></span></div></div>`;
+}
+// Each agent acts out its job while it works: Scout scans the field, Story Builder spins words, Gatekeeper scans the request.
+function thinkStage(agent) {
+  const b = bot(agent, "thinking", 64, "bouncing");
+  if (agent === "scout") {
+    const icons = ["Basketball", "Soccer", "Football", "Tennis", "Golf", "Hockey"];
+    return `<div class="stage st-scout" aria-hidden="true"><span class="radar"></span><span class="radar r2"></span>
+      <div class="orbit">${icons.map((n, i) => `<span class="orb" style="--a:${i * 60}deg">${sportSvg(n, 18)}</span>`).join("")}</div>${b}</div>`;
+  }
+  if (agent === "story_builder") {
+    const words = ["comeback", "hometown hero", "leader", "#1", "never quit", "inspire"];
+    return `<div class="stage st-story" aria-hidden="true">${words.map((w, i) => `<span class="word-float" style="--d:${i * 0.55}s;--x:${(i % 3) * 22 - 10}px">${w}</span>`).join("")}
+      <span class="spark s1">✦</span><span class="spark s2">✦</span><span class="spark s3">✦</span>${b}</div>`;
+  }
+  if (agent === "gatekeeper") {
+    return `<div class="stage st-gate" aria-hidden="true">${b}<div class="doc"><i></i><i></i><i></i><i></i><span class="beam"></span><span class="ok">✓</span></div></div>`;
+  }
+  return b;
 }
 setInterval(() => document.querySelectorAll(".thinking[data-steps]").forEach((el) => {
   const steps = JSON.parse(el.dataset.steps), i = Math.min(Number(el.dataset.i) + 1, steps.length - 1);
@@ -148,7 +166,13 @@ function openStory() {
 }
 
 function drawFooter() { const f = $("#foot"); if (f && !f.innerHTML) f.innerHTML = `<div class="foot-brand">${XO(56)}<div><b>NextPlay <span>Pros</span></b><small>Get booked. Get paid. Inspire.</small></div></div>${playbook(false)}<div class="foot-fine">MGT 409 · Yale SOM · Adrian Vellinga · All roster profiles are fictional demo data.</div>`; }
-function render() { drawFooter(); if ($("#acct")) drawAcct(); renderTabs(); drawStepper(); (VIEWS[state.tab] || VIEWS.find)(); }
+function render() { drawFooter(); if ($("#acct")) drawAcct(); renderTabs(); drawStepper(); (VIEWS[state.tab] || VIEWS.find)(); drawInspire(); }
+function drawInspire() {
+  const el = $("#inspire"); if (!el) return;
+  const role = state.role, tab = state.tab;
+  const pages = role === "athlete" ? ["home", "board", "build", "rider", "inbox"] : ["home", "mine"];  // booker "find" shows it inline
+  el.innerHTML = pages.includes(tab) && isReturning(role) ? inspireBanner(role) : "";
+}
 
 // ---------------------------------------------------------------- step guide + dashboard
 const STEPS = {
@@ -348,6 +372,33 @@ document.addEventListener("click", (e) => {
   if (e.target.closest("[data-go-find]")) { const h = document.getElementById("find-hero"); if (h) h.scrollIntoView({ behavior: "smooth", block: "start" }); setTimeout(() => { const q = document.getElementById("q"); if (q) q.focus({ preventScroll: true }); }, 450); }
 });
 
+// Returning users don't need "How it works" again: they get an inspiring closing banner instead.
+const isReturning = (role) => role === "athlete"
+  ? !!(localGet("np_published") || (state.user && state.user.role === "athlete"))
+  : !!(localGet("np_sent_request") || (state.user && state.user.role === "booker"));
+const INSPIRE = {
+  booker: { imgs: [["gen/book_speaking.jpg", "62% 35%", "Keynotes & school talks"], ["gen/book_clinic.jpg", "70% 40%", "Youth clinics"], ["gen/crowd_glory.jpg", "center 40%", "Game-day energy, in your room"]], kicker: "Why it matters",
+    title: "A real story, <span>told in the room.</span>",
+    text: "The athlete you book doesn't just fill a slot on the agenda. They give your audience a story they'll carry out the door.",
+    tips: ["Ask for a prep call to shape the talk", "Share your run of show and audience", "Post a photo after and tag your athlete"],
+    cta: ["find", "Book another athlete"] },
+  athlete: { imgs: [["gen/book_autographs.jpg", "70% 40%", "Back in the community"], ["gen/crowd_glory.jpg", "center 40%", "They remember you"], ["gen/older_bball.jpg", "60% 20%", "Still got it"]], kicker: "Your next play",
+    title: "Your story still <span>moves people.</span>",
+    text: "Every booking is a chance to inspire someone new: a kid at a clinic, a team at a kickoff, a fan who never forgot.",
+    tips: ["Answer requests within a day", "Check in 60 minutes early (keep 95%)", "Post a recap and thank your host"],
+    cta: ["board", "Find gigs"] },
+};
+function inspireBanner(role) {
+  const c = INSPIRE[role];
+  return `<section class="inspire">
+    <div class="inspire-pics" aria-hidden="true">${c.imgs.map(([src, pos, cap], i) =>
+      `<figure style="animation-delay:${i * 4}s"><img src="/static/img/${src}" alt="" style="object-position:${pos}"><figcaption>${esc(cap)}</figcaption></figure>`).join("")}</div>
+    <div class="inspire-copy"><div class="inspire-kicker">${c.kicker}</div><h2>${c.title}</h2><p>${esc(c.text)}</p>
+      <ul>${c.tips.map((t) => `<li>${uiIcon("star", 14)} ${esc(t)}</li>`).join("")}</ul>
+      <button class="btn" data-inspire-tab="${c.cta[0]}">${c.cta[1]}</button></div></section>`;
+}
+document.addEventListener("click", (e) => { const b = e.target.closest("[data-inspire-tab]"); if (b) { state.tab = b.dataset.inspireTab; render(); window.scrollTo(0, 0); } });
+
 function howItWorks() {
   const step = (n, b, mood, title, who, text) => `<div class="how-step">
       <div class="how-num">${n}</div>${bot(b, mood, 120)}
@@ -490,7 +541,7 @@ function viewFind() {
     <div class="chips">${EXAMPLES.map((x, i) => `<button class="chip" data-ex="${i}">${esc(x.slice(0, 48))}…</button>`).join("")}</div>
   </section>
   <section id="results">${state.lastScout ? scoutResults(state.lastScout) : ""}</section>
-  ${howItWorks()}`;
+  ${isReturning("booker") ? inspireBanner("booker") : howItWorks()}`;
   document.querySelectorAll("[data-ex]").forEach((c) => (c.onclick = () => { $("#q").value = EXAMPLES[c.dataset.ex]; $("#budget").value = ""; }));
   $("#go").onclick = runScout;
   $("#q").onkeydown = (e) => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) runScout(); };
@@ -603,7 +654,7 @@ function requestModal(athleteId) {
         : `<div class="alert good">✅ Sent to ${esc(a.name)}${r.status === "flagged" ? " (marked for a careful look)" : ""}. Track it under <b>My requests</b>.</div>`;
       $("#r-out").innerHTML += usageLine(s.usage);
       btn.textContent = "Sent";
-      if (r.status !== "blocked") askToSave("booker", body.booker_name);
+      if (r.status !== "blocked") { localSet("np_sent_request", "1"); askToSave("booker", body.booker_name); }
     } catch (err) { $("#r-out").innerHTML = `<div class="alert bad">${esc(err.message)}</div>`; btn.disabled = false; btn.textContent = "Send request"; }
   };
 }

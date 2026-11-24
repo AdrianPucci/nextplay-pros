@@ -561,3 +561,62 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 @media (max-width: 640px) { .photo-slots { gap: 8px; } }
 
 .photo-note { font-size: 13.5px; color: var(--ink); background: #fff8f4; border-left: 4px solid var(--brand); border-radius: 8px; padding: 8px 12px; margin: 10px 0 0; }
+
+/* Inspiring closing banner for returning bookers and signed-up athletes */
+.inspire-wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+.inspire { position: relative; margin: 26px 0 8px; border-radius: var(--radius); overflow: hidden; min-height: 300px; color: #fff;
+           background: #0f1b2d var(--img) var(--pos) / cover no-repeat; display: flex; align-items: center; }
+.inspire::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(11,20,36,.95) 0%, rgba(11,20,36,.8) 38%, rgba(11,20,36,.15) 75%); }
+.inspire-copy { position: relative; padding: 30px 32px; max-width: 560px; }
+.inspire-kicker { color: #9fdcec; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; font-size: 12px; }
+.inspire h2 { color: #fff; font-size: clamp(24px, 3vw, 34px); line-height: 1.1; margin: 6px 0 10px; }
+.inspire h2 span { color: var(--brand); display: block; }
+.inspire p { color: #dbe4f1; margin: 0 0 10px; }
+.inspire ul { list-style: none; padding: 0; margin: 0 0 16px; display: grid; gap: 6px; color: #e8edf5; font-size: 14.5px; }
+.inspire li .ui-ic { color: var(--brand); vertical-align: -2px; margin-right: 4px; }
+@media (max-width: 640px) { .inspire-wrap { padding: 0 12px; } .inspire::before { background: linear-gradient(0deg, rgba(11,20,36,.96) 45%, rgba(11,20,36,.35) 100%); }
+  .inspire { align-items: flex-end; min-height: 420px; } .inspire-copy { padding: 22px 18px; } }
+
+/* Dynamic inspire banner: three photos crossfading with a slow push-in */
+.inspire { background: #0f1b2d; }
+.inspire-pics { position: absolute; inset: 0; }
+.inspire-pics figure { position: absolute; inset: 0; margin: 0; opacity: 0; overflow: hidden; animation: inspireFade 12s linear infinite; }
+.inspire-pics img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.12); animation: inspireZoom 12s linear infinite; animation-delay: inherit; }
+.inspire-pics figcaption { position: absolute; right: 16px; bottom: 12px; font-size: 12px; font-weight: 700; color: #c5d1e3; letter-spacing: .06em; text-transform: uppercase; text-shadow: 0 1px 6px rgba(0,0,0,.8); }
+.inspire::before { z-index: 1; }
+.inspire-copy { z-index: 2; }
+@keyframes inspireFade { 0% { opacity: 0; } 6% { opacity: 1; } 33% { opacity: 1; } 40% { opacity: 0; } 100% { opacity: 0; } }
+@keyframes inspireZoom { 0% { transform: scale(1.14); } 40% { transform: scale(1.02); } 100% { transform: scale(1.02); } }
+.inspire .btn { transition: transform .15s, box-shadow .15s; } .inspire .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(255,90,31,.4); }
+@media (prefers-reduced-motion: reduce) { .inspire-pics figure, .inspire-pics img { animation: none; } .inspire-pics figure:first-child { opacity: 1; } }
+
+/* Thinking stages: each agent acts out its job */
+.thinking .stage { position: relative; width: 120px; height: 96px; flex: none; display: grid; place-items: center; }
+.thinking .stage .bot { position: relative; z-index: 2; }
+/* Scout: radar sweep + sport icons orbiting */
+.st-scout .radar { position: absolute; width: 60px; height: 60px; border-radius: 50%; border: 2px solid rgba(255,90,31,.55); animation: radar 1.8s ease-out infinite; }
+.st-scout .radar.r2 { animation-delay: .9s; }
+@keyframes radar { from { transform: scale(.5); opacity: .9; } to { transform: scale(1.9); opacity: 0; } }
+.st-scout .orbit { position: absolute; inset: 0; animation: spin 6s linear infinite; }
+.st-scout .orb { position: absolute; left: 50%; top: 50%; margin: -11px; width: 22px; height: 22px; display: grid; place-items: center;
+                 color: #1d4f86; background: #e7f1fb; border-radius: 50%; transform: rotate(var(--a)) translate(52px) rotate(calc(-1 * var(--a))); }
+.st-scout .orb .sport-ic { animation: spin 6s linear infinite reverse; }
+@keyframes spin { to { transform: rotate(360deg); } }
+/* Story Builder: words float up out of the megaphone */
+.st-story .word-float { position: absolute; left: 62%; top: 30%; font-size: 11px; font-weight: 800; color: var(--brand); white-space: nowrap; opacity: 0;
+                        animation: floatUp 3.3s ease-out infinite; animation-delay: var(--d); }
+@keyframes floatUp { 0% { opacity: 0; transform: translate(0, 10px) scale(.8); } 15% { opacity: 1; } 80% { opacity: .9; } 100% { opacity: 0; transform: translate(var(--x), -48px) scale(1.05); } }
+.st-story .spark { position: absolute; color: #e6c27a; font-size: 13px; animation: twinkle 1.4s ease-in-out infinite; }
+.st-story .s1 { left: 8px; top: 14px; } .st-story .s2 { right: 4px; bottom: 18px; animation-delay: .5s; } .st-story .s3 { left: 18px; bottom: 8px; animation-delay: 1s; }
+@keyframes twinkle { 0%, 100% { opacity: .2; transform: scale(.7); } 50% { opacity: 1; transform: scale(1.2); } }
+/* Gatekeeper: scanner beam sweeps the request, then a check pops */
+.st-gate { grid-template-columns: auto auto; gap: 4px; width: 130px; }
+.st-gate .doc { position: relative; width: 38px; height: 48px; background: #fff; border: 2px solid #b7c2d6; border-radius: 6px; padding: 8px 6px; display: grid; gap: 5px; overflow: hidden; }
+.st-gate .doc i { display: block; height: 3px; background: #dfe5ee; border-radius: 2px; }
+.st-gate .doc i:nth-child(2) { width: 70%; } .st-gate .doc i:nth-child(4) { width: 55%; }
+.st-gate .beam { position: absolute; left: 0; right: 0; height: 10px; top: -10px; background: linear-gradient(180deg, transparent, rgba(18,134,91,.55), transparent); animation: scan 2s ease-in-out infinite; }
+@keyframes scan { 0% { top: -10px; } 60% { top: 48px; } 100% { top: 48px; } }
+.st-gate .ok { position: absolute; right: -2px; bottom: -2px; width: 18px; height: 18px; border-radius: 50%; background: #12865b; color: #fff; font-size: 11px; font-weight: 900;
+               display: grid; place-items: center; opacity: 0; animation: okPop 2s ease-in-out infinite; }
+@keyframes okPop { 0%, 60% { opacity: 0; transform: scale(.3); } 72% { opacity: 1; transform: scale(1.2); } 85%, 100% { opacity: 1; transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .thinking .stage * { animation: none !important; } }
