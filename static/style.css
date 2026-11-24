@@ -620,3 +620,19 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
                display: grid; place-items: center; opacity: 0; animation: okPop 2s ease-in-out infinite; }
 @keyframes okPop { 0%, 60% { opacity: 0; transform: scale(.3); } 72% { opacity: 1; transform: scale(1.2); } 85%, 100% { opacity: 1; transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) { .thinking .stage * { animation: none !important; } }
+
+/* Celebration pop-up after publishing a profile or sending a request */
+.celebrate { position: relative; text-align: center; max-width: 440px; margin: 0 auto; overflow: hidden; padding-top: 6px; }
+.cel-badge { width: 74px; height: 74px; margin: 6px auto 8px; border-radius: 20px; background: var(--brand); display: grid; place-items: center; color: #fff;
+             box-shadow: 0 10px 30px rgba(255,90,31,.4); animation: celPop .6s cubic-bezier(.2,1.4,.4,1) both; }
+@keyframes celPop { from { transform: scale(.3) rotate(-12deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.celebrate h2 { margin: 4px 0 4px; font-size: 24px; color: var(--navy); }
+.cel-next { text-align: left; background: #f5f6f8; border-radius: 12px; padding: 10px 14px; margin: 12px 0 14px; }
+.cel-k { font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--brand); }
+.cel-next ol { margin: 6px 0 0; padding-left: 20px; display: grid; gap: 4px; font-size: 14px; }
+.linkish { background: none; border: 0; padding: 0; color: var(--brand); font-weight: 700; cursor: pointer; text-decoration: underline; }
+.confetti { position: absolute; inset: 0; pointer-events: none; }
+.confetti i { position: absolute; top: -12px; left: var(--x); width: 7px; height: 12px; background: var(--c); border-radius: 2px; opacity: 0;
+              animation: confetti 1.8s ease-in var(--d) 2 forwards; }
+@keyframes confetti { 0% { opacity: 1; transform: translateY(0) rotate(0); } 100% { opacity: 0; transform: translateY(320px) rotate(540deg); } }
+@media (prefers-reduced-motion: reduce) { .confetti { display: none; } .cel-badge { animation: none; } }

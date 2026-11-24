@@ -6752,5 +6752,45 @@
       "summary": "MS Fund of Denver wants a 15-minute talk about your athletic story in Boulder on Dec 16, 2026, offering $600. The booker offers pickup and drop-off, conflicting with your rider; the stated date is not in two weeks, and the event time is unspecified.",
       "fee_note": "$600 is within your $500\u2013$1,500 fee range."
     }
+  },
+  {
+    "run_id": "78c931a155",
+    "time": "2026-11-24T04:48:10+00:00",
+    "agent": "story_builder",
+    "input": "Athlete basics: <untrusted source=\"athlete form\"> Name: Giovana Sport: DelaGuistina Level: Current Pro City: Denver </untrusted> Athlete notes: <untrusted source=\"athlete notes\"> Trail running. I run all the time. 6 days a week, rain, shine, snow, sleet, blazing hot, you name it. I have been doing this for 12 years now. I run an average of 28 miles per week. I have run 2 ultra marathons and 26 marathons. I always have a good attitude and I don't give up! Active years: 2013-2026 Public speaking: Yes, small groups Awards, victories, and favorite accomplishments: Many top 10 finishes. The locals in the sport are some of my best fans! I love that I usualy have a small croud cheering me on What I overcame as an athlete: 2 hip surgeries in 2023 Stories I like to tell about my career: I have the most amazing running coach she has inspired me beyond measure and keeps my skills sharp. </untrusted>",
+    "tool_calls": [],
+    "reasoning": [],
+    "output": {
+      "headline": "Two Hip Surgeries, Still Running the Miles",
+      "bio": "After two hip surgeries in 2023, Giovana returned to the trail-running routine she has kept for 12 years. She runs six days a week in all kinds of weather, averaging 28 miles weekly, and has completed two ultramarathons and 26 marathons. Giovana has earned many top-10 finishes and credits her coach with inspiring her and keeping her skills sharp. Based in Denver, she speaks with small groups about persistence, training, and the support that keeps athletes moving.",
+      "story": "After two hip surgeries in 2023, Denver trail runner Giovana found her way back to a sport she has practiced for 12 years, running six days a week through every kind of weather. She shares how persistence and an inspiring coach have helped her keep going, from local races to ultramarathons and marathons.",
+      "topics": [
+        "Returning After Hip Surgery",
+        "Building a Consistent Running Habit",
+        "Running Through Every Season",
+        "The Power of a Great Coach"
+      ],
+      "best_fit_events": [
+        "Small-group school wellness sessions",
+        "Denver-area running club gatherings",
+        "Community trail-running meetups",
+        "Small-group athlete panels"
+      ],
+      "categories": [
+        "speaking"
+      ],
+      "claims_to_verify": [
+        "Trail runner",
+        "Active years: 2013\u20132026",
+        "Runs six days a week",
+        "Averages 28 miles per week",
+        "Completed two ultramarathons",
+        "Completed 26 marathons",
+        "Many top-10 finishes",
+        "Had two hip surgeries in 2023",
+        "Has a running coach who inspires her and keeps her skills sharp",
+        "Based in Denver"
+      ]
+    }
   }
 ]

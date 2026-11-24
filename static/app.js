@@ -515,11 +515,24 @@ document.addEventListener("click", (e) => {
   if (e.target.closest("[data-signin]")) signIn();
 });
 // After the first fill-in (a request sent or a profile published), ask them to make an account to follow up.
-function askToSave(kind, name) {
+function celebrate({ title, sub, steps, primary, secondary, kind, name }) {
+  const confetti = Array.from({ length: 18 }, (_, i) => `<i style="--x:${(i * 37) % 100}%;--d:${(i % 6) * 0.12}s;--c:${["#ff5a1f", "#9fdcec", "#e6c27a", "#12865b"][i % 4]}"></i>`).join("");
+  openModal(`<div class="celebrate"><div class="confetti" aria-hidden="true">${confetti}</div>
+    <div class="cel-badge">${XO(46)}</div><h2>${title}</h2><p class="sub">${sub}</p>
+    <div class="cel-next"><div class="cel-k">What's next</div><ol>${steps.map((t) => `<li>${t}</li>`).join("")}</ol></div>
+    <div class="row-btns"><button class="btn" data-cel-go="${primary[0]}">${primary[1]}</button>${secondary ? `<button class="btn ghost" data-cel-go="${secondary[0]}">${secondary[1]}</button>` : ""}</div>
+    ${state.user ? "" : `<p class="fine"><button class="linkish" data-cel-save>Save this to a free account</button> so you can check in from any device.</p>`}</div>`);
+  document.querySelectorAll("[data-cel-go]").forEach((b) => (b.onclick = () => {
+    $("#modal").hidden = true; state.tab = b.dataset.celGo; render(); window.scrollTo(0, 0);
+    if (state.tab === "rider") setTimeout(() => { const ph = document.querySelector(".photo-slots"); if (ph) ph.scrollIntoView({ behavior: "smooth", block: "center" }); }, 700);
+  }));
+  const sv = document.querySelector("[data-cel-save]"); if (sv) sv.onclick = () => askToSave(kind, name, true);
+}
+function askToSave(kind, name, now = false) {
   if (state.user) return;
   setTimeout(() => signIn({ title: kind === "athlete" ? "You're live! Save your profile" : "Request sent! Save it to your account",
     lead: kind === "athlete" ? "Create your free account so you can see requests, accept bookings, and get paid." : "Create your free account to see the athlete's reply and unlock their contact details when they accept.",
-    name, role: kind }), 1400);
+    name, role: kind }), now ? 0 : 1400);
 }
 function signInGate(what) {
   return `<div class="signin-gate card"><div class="gate-icon">🔒</div><h3>Sign in to see ${esc(what)}</h3>
@@ -654,7 +667,16 @@ function requestModal(athleteId) {
         : `<div class="alert good">✅ Sent to ${esc(a.name)}${r.status === "flagged" ? " (marked for a careful look)" : ""}. Track it under <b>My requests</b>.</div>`;
       $("#r-out").innerHTML += usageLine(s.usage);
       btn.textContent = "Sent";
-      if (r.status !== "blocked") { localSet("np_sent_request", "1"); askToSave("booker", body.booker_name); }
+      if (r.status !== "blocked") {
+        localSet("np_sent_request", "1");
+        const first = esc(a.name.split(" ")[0]);
+        setTimeout(() => celebrate({ kind: "booker", name: body.booker_name,
+          title: `Request sent to ${first}!`,
+          sub: r.status === "flagged" ? `Gatekeeper screened it and marked one thing for ${first} to look at. You're all set on your side.` : "Gatekeeper screened it and it's on its way. You're all set on your side.",
+          steps: [`${first} reviews it, usually within a day, and may ask for a quick prep call.`, "When they accept, your fee is held safely in escrow and their contact details unlock.",
+                  `On event day, ${first} checks in 60 minutes early. You'll see it under Requests & bookings.`],
+          primary: ["mine", "Track my request"], secondary: ["find", "Find another athlete"] }), 900);
+      }
     } catch (err) { $("#r-out").innerHTML = `<div class="alert bad">${esc(err.message)}</div>`; btn.disabled = false; btn.textContent = "Send request"; }
   };
 }
@@ -811,9 +833,13 @@ function drawDraft() {
       fee_min: Number($("#d-min").value), fee_max: Number($("#d-max").value), email: $("#d-email").value.trim(), phone: $("#d-phone").value.trim() };
     if (!body.email) return toast("Add a private email so bookers can reach you after you accept.");
     try { const a = await api("/api/athletes", { method: "POST", body }); await loadRoster(); state.athleteId = a.id; localSet("np_athlete", a.id); localSet("np_published", "1");
-      toast(`Published! Next: add your photos and set your rider.`); state.tab = "rider"; render();
-      setTimeout(() => { const ph = document.querySelector(".photo-slots"); if (ph) ph.scrollIntoView({ behavior: "smooth", block: "center" }); }, 900);
-      askToSave("athlete", a.name);
+      state.tab = "rider"; render();
+      celebrate({ kind: "athlete", name: a.name,
+        title: "Profile published!",
+        sub: `You're live on NextPlay Pros, ${esc(a.name.split(" ")[0])}. Bookers can find you starting now.`,
+        steps: ["Add up to three photos (your current photo shows first).", "Set your rider and availability so only the right requests reach you.",
+                "Explore gigs on the Opportunity board, and answer requests in your inbox."],
+        primary: ["rider", "Add my photos"], secondary: ["board", "Explore gigs"] });
     } catch (err) { toast(err.message); }
   };
 }
