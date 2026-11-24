@@ -559,3 +559,5 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .pro-extras { display: flex; gap: 4px; margin-top: 4px; }
 .pro-extras img { width: 34px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid var(--line); }
 @media (max-width: 640px) { .photo-slots { gap: 8px; } }
+
+.photo-note { font-size: 13.5px; color: var(--ink); background: #fff8f4; border-left: 4px solid var(--brand); border-radius: 8px; padding: 8px 12px; margin: 10px 0 0; }

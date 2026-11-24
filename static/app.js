@@ -988,6 +988,7 @@ function drawRiderForm() {
           <label class="btn small ghost slot-btn">${url ? "Replace" : "Upload"}<input type="file" hidden data-slot="${i}" accept="image/jpeg,image/png,image/webp"></label>
           ${i > 0 && url ? `<button class="btn small ghost slot-btn" data-remove-slot="${i}">Remove</button>` : ""}</div>`; }).join("")}</div>
       <div id="photo-msg" class="meta"></div>
+      <p class="photo-note">A quick note: photos should be appropriate for all ages and show you at your best, whether that's a professional headshot or a highlight from your athletic career. Thank you for helping keep NextPlay Pros welcoming for every school, family, and organization.</p>
       <p class="photo-safe">${uiIcon("shield", 14)} Every photo is screened automatically before anyone sees it. Nudity, sexual, or graphic images are blocked.</p></div>
     <div class="panel profile-panel"><h2>🗓️ When I'm available</h2>
       <div class="day-grid">${Object.entries(o.days).map(([k, v]) => `<label class="check"><input type="checkbox" name="days" value="${k}" ${a.availability.days.includes(k) ? "checked" : ""}> ${v}</label>`).join("")}</div>
