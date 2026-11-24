@@ -545,3 +545,17 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .gate .label { display: flex; align-items: center; gap: 14px; font-size: 17px; letter-spacing: .08em; color: var(--navy); margin-bottom: 6px; }
 .gate .label .bot { flex: none; }
 .req .gate:has(.conflict) { border-left-color: #d9a400; }
+
+/* Three athlete photo slots + screening note */
+.photo-slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 10px 0; }
+.photo-slot { display: grid; gap: 6px; justify-items: center; text-align: center; }
+.slot-label { font-size: 12px; font-weight: 700; color: var(--muted); }
+.photo-slot img, .photo-slot .pro-photo, .slot-empty { width: 100%; max-width: 140px; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 12px; border: 1px solid var(--line); }
+.slot-empty { display: grid; place-items: center; font-size: 30px; color: #b7c2d6; background: #f5f6f8; border-style: dashed; }
+.slot-btn { cursor: pointer; width: auto; }
+.photo-safe { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); margin: 8px 0 0; }
+.photo-safe .ui-ic { color: #12865b; }
+.photo-err { color: #c62828; font-weight: 600; }
+.pro-extras { display: flex; gap: 4px; margin-top: 4px; }
+.pro-extras img { width: 34px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid var(--line); }
+@media (max-width: 640px) { .photo-slots { gap: 8px; } }

@@ -90,7 +90,7 @@ function availLine(a) {
 }
 function athleteCard(a, extra = "") {
   return `<div class="card pro">
-    <div class="pro-top">${photoBox(a)}${extra.score || ""}</div>
+    <div class="pro-top">${photoBox(a)}${(a.photos_extra || []).filter(Boolean).length ? `<div class="pro-extras">${a.photos_extra.filter(Boolean).map((u) => `<img src="${esc(u)}" alt="">`).join("")}</div>` : ""}${extra.score || ""}</div>
     <div class="card-head"><div><div class="name">${esc(a.name)} ${SPORT_ICON[a.sport] || ""}</div>
       <div class="meta">${esc(a.level)} · ${esc(a.sport)} · ${esc(a.city)}, ${esc(a.state)}</div></div></div>
     ${extra.why || ""}
@@ -979,9 +979,16 @@ function drawRiderForm() {
   const boxes = (name, map, sel) => Object.entries(map).map(([k, v]) =>
     `<label class="check"><input type="checkbox" name="${name}" value="${k}" ${sel.includes(k) ? "checked" : ""}> ${esc(v)}</label>`).join("");
   $("#rider-form").innerHTML = `<div class="grid two">
-    <div class="panel profile-panel"><h2>📷 Profile photo</h2>
-      <div class="photo-edit">${photoBox(a, "pro-photo small")}<div><p class="meta">Shown on your card to every booker. JPG or PNG, up to 6 MB. We crop it to a portrait.</p>
-      <input type="file" id="photo-file" accept="image/jpeg,image/png,image/webp"><div id="photo-msg" class="meta"></div></div></div></div>
+    <div class="panel profile-panel"><h2>📷 Your photos</h2>
+      <p class="meta">Your <b>current photo</b> is the one bookers see first; add up to two more (action shots, career moments). JPG or PNG, up to 6 MB.</p>
+      <div class="photo-slots">${[0, 1, 2].map((i) => {
+        const url = i === 0 ? a.photo : (a.photos_extra || [])[i - 1];
+        return `<div class="photo-slot"><div class="slot-label">${i === 0 ? "Current photo" : "Optional photo " + i}</div>
+          ${url ? `<img src="${esc(url)}" alt="">` : i === 0 ? photoBox(a, "pro-photo small") : `<div class="slot-empty">+</div>`}
+          <label class="btn small ghost slot-btn">${url ? "Replace" : "Upload"}<input type="file" hidden data-slot="${i}" accept="image/jpeg,image/png,image/webp"></label>
+          ${i > 0 && url ? `<button class="btn small ghost slot-btn" data-remove-slot="${i}">Remove</button>` : ""}</div>`; }).join("")}</div>
+      <div id="photo-msg" class="meta"></div>
+      <p class="photo-safe">${uiIcon("shield", 14)} Every photo is screened automatically before anyone sees it. Nudity, sexual, or graphic images are blocked.</p></div>
     <div class="panel profile-panel"><h2>🗓️ When I'm available</h2>
       <div class="day-grid">${Object.entries(o.days).map(([k, v]) => `<label class="check"><input type="checkbox" name="days" value="${k}" ${a.availability.days.includes(k) ? "checked" : ""}> ${v}</label>`).join("")}</div>
       <div style="margin-top:8px">${Object.entries(o.times).map(([k, v]) => `<label class="check"><input type="checkbox" name="times" value="${k}" ${a.availability.times.includes(k) ? "checked" : ""}> ${esc(v)}</label>`).join("")}</div>
@@ -995,14 +1002,18 @@ function drawRiderForm() {
       <h2 style="margin-top:18px">⛔ I won't do</h2>${boxes("wont_do", o.wont_do, r.wont_do)}
       <label style="margin-top:8px">Anything else I won't do</label><input id="wont-other" maxlength="300" value="${esc(r.wont_do_other)}" placeholder="e.g. no events on Sundays, no tobacco or vape brands">
       <button class="btn good" id="rider-save" style="margin-top:14px">Save availability &amp; rider</button></div></div>`;
-  $("#photo-file").onchange = async () => {
-    const f = $("#photo-file").files[0]; if (!f) return;
+  document.querySelectorAll("[data-slot]").forEach((inp) => (inp.onchange = async () => {
+    const f = inp.files[0], slot = Number(inp.dataset.slot); if (!f) return;
     if (f.size > 6e6) return ($("#photo-msg").textContent = "That photo is over 6 MB.");
-    $("#photo-msg").textContent = "Uploading…";
+    $("#photo-msg").textContent = "Checking and uploading…";
     const data_url = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f); });
-    try { await api(`/api/athletes/${a.id}/photo`, { method: "POST", body: { athlete_id: a.id, data_url } }); await loadRoster(); toast("Photo saved."); drawRiderForm(); }
-    catch (err) { $("#photo-msg").textContent = err.message; }
-  };
+    try { await api(`/api/athletes/${a.id}/photo`, { method: "POST", body: { athlete_id: a.id, data_url, slot } }); await loadRoster(); toast("Photo passed the safety check and was saved."); drawRiderForm(); }
+    catch (err) { $("#photo-msg").innerHTML = `<span class="photo-err">${esc(err.message)}</span>`; }
+  }));
+  document.querySelectorAll("[data-remove-slot]").forEach((b) => (b.onclick = async () => {
+    try { await api(`/api/athletes/${a.id}/photo/remove`, { method: "POST", body: { athlete_id: a.id, slot: Number(b.dataset.removeSlot) } }); await loadRoster(); toast("Photo removed."); drawRiderForm(); }
+    catch (err) { toast(err.message); }
+  }));
   $("#rider-save").onclick = async () => {
     const pick = (n) => [...document.querySelectorAll(`input[name="${n}"]:checked`)].map((i) => i.value);
     const rider = { security: pick("security"), accommodations: pick("accommodations"), wont_do: pick("wont_do"),

@@ -132,6 +132,7 @@ def save_availability(athlete_id: str, body: AvailabilityIn):
 class PhotoIn(BaseModel):
     athlete_id: str
     data_url: str  # "data:image/jpeg;base64,..."
+    slot: int = 0  # 0 = current photo, 1-2 = optional extra photos
 
 
 @app.post("/api/athletes/{athlete_id}/photo")
@@ -144,7 +145,22 @@ def upload_photo(athlete_id: str, body: PhotoIn):
     except Exception:  # noqa: BLE001
         raise HTTPException(400, "Couldn't read that upload.")
     try:
-        return store.save_photo(athlete_id, raw)
+        return store.save_photo(athlete_id, raw, body.slot)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+class PhotoRemoveIn(BaseModel):
+    athlete_id: str
+    slot: int
+
+
+@app.post("/api/athletes/{athlete_id}/photo/remove")
+def remove_photo(athlete_id: str, body: PhotoRemoveIn):
+    if body.athlete_id != athlete_id:
+        raise HTTPException(403, "You can only change your own photos.")
+    try:
+        return store.remove_photo(athlete_id, body.slot)
     except ValueError as e:
         raise HTTPException(400, str(e))
 

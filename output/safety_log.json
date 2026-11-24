@@ -796,5 +796,36 @@
       "spent_usd": 0.0049,
       "cap_usd": 0.0
     }
+  },
+  {
+    "time": "2026-11-24T04:10:34+00:00",
+    "guard": "daily_spend_cap",
+    "where": "any agent",
+    "detail": {
+      "spent_usd": 0.0053,
+      "cap_usd": 0.0
+    }
+  },
+  {
+    "time": "2026-11-24T04:10:36+00:00",
+    "guard": "photo_blocked",
+    "where": "photo upload",
+    "detail": {
+      "athlete_id": "ath_001",
+      "slot": 1,
+      "categories": [
+        "sexual"
+      ]
+    }
+  },
+  {
+    "time": "2026-11-24T04:10:36+00:00",
+    "guard": "photo_check_unavailable",
+    "where": "photo upload",
+    "detail": {
+      "athlete_id": "ath_001",
+      "slot": 0,
+      "categories": []
+    }
   }
 ]

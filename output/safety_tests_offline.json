@@ -7,8 +7,8 @@
     "live": false,
     "passed": true,
     "detail": "contact returned: None",
-    "seconds": 0.1,
-    "time": "2026-11-24T04:02:06+00:00"
+    "seconds": 0.12,
+    "time": "2026-11-24T04:10:33+00:00"
   },
   {
     "id": "V2",
@@ -19,7 +19,7 @@
     "passed": true,
     "detail": "own booker: True, other booker: None",
     "seconds": 0.12,
-    "time": "2026-11-24T04:02:06+00:00"
+    "time": "2026-11-24T04:10:34+00:00"
   },
   {
     "id": "V3",
@@ -30,7 +30,7 @@
     "passed": true,
     "detail": "refused: This request was not sent to you.",
     "seconds": 0.11,
-    "time": "2026-11-24T04:02:06+00:00"
+    "time": "2026-11-24T04:10:34+00:00"
   },
   {
     "id": "V4",
@@ -40,8 +40,8 @@
     "live": false,
     "passed": true,
     "detail": "refused: Request is already blocked.",
-    "seconds": 0.1,
-    "time": "2026-11-24T04:02:06+00:00"
+    "seconds": 0.11,
+    "time": "2026-11-24T04:10:34+00:00"
   },
   {
     "id": "B1",
@@ -51,8 +51,8 @@
     "live": false,
     "passed": true,
     "detail": "12 results, over budget: []",
-    "seconds": 0.08,
-    "time": "2026-11-24T04:02:06+00:00"
+    "seconds": 0.09,
+    "time": "2026-11-24T04:10:34+00:00"
   },
   {
     "id": "R1",
@@ -63,7 +63,7 @@
     "passed": true,
     "detail": "3 removed -> 'Reach me at [email removed] or [phone removed], see [link removed]'",
     "seconds": 0.0,
-    "time": "2026-11-24T04:02:06+00:00"
+    "time": "2026-11-24T04:10:34+00:00"
   },
   {
     "id": "R2",
@@ -74,7 +74,7 @@
     "passed": true,
     "detail": "all 3 caught",
     "seconds": 0.0,
-    "time": "2026-11-24T04:02:06+00:00"
+    "time": "2026-11-24T04:10:34+00:00"
   },
   {
     "id": "S1",
@@ -83,9 +83,9 @@
     "risk": "overspending",
     "live": false,
     "passed": true,
-    "detail": "refused: Daily AI spend cap reached ($0.00 of $0.00). Try again tomorrow.",
+    "detail": "refused: Daily AI spend cap reached ($0.01 of $0.00). Try again tomorrow.",
     "seconds": 0.0,
-    "time": "2026-11-24T04:02:06+00:00"
+    "time": "2026-11-24T04:10:34+00:00"
   },
   {
     "id": "T1",
@@ -95,8 +95,8 @@
     "live": false,
     "passed": true,
     "detail": "status 400: Please agree to the athlete's Event Rider and the NextPlay Pros Terms before sending.",
-    "seconds": 0.67,
-    "time": "2026-11-24T04:02:07+00:00"
+    "seconds": 0.76,
+    "time": "2026-11-24T04:10:35+00:00"
   },
   {
     "id": "T2",
@@ -107,7 +107,7 @@
     "passed": true,
     "detail": "hits=['Alcohol or bar promotion', 'Gambling or sports-betting promotion']; clean request hits=[]",
     "seconds": 0.0,
-    "time": "2026-11-24T04:02:07+00:00"
+    "time": "2026-11-24T04:10:35+00:00"
   },
   {
     "id": "N1",
@@ -118,7 +118,7 @@
     "passed": true,
     "detail": "status 400: This is a current college athlete. Please confirm the Name, Image & Likeness (NIL) rules before sending.",
     "seconds": 0.11,
-    "time": "2026-11-24T04:02:07+00:00"
+    "time": "2026-11-24T04:10:35+00:00"
   },
   {
     "id": "N2",
@@ -129,7 +129,7 @@
     "passed": true,
     "detail": "college=['possible_recruiting_inducement', 'school_logo_or_uniform'], pro=[]",
     "seconds": 0.0,
-    "time": "2026-11-24T04:02:07+00:00"
+    "time": "2026-11-24T04:10:35+00:00"
   },
   {
     "id": "C1",
@@ -140,7 +140,7 @@
     "passed": true,
     "detail": "on time 950.0, <60 min 900.0, late 675.0 (+250.0 refund)",
     "seconds": 0.0,
-    "time": "2026-11-24T04:02:07+00:00"
+    "time": "2026-11-24T04:10:35+00:00"
   },
   {
     "id": "C2",
@@ -151,7 +151,7 @@
     "passed": true,
     "detail": "refused before accept; other athlete refused; booked athlete checked in; double check-in refused",
     "seconds": 0.14,
-    "time": "2026-11-24T04:02:07+00:00"
+    "time": "2026-11-24T04:10:35+00:00"
   },
   {
     "id": "AV1",
@@ -162,7 +162,7 @@
     "passed": true,
     "detail": "bad=['Not available on Mons', \"Needs 14 days' notice (this is 7 days away)\", 'Not available evenings']; ok=[]",
     "seconds": 0.0,
-    "time": "2026-11-24T04:02:07+00:00"
+    "time": "2026-11-24T04:10:35+00:00"
   },
   {
     "id": "AV2",
@@ -173,7 +173,7 @@
     "passed": true,
     "detail": "14 athletes free Monday mornings; wrong=[]",
     "seconds": 0.12,
-    "time": "2026-11-24T04:02:07+00:00"
+    "time": "2026-11-24T04:10:35+00:00"
   },
   {
     "id": "PH1",
@@ -183,7 +183,29 @@
     "live": false,
     "passed": true,
     "detail": "refused: That file isn't a photo we can read (use JPG or PNG).",
-    "seconds": 0.38,
-    "time": "2026-11-24T04:02:07+00:00"
+    "seconds": 0.4,
+    "time": "2026-11-24T04:10:35+00:00"
+  },
+  {
+    "id": "PH2",
+    "name": "A photo flagged for nudity is refused and never saved",
+    "layer": "Code: photo moderation",
+    "risk": "abuse",
+    "live": false,
+    "passed": true,
+    "detail": "refused: This photo can't be posted: our safety check flagged nudity or sexual content. Please choose a different photo.",
+    "seconds": 0.12,
+    "time": "2026-11-24T04:10:36+00:00"
+  },
+  {
+    "id": "PH3",
+    "name": "If the photo check can't run, the photo is not posted (fail closed)",
+    "layer": "Code: photo moderation",
+    "risk": "abuse",
+    "live": false,
+    "passed": true,
+    "detail": "refused: Our photo safety check couldn't run right now, so the photo wasn't posted. Please try again in a minute.",
+    "seconds": 0.11,
+    "time": "2026-11-24T04:10:36+00:00"
   }
 ]

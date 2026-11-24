@@ -94,6 +94,7 @@ def _with_rider(a: dict) -> dict:
         a["availability"] = riders.seed_availability(n) if n else dict(riders.AVAIL_EMPTY)
     a["availability"] = riders.clean_availability(a["availability"])
     a.setdefault("photo", None)
+    a.setdefault("photos_extra", [None, None])
     return a
 
 
@@ -114,13 +115,17 @@ def update_availability(athlete_id: str, availability: dict) -> dict:
 PHOTOS = DATA_DIR / "photos"
 
 
-def save_photo(athlete_id: str, raw: bytes) -> dict:
-    """Validate an uploaded image, square it up to a 3:4 portrait, and store it next to the roster."""
+def save_photo(athlete_id: str, raw: bytes, slot: int = 0, screen=None) -> dict:
+    """Validate an uploaded image, crop it to a 3:4 portrait, screen it for nudity/graphic content, then store it.
+    slot 0 = current (main) photo; slots 1-2 = optional extra photos. Nothing is saved unless the screen passes."""
     import io
     from PIL import Image
+    from . import moderation
     a = get_athlete(athlete_id)
     if not a:
         raise ValueError("No such athlete")
+    if slot not in (0, 1, 2):
+        raise ValueError("Photo slot must be 0, 1, or 2.")
     if len(raw) > 6_000_000:
         raise ValueError("Photo is too large (max 6 MB).")
     try:
@@ -134,10 +139,35 @@ def save_photo(athlete_id: str, raw: bytes) -> dict:
     th = int(tw * 4 / 3)
     left = (w - tw) // 2
     im = im.crop((left, 0, left + tw, th)).resize((450, 600))
+    buf = io.BytesIO()
+    im.save(buf, "JPEG", quality=85)
+    jpeg = buf.getvalue()
+    result = (screen or moderation.screen_image)(jpeg)  # fail closed: blocked OR unavailable -> not saved
+    if not result["ok"]:
+        from .guards import log_safety
+        log_safety("photo_blocked" if result["reason"] == "blocked" else "photo_check_unavailable", "photo upload",
+                   {"athlete_id": athlete_id, "slot": slot, "categories": result.get("categories", [])})
+        raise ValueError(moderation.refusal(result))
     PHOTOS.mkdir(exist_ok=True)
-    name = f"{athlete_id}.jpg"
-    im.save(PHOTOS / name, "JPEG", quality=85)
-    a["photo"] = f"/photos/{name}?v={uuid.uuid4().hex[:6]}"
+    name = f"{athlete_id}.jpg" if slot == 0 else f"{athlete_id}-{slot}.jpg"
+    (PHOTOS / name).write_bytes(jpeg)
+    url = f"/photos/{name}?v={uuid.uuid4().hex[:6]}"
+    if slot == 0:
+        a["photo"] = url
+    else:
+        extras = (a.get("photos_extra") or [None, None])[:2] + [None] * (2 - len((a.get("photos_extra") or [])[:2]))
+        extras[slot - 1] = url
+        a["photos_extra"] = extras
+    return _save(a)
+
+
+def remove_photo(athlete_id: str, slot: int) -> dict:
+    a = get_athlete(athlete_id)
+    if not a or slot not in (1, 2):
+        raise ValueError("Only the optional photos (slots 1-2) can be removed.")
+    extras = (a.get("photos_extra") or [None, None]) + [None, None]
+    extras[slot - 1] = None
+    a["photos_extra"] = extras[:2]
     return _save(a)
 
 

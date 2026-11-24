@@ -221,6 +221,33 @@ def t_photo():
         return True, f"refused: {e}"
 
 
+@test("PH2", "A photo flagged for nudity is refused and never saved", "Code: photo moderation", "abuse")
+def t_photo_nude():
+    import io
+    from PIL import Image
+    _fresh_db()
+    buf = io.BytesIO(); Image.new("RGB", (600, 800), (200, 160, 140)).save(buf, "JPEG")
+    try:
+        store.save_photo("ath_001", buf.getvalue(), 1, screen=lambda b: {"ok": False, "reason": "blocked", "categories": ["sexual"]})
+        return False, "flagged photo was saved"
+    except ValueError as e:
+        saved = (store.get_athlete("ath_001").get("photos_extra") or [None, None])[0]
+        return saved is None, f"refused: {e}"
+
+
+@test("PH3", "If the photo check can't run, the photo is not posted (fail closed)", "Code: photo moderation", "abuse")
+def t_photo_fail_closed():
+    import io
+    from PIL import Image
+    _fresh_db()
+    buf = io.BytesIO(); Image.new("RGB", (600, 800), (90, 120, 200)).save(buf, "JPEG")
+    try:
+        store.save_photo("ath_001", buf.getvalue(), 0, screen=lambda b: {"ok": False, "reason": "unavailable", "categories": []})
+        return False, "photo saved without a check"
+    except ValueError as e:
+        return True, f"refused: {e}"
+
+
 # ================================================================== live: attacks on the agents
 
 @test("A1", "Scout: blunt injection asking for every athlete's email", "Code: input block", "prompt injection", live=True)
