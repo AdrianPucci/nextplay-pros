@@ -31,6 +31,7 @@ class StoryIn(BaseModel):
     level: str
     city: str
     notes: str
+    off_limits: str = Field("", max_length=1000)  # topics the athlete won't discuss: kept out of the profile
 
 
 class PublishIn(BaseModel):

@@ -5785,5 +5785,48 @@
       ],
       "note": "I found fewer than three local fits, so I widened the search beyond Colorado; Jordan was still the only match. His availability is listed for evenings, and he needs 21 days\u2019 notice\u2014what Saturday date and clinic time are you considering?"
     }
+  },
+  {
+    "run_id": "6b63e38eb6",
+    "time": "2026-11-24T04:01:45+00:00",
+    "agent": "story_builder",
+    "input": "Athlete basics: <untrusted source=\"athlete form\"> Name: Dana Reyes Sport: Basketball Level: Former College City: Denver </untrusted> Athlete notes: <untrusted source=\"athlete notes\"> I played point guard at Colorado State and two seasons overseas in Spain. Now I coach high school girls and run a small business. Active years: 2006-2013 Public speaking: Yes, small groups Awards, victories, and favorite accomplishments: Mountain West all-conference, our 2011 conference title run What I overcame as an athlete: tore my ACL junior year and came back as a starter Stories I like to tell about my career: the night we beat the top seed on the road Current passions and interests: coaching girls, small business, hiking Charities and organizations I've supported: Special Olympics Colorado basketball days </untrusted> OFF THE TABLE (the athlete does not want these in the profile; never mention them): <untrusted source=\"athlete off-limits\"> my divorce and my time with the Madrid club owner lawsuit </untrusted>",
+    "tool_calls": [],
+    "reasoning": [],
+    "output": {
+      "headline": "An ACL Comeback That Led Back to the Starting Lineup",
+      "bio": "After tearing her ACL as a junior, Dana Reyes rehabbed and returned to the starting lineup at Colorado State. A point guard who played two seasons overseas in Spain, she earned Mountain West all-conference recognition and remembers her team's 2011 conference title run\u2014including a road win over the top seed. She now coaches high school girls and runs a small business in Denver. Reyes also supports Special Olympics Colorado basketball days and enjoys hiking.",
+      "story": "After tearing her ACL as a junior, Dana Reyes came back to start at point guard for Colorado State. Now coaching high school girls, she shares lessons from her comeback and the night her team beat the top seed on the road in small-group settings.",
+      "topics": [
+        "Returning to the starting lineup",
+        "Rebuilding after an ACL injury",
+        "The road win over the top seed",
+        "Leading through a title run",
+        "Coaching the next generation"
+      ],
+      "best_fit_events": [
+        "Small-group talks for high school girls basketball teams",
+        "Girls' basketball clinics and team development days",
+        "Special Olympics Colorado basketball days",
+        "Small-business leadership conversations"
+      ],
+      "categories": [
+        "speaking",
+        "clinic",
+        "mentoring"
+      ],
+      "claims_to_verify": [
+        "Played point guard at Colorado State",
+        "Played two seasons overseas in Spain",
+        "Active years: 2006\u20132013",
+        "Mountain West all-conference recognition",
+        "Part of the 2011 conference title run",
+        "Tore her ACL as a junior and returned as a starter",
+        "Her team beat the top seed on the road",
+        "Currently coaches high school girls",
+        "Runs a small business in Denver",
+        "Supported Special Olympics Colorado basketball days"
+      ]
+    }
   }
 ]

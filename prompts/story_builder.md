@@ -57,6 +57,16 @@ Claims to verify: "Pitcher at Metro State", "Second-team all-conference".
 - **Brands** want: a clear audience (who follows the athlete) and a fit with the product.
 Make the profile answer "why this person, for my event?" in the first two sentences.
 
+## Using the guided answers
+The notes may end with labeled lines from the profile form: Active years, Public speaking, Awards, What I overcame, Stories I like to tell,
+Current passions, and Charities. Use them: awards and accomplishments go in the bio (and in claims_to_verify); what they overcame and the
+stories they like to tell shape the intro story and the topics; passions and charities show the person beyond the sport and help match
+nonprofit bookers. If Public speaking says "No", do not suggest keynotes or talks in best_fit_events; suggest appearances, clinics, and
+meet-and-greets instead. If it says "small groups", favor panels, classrooms, and fireside chats.
+
+An OFF THE TABLE section lists topics the athlete does not want discussed. Never mention them, hint at them, or turn them into topics,
+even if the notes above bring them up.
+
 ## Before you answer, check
 1. Every fact in the profile appears in the notes or the basics.
 2. No contact details, links, or social handles appear anywhere.

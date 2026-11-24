@@ -700,13 +700,29 @@ function viewBuild() {
     <div class="row"><div><label>Name</label><input id="s-name"></div><div><label>Sport</label><input id="s-sport"></div></div>
     <div class="row"><div><label>Level</label><select id="s-level">${levels.map((l) => `<option>${l}</option>`).join("")}</select></div>
       <div><label>Home city</label><select id="s-city">${state.cities.map((c) => `<option>${esc(c)}</option>`).join("")}</select></div></div>
-    <div><label>Your story, in your own words</label><textarea id="s-notes" rows="8" placeholder="Where you played, the hardest moment, what you do now, what you'd love to talk about or do at events…"></textarea></div>
+    <div><label>Your story, in your own words</label><textarea id="s-notes" rows="6" placeholder="Where you played, the hardest moment, what you do now, what you'd love to talk about or do at events…"></textarea></div>
+    <details class="more-q" open><summary><b>Tell us more</b> <span class="meta">(optional, but it makes your profile much stronger)</span></summary>
+      <div class="row"><div><label>Active years</label><input id="q-active" placeholder="e.g. 2004–2015, or 2022–now"></div>
+        <div><label>Public speaking?</label><select id="q-speak"><option value="">Choose…</option><option>Yes, I love it</option><option>Yes, small groups</option><option>Not yet, open to it</option><option>No, appearances only</option></select></div></div>
+      <div><label>Awards, victories, and favorite accomplishments</label><textarea id="q-awards" rows="2" placeholder="Titles, records, all-star picks, the win you're proudest of…"></textarea></div>
+      <div><label>What you overcame as an athlete</label><textarea id="q-overcame" rows="2" placeholder="Injuries, setbacks, being overlooked, life outside sports…"></textarea></div>
+      <div><label>Stories you like to tell about your career</label><textarea id="q-stories" rows="2" placeholder="The locker-room moment, the coach who changed everything…"></textarea></div>
+      <div><label>Current passions and interests</label><input id="q-passions" placeholder="Coaching, business, family, faith, the outdoors…"></div>
+      <div><label>Charities and organizations you've supported</label><textarea id="q-charity" rows="2" placeholder="Causes you care about and events you've done for them"></textarea></div>
+      <div><label>Off the table</label><textarea id="q-off" rows="2" placeholder="Topics or experiences you don't want to discuss. We'll keep them out of your profile."></textarea></div>
+    </details>
     <button class="btn" id="s-go">Write my profile</button>
   </div><div id="s-out" class="panel"><div class="empty">Your draft will appear here.</div></div></div>`;
   $("#s-city").value = "Denver";
   $("#s-go").onclick = async () => {
-    const body = { name: $("#s-name").value.trim(), sport: $("#s-sport").value.trim(), level: $("#s-level").value, city: $("#s-city").value, notes: $("#s-notes").value.trim() };
-    if (!body.name || !body.sport || body.notes.length < 30) return toast("Add your name, sport, and a few sentences about your story.");
+    const QS = [["q-active", "Active years"], ["q-speak", "Public speaking"], ["q-awards", "Awards, victories, and favorite accomplishments"],
+      ["q-overcame", "What I overcame as an athlete"], ["q-stories", "Stories I like to tell about my career"], ["q-passions", "Current passions and interests"],
+      ["q-charity", "Charities and organizations I've supported"]];
+    const extra = QS.map(([id, label]) => [label, $("#" + id).value.trim()]).filter(([, v]) => v).map(([l, v]) => `${l}: ${v}`).join("\n");
+    const story = $("#s-notes").value.trim();
+    const body = { name: $("#s-name").value.trim(), sport: $("#s-sport").value.trim(), level: $("#s-level").value, city: $("#s-city").value,
+      notes: [story, extra].filter(Boolean).join("\n\n"), off_limits: $("#q-off").value.trim() };
+    if (!body.name || !body.sport || body.notes.length < 30) return toast("Add your name, sport, and a few sentences about your story (or answer a few questions below).");
     const btn = $("#s-go"); btn.disabled = true; btn.innerHTML = `<span class="spinner"></span>Writing…`;
     $("#s-out").innerHTML = thinking("story_builder", "Story Builder is writing your profile");
     try { const r = await api("/api/story", { method: "POST", body }); state.draft = { ...body, ...r }; drawDraft(); }

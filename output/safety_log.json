@@ -787,5 +787,14 @@
       "spent_usd": 0.0044,
       "cap_usd": 0.0
     }
+  },
+  {
+    "time": "2026-11-24T04:02:06+00:00",
+    "guard": "daily_spend_cap",
+    "where": "any agent",
+    "detail": {
+      "spent_usd": 0.0049,
+      "cap_usd": 0.0
+    }
   }
 ]

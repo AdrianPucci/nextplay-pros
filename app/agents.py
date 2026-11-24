@@ -280,6 +280,10 @@ async def build_story(notes: str, basics: dict) -> dict:
     facts = (f"Name: {basics.get('name','')}\nSport: {basics.get('sport','')}\nLevel: {basics.get('level','')}\n"
              f"City: {basics.get('city','')}")
     prompt = f"Athlete basics:\n{untrusted('athlete form', facts)}\n\nAthlete notes:\n{untrusted('athlete notes', clean)}"
+    off = (basics.get("off_limits") or "").strip()
+    if off:
+        off_clean, _ = redact_contacts(off)
+        prompt += f"\n\nOFF THE TABLE (the athlete does not want these in the profile; never mention them):\n{untrusted('athlete off-limits', off_clean)}"
     out, usage, run_id = await _run(story_agent(), "story_builder", prompt)
 
     draft = out.model_dump()
@@ -289,6 +293,15 @@ async def build_story(notes: str, basics: dict) -> dict:
         if removed:
             draft[k] = cleaned
             log_safety("contact_in_profile_output", "story builder output", {"field": k, "run_id": run_id})
+    # Off-limits check: if a word the athlete put off the table shows up in the public text, flag it for them.
+    if off:
+        stop = {"about", "their", "there", "would", "which", "these", "those", "never", "don't", "doesn't", "anything", "talk", "discuss"}
+        terms = {w for w in re.findall(r"[a-zA-Z']{5,}", off.lower()) if w not in stop}
+        public = " ".join(draft[k] for k in ("headline", "bio", "story")).lower() + " " + " ".join(draft["topics"]).lower()
+        hits = sorted(t for t in terms if t in public)
+        if hits:
+            draft["claims_to_verify"].append(f"Mentions something you put off the table ({', '.join(hits)}). Edit it out before publishing.")
+            log_safety("off_limits_in_profile", "story builder output", {"terms": hits, "run_id": run_id})
     # Invented-fact check: any number in the profile that is not in the athlete's own words gets flagged.
     source_numbers = set(NUMBER.findall(notes + " " + facts))
     new_numbers = sorted({x for k in ("headline", "bio", "story") for x in NUMBER.findall(draft[k])} - source_numbers)
