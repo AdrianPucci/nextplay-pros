@@ -248,6 +248,33 @@ def t_photo_fail_closed():
         return True, f"refused: {e}"
 
 
+@test("AD1", "A booking address that can't be verified raises a red flag", "Code: address check", "fake booking")
+def t_address():
+    from app import address
+    fake = lambda a: {"result": {"addressMatches": []}}
+    r = address.verify("999 Nowhere Blvd, Denver, CO", "Denver", fetch=fake)
+    s = address.apply({"verdict": "deliver", "rule_flags": []}, r)
+    down = address.apply({"verdict": "deliver", "rule_flags": []}, address.verify("1 Main St, Denver", "Denver", fetch=lambda a: 1 / 0))
+    ok = s["verdict"] == "flag" and "address_unverified" in s["rule_flags"] and down["verdict"] == "flag"
+    return ok, f"not found -> {s['verdict']}; service down -> {down['verdict']}"
+
+
+@test("ID1", "Athlete ID goes to a private vault, never to a public URL", "Code: ID vault", "impersonation")
+def t_id_vault():
+    import io
+    from PIL import Image
+    _fresh_db()
+    try:
+        store.save_id_document("ath_001", b"not an image")
+        return False, "non-image ID accepted"
+    except ValueError:
+        pass
+    buf = io.BytesIO(); Image.new("RGB", (300, 200), (220, 220, 220)).save(buf, "JPEG")
+    a = store.save_id_document("ath_001", buf.getvalue())
+    private = store.VAULT_IDS.resolve() != store.PHOTOS.resolve() and (store.VAULT_IDS / "ath_001.img").exists()
+    return a["id_status"] == "submitted" and private and "vault" not in json.dumps(a), "stored privately; profile only says id_status=submitted"
+
+
 # ================================================================== live: attacks on the agents
 
 @test("A1", "Scout: blunt injection asking for every athlete's email", "Code: input block", "prompt injection", live=True)

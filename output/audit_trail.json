@@ -6792,5 +6792,50 @@
         "Based in Denver"
       ]
     }
+  },
+  {
+    "run_id": "98bbce713c",
+    "time": "2026-11-24T05:00:36+00:00",
+    "agent": "gatekeeper",
+    "input": "Athlete receiving this: Marcus Hale (Football, Former Pro), fee range $2,500-$6,000. The athlete's Event Rider (set by the athlete; the booker agreed to it): Transportation: Mileage reimbursed Maximum time on site: 3 hours Security needs: A named on-site contact person; Security escort on site; No unsupervised one-on-one time with attendees Accommodations: Microphone and screen provided; Hotel provided if travel is over 100 miles; Meal provided (dietary needs shared in advance) Will NOT do: Political events or endorsements Booking request: <untrusted source=\"booker\"> Organization: Front Range Credit Union Contact name: Pat Lee Event type: speaking Date: 2027-01-22 City: Denver Budget offered: $4,000 Message: All-staff keynote on bouncing back, 30 minutes plus Q&A, about 250 employees. Transportation offered by booker: not stated </untrusted>",
+    "tool_calls": [],
+    "reasoning": [],
+    "output": {
+      "verdict": "deliver",
+      "risk_flags": [],
+      "rider_conflicts": [],
+      "summary": "Front Range Credit Union wants Marcus Hale for a 30-minute all-staff keynote with Q&A on Jan 22, 2027, in Denver, for about 250 employees, offering $4,000. Transportation is not stated; the rider requires mileage reimbursement.",
+      "fee_note": "$4,000 is within Marcus\u2019s $2,500\u2013$6,000 fee range."
+    }
+  },
+  {
+    "run_id": "5c16585f54",
+    "time": "2026-11-24T05:00:39+00:00",
+    "agent": "gatekeeper",
+    "input": "Athlete receiving this: Marcus Hale (Football, Former Pro), fee range $2,500-$6,000. The athlete's Event Rider (set by the athlete; the booker agreed to it): Transportation: Mileage reimbursed Maximum time on site: 3 hours Security needs: A named on-site contact person; Security escort on site; No unsupervised one-on-one time with attendees Accommodations: Microphone and screen provided; Hotel provided if travel is over 100 miles; Meal provided (dietary needs shared in advance) Will NOT do: Political events or endorsements Booking request: <untrusted source=\"booker\"> Organization: Front Range Credit Union Contact name: Pat Lee Event type: speaking Date: 2027-01-22 City: Denver Budget offered: $4,000 Message: All-staff keynote on bouncing back, 30 minutes plus Q&A, about 250 employees. Transportation offered by booker: not stated </untrusted>",
+    "tool_calls": [],
+    "reasoning": [],
+    "output": {
+      "verdict": "deliver",
+      "risk_flags": [],
+      "rider_conflicts": [],
+      "summary": "Front Range Credit Union wants Marcus Hale for a 30-minute all-staff keynote with Q&A for about 250 employees on Jan 22, 2027, in Denver, offering $4,000. Transportation is not stated.",
+      "fee_note": "The $4,000 offer is within Marcus\u2019s $2,500\u2013$6,000 fee range."
+    }
+  },
+  {
+    "run_id": "2d5cb88db8",
+    "time": "2026-11-24T05:00:41+00:00",
+    "agent": "gatekeeper",
+    "input": "Athlete receiving this: Marcus Hale (Football, Former Pro), fee range $2,500-$6,000. The athlete's Event Rider (set by the athlete; the booker agreed to it): Transportation: Mileage reimbursed Maximum time on site: 3 hours Security needs: A named on-site contact person; Security escort on site; No unsupervised one-on-one time with attendees Accommodations: Microphone and screen provided; Hotel provided if travel is over 100 miles; Meal provided (dietary needs shared in advance) Will NOT do: Political events or endorsements Booking request: <untrusted source=\"booker\"> Organization: Front Range Credit Union Contact name: Pat Lee Event type: speaking Date: 2027-01-22 City: Denver Budget offered: $4,000 Message: All-staff keynote on bouncing back, 30 minutes plus Q&A, about 250 employees. Transportation offered by booker: not stated </untrusted>",
+    "tool_calls": [],
+    "reasoning": [],
+    "output": {
+      "verdict": "deliver",
+      "risk_flags": [],
+      "rider_conflicts": [],
+      "summary": "Front Range Credit Union wants Marcus Hale for a 30-minute all-staff keynote with Q&A for about 250 employees on Jan 22, 2027, in Denver, offering $4,000. Transportation is not stated.",
+      "fee_note": "The $4,000 offer is within Marcus's $2,500-$6,000 fee range."
+    }
   }
 ]

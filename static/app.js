@@ -113,11 +113,12 @@ function availLine(a) {
   const times = av.times.length === 3 ? "any time" : av.times.map((t) => o.times[t].split(" (")[0].toLowerCase()).join(", ");
   return `🗓️ ${esc(days)} · ${esc(times)} · ${av.notice_days} days' notice`;
 }
+const idBadge = (a) => (a.id_status ? `<span class="pill idok" title="Government ID on file with NextPlay Pros (never shown)">🪪 ID on file</span>` : "");
 function athleteCard(a, extra = "") {
   return `<div class="card pro">
     <div class="pro-top">${photoBox(a)}${(a.photos_extra || []).filter(Boolean).length ? `<div class="pro-extras">${a.photos_extra.filter(Boolean).map((u) => `<img src="${esc(u)}" alt="">`).join("")}</div>` : ""}${extra.score || ""}</div>
     <div class="card-head"><div><div class="name">${esc(a.name)} ${SPORT_ICON[a.sport] || ""}</div>
-      <div class="meta">${esc(a.level)} · ${esc(a.sport)} · ${esc(a.city)}, ${esc(a.state)}</div></div></div>
+      <div class="meta">${esc(a.level)} · ${esc(a.sport)} · ${esc(a.city)}, ${esc(a.state)}</div>${idBadge(a)}</div></div>
     ${extra.why || ""}
     ${a.headline ? `<div><b>${esc(a.headline)}</b></div>` : ""}
     <p class="story">${esc(a.story)}</p>
@@ -647,6 +648,8 @@ function requestModal(athleteId) {
       <div class="row"><div><label>Your name</label><input id="r-name" value="${esc(state.bookerName)}"></div><div><label>Organization</label><input id="r-org" value="${esc((state.user && state.user.org) || "")}"></div><div><label>Booking as</label><select id="r-orgtype">${ORG_TYPES.map(([k, l]) => `<option value="${k}" ${state.user && state.user.org_type === k ? "selected" : ""}>${l}</option>`).join("")}</select></div></div>
       <div class="row"><div><label>Type</label><select id="r-type">${a.categories.map((c) => `<option value="${c}">${CAT[c]}</option>`).join("")}</select></div>
         <div><label>Date</label><input id="r-date" type="date"></div><div><label>Start time</label><input id="r-time" type="time"></div></div>
+      <div><label>Event address</label><input id="r-address" maxlength="300" placeholder="Street, city, state ZIP (or &quot;virtual&quot;)">
+        <small class="budget-hint" style="color:var(--muted)">We check it against U.S. address records. If it can't be verified, the athlete sees a red flag.</small></div>
       <div class="row"><div><label>City</label><input id="r-city" value="${esc(b.city || "")}"></div><div><label>Budget offered ($)</label><input id="r-budget" type="number" step="100" value="${esc(b.budget_max ?? state.lastBudget ?? "")}"></div></div>
       <div class="prep-ask"><label class="agree"><input type="checkbox" id="r-prep"> I'd like a <b>15-minute prep call</b> before ${esc(a.name.split(" ")[0])} commits</label>
         <div id="r-prep-slots" class="prep-slots" hidden><span class="meta">Offer up to three times:</span>
@@ -684,7 +687,7 @@ function requestModal(athleteId) {
     if ($("#r-nil") && !$("#r-nil").checked) return toast("Please confirm the NIL rules first.");
     const body = { agreed_nil: !!$("#r-nil"), agreed_terms: true, transport_offered: $("#r-transport").value, athlete_id: a.id, booker_id: state.bookerId, booker_name: $("#r-name").value.trim(), org: $("#r-org").value.trim(), org_type: $("#r-orgtype").value,
       prep_call: $("#r-prep").checked, prep_slots: $("#r-prep").checked ? [...document.querySelectorAll(".r-slot")].map((x) => x.value).filter(Boolean) : [],
-      event_type: $("#r-type").value, event_date: $("#r-date").value, event_time: $("#r-time").value, city: $("#r-city").value.trim(),
+      event_type: $("#r-type").value, event_date: $("#r-date").value, event_time: $("#r-time").value, city: $("#r-city").value.trim(), event_address: $("#r-address").value.trim(),
       budget: $("#r-budget").value ? Number($("#r-budget").value) : null, message: $("#r-msg").value.trim() };
     if (!body.booker_name || !body.org || !body.message) return toast("Name, organization, and message are required.");
     state.bookerName = body.booker_name; localSet("np_booker_name", body.booker_name);
@@ -781,6 +784,9 @@ async function drawInbox() {
   const open = list.filter((r) => r.status !== "blocked"), blocked = list.filter((r) => r.status === "blocked");
   const reqHtml = (r) => `<div class="req">
     <div class="req-top"><div><b>${esc(r.org)}</b> ${r.org_type ? `<span class="pill orgtype">${esc(ORG_LABEL[r.org_type] || r.org_type)}</span>` : ""} <span class="meta">· ${esc(r.booker_name)} · ${esc(r.city || "")} · ${esc(r.event_date || "date TBD")}</span></div><span>${r.screening.demo ? `<span class="status demo" title="Sample request so every inbox has something to try">demo</span> ` : ""}<span class="status ${r.status}">${r.status}</span></span></div>
+    ${r.screening.address ? (r.screening.address.status === "verified"
+      ? `<div class="addr ok">${uiIcon("shield", 14)} ${esc(r.screening.address.label)}${r.screening.address.matched && r.screening.address.matched !== "Virtual" ? ": " + esc(r.screening.address.matched) : ""}</div>`
+      : `<div class="addr red">🚩 <b>Red flag:</b> ${esc(r.screening.address.label)}${r.event_address ? ` (“${esc(r.event_address)}”)` : ""}. Confirm the location on a prep call before you accept.</div>`) : ""}
     <div class="gate"><div class="label">${bot("gatekeeper", r.status === "blocked" ? "classic" : "happy", 72)}<span>Gatekeeper summary</span></div>${(r.screening.rider_conflicts || []).length ? `<div class="conflict">⚠️ Conflicts with your Event Rider: ${esc(r.screening.rider_conflicts.join("; "))}</div>` : ""}${esc(r.screening.summary)}<br><span class="meta">${esc(r.screening.fee_note)}</span>
       ${(r.screening.risk_flags || []).length || (r.screening.rule_flags || []).length ? `<br><span class="meta">⚠️ ${esc([...(r.screening.risk_flags || []), ...(r.screening.rule_flags || [])].join(", "))}</span>` : ""}</div>
     <details><summary>Read full message</summary><p class="msg">${esc(r.message)}</p></details>
@@ -854,6 +860,9 @@ function drawDraft() {
       <div class="row"><div><label>Min fee ($)</label><input id="d-min" type="number" step="50" value="500"></div><div><label>Max fee ($)</label><input id="d-max" type="number" step="50" value="1500"></div></div>
       <div class="row"><div><label>Private email (vault)</label><input id="d-email" type="email"></div><div><label>Private phone (vault)</label><input id="d-phone"></div></div>
       <div class="meta">🔒 Email and phone go into the private vault. Nobody sees them, not even our team, until you accept a booking.</div>
+      <div class="id-box"><label>Government ID (required)</label><input type="file" id="d-id" accept="image/jpeg,image/png,image/webp">
+        <p class="meta">${uiIcon("lock", 13)} Kept in a private vault to confirm you are who you say you are. Never shown to bookers, never sent to AI. Bookers only see "ID on file."</p>
+        <p class="id-demo"><b>Class demo:</b> please upload a sample image, not your real ID.</p></div>
       <button class="btn good" id="d-pub">Publish profile</button>
     </div>`;
   $("#d-pub").onclick = async () => {
@@ -862,6 +871,10 @@ function drawDraft() {
       draft: { ...d, headline: $("#d-headline").value, bio: $("#d-bio").value, story: $("#d-story").value },
       fee_min: Number($("#d-min").value), fee_max: Number($("#d-max").value), email: $("#d-email").value.trim(), phone: $("#d-phone").value.trim() };
     if (!body.email) return toast("Add a private email so bookers can reach you after you accept.");
+    const idf = $("#d-id").files[0];
+    if (!idf) return toast("Please add a photo of your government ID (it stays private).");
+    if (idf.size > 8e6) return toast("That ID photo is over 8 MB.");
+    body.id_document = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(idf); });
     try { const a = await api("/api/athletes", { method: "POST", body }); await loadRoster(); state.athleteId = a.id; localSet("np_athlete", a.id); localSet("np_published", "1");
       state.tab = "rider"; render();
       celebrate({ kind: "athlete", name: a.name,

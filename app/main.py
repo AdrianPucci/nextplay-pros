@@ -10,7 +10,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from . import agents, rider as riders, store
+from . import address, agents, rider as riders, store
 from .config import DAILY_SPEND_CAP_USD, STATIC
 from .guards import SAFETY_LOG, USAGE_LOG, log_safety, redact_contacts, scan_text, spent_today
 
@@ -48,6 +48,7 @@ class PublishIn(BaseModel):
     email: str
     phone: str = ""
     rider: dict | None = None
+    id_document: str = ""  # data URL of a government ID: required, stored in a private vault, never shown or sent to AI
 
 
 class RequestIn(BaseModel):
@@ -56,6 +57,7 @@ class RequestIn(BaseModel):
     booker_name: str
     org: str
     org_type: str = ""  # school, nonprofit, company, team, community, individual
+    event_address: str = Field("", max_length=300)  # checked against the U.S. Census geocoder; unverified -> red flag
     event_type: str
     event_date: str = ""
     event_time: str = ""  # start time, HH:MM (for the 60-minutes-early check-in rule)
@@ -230,7 +232,18 @@ def publish(body: PublishIn):
     }
     for k in ("story", "bio", "headline", "career"):  # never let contact details into a public profile
         profile[k], _ = redact_contacts(profile[k])
-    return store.add_athlete(profile, body.email, body.phone)
+    import base64
+    if not body.id_document:
+        raise HTTPException(400, "Please add a photo of your government ID. It stays private and is never shown to bookers.")
+    try:
+        id_raw = base64.b64decode(body.id_document.split(",", 1)[-1], validate=True)
+        store.check_id_document(id_raw)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    except Exception:  # noqa: BLE001
+        raise HTTPException(400, "Couldn't read that ID upload.")
+    a = store.add_athlete(profile, body.email, body.phone)
+    return store.save_id_document(a["id"], id_raw)
 
 
 # ------------------------------------------------------------------ requests
@@ -250,6 +263,8 @@ async def send_request(body: RequestIn):
         _err(e)
     form = body.model_dump()
     form["message"], _ = redact_contacts(form["message"])  # off-platform contact waits until accepted
+    if screening.get("verdict") != "block":  # address check: anything but a clean match is a red flag for the athlete
+        screening = address.apply(screening, address.verify(body.event_address, body.city))
     status = {"deliver": "pending", "flag": "flagged", "block": "blocked"}[screening["verdict"]]
     req = store.create_request(body.athlete_id, body.booker_id, form, status, screening)
     if body.prep_call and status != "blocked" and any(body.prep_slots):

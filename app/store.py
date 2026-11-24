@@ -69,7 +69,7 @@ def init_db(reset: bool = False) -> None:
                 status TEXT NOT NULL, screening TEXT, created TEXT, decided TEXT);
         """)
         cols = {r[1] for r in c.execute("PRAGMA table_info(requests)")}
-        for col in ("event_time", "checked_in", "org_type", "prep_status", "prep_by", "prep_slots", "prep_time", "prep_link", "prep_notes"):  # added for the commitment rules
+        for col in ("event_time", "checked_in", "org_type", "event_address", "prep_status", "prep_by", "prep_slots", "prep_time", "prep_link", "prep_notes"):  # added for the commitment rules
             if col not in cols:
                 c.execute(f"ALTER TABLE requests ADD COLUMN {col} TEXT")
         if c.execute("SELECT COUNT(*) FROM athletes").fetchone()[0] == 0:
@@ -95,6 +95,7 @@ def _with_rider(a: dict) -> dict:
     a["availability"] = riders.clean_availability(a["availability"])
     a.setdefault("photo", None)
     a.setdefault("photos_extra", [None, None])
+    a.setdefault("id_status", "on_file")  # demo roster: fictional athletes, treated as ID on file
     return a
 
 
@@ -158,6 +159,32 @@ def save_photo(athlete_id: str, raw: bytes, slot: int = 0, screen=None) -> dict:
         extras = (a.get("photos_extra") or [None, None])[:2] + [None] * (2 - len((a.get("photos_extra") or [])[:2]))
         extras[slot - 1] = url
         a["photos_extra"] = extras
+    return _save(a)
+
+
+VAULT_IDS = DATA_DIR / "vault_ids"  # private: no route serves this folder, and it is git-ignored
+
+
+def check_id_document(raw: bytes) -> None:
+    import io
+    from PIL import Image
+    if len(raw) > 8_000_000:
+        raise ValueError("ID photo is too large (max 8 MB).")
+    try:
+        Image.open(io.BytesIO(raw)).verify()
+    except Exception:  # noqa: BLE001
+        raise ValueError("That ID file isn't a photo we can read (use JPG or PNG).")
+
+
+def save_id_document(athlete_id: str, raw: bytes) -> dict:
+    """Store the athlete's ID privately and mark the profile 'ID on file'. Never shown publicly or sent to the AI."""
+    check_id_document(raw)
+    a = get_athlete(athlete_id)
+    if not a:
+        raise ValueError("No such athlete")
+    VAULT_IDS.mkdir(parents=True, exist_ok=True)
+    (VAULT_IDS / f"{athlete_id}.img").write_bytes(raw)
+    a["id_status"] = "submitted"
     return _save(a)
 
 
@@ -261,11 +288,12 @@ def create_request(athlete_id: str, booker_id: str, form: dict, status: str, scr
     rid = f"req_{uuid.uuid4().hex[:8]}"
     with _lock, connect() as c:
         c.execute("INSERT INTO requests (id, athlete_id, booker_id, booker_name, org, event_type, event_date, city, "
-                  "budget, message, status, screening, created, decided, event_time, checked_in, org_type) "
-                  "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
+                  "budget, message, status, screening, created, decided, event_time, checked_in, org_type, event_address) "
+                  "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
             rid, athlete_id, booker_id, form.get("booker_name"), form.get("org"), form.get("event_type"),
             form.get("event_date"), form.get("city"), form.get("budget"), form.get("message"),
-            status, json.dumps(screening), now(), None, form.get("event_time") or None, None, form.get("org_type") or None))
+            status, json.dumps(screening), now(), None, form.get("event_time") or None, None, form.get("org_type") or None,
+            form.get("event_address") or None))
     return get_request(rid)
 
 
