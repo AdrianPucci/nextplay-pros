@@ -408,7 +408,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .fine { font-size: 12px; color: var(--muted); margin-top: 14px; line-height: 1.5; }
 .mail { font-size: 48px; }
 .row-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-.gate { text-align: center; padding: 36px 20px; max-width: 520px; margin: 10px auto; }
+.signin-gate { text-align: center; padding: 36px 20px; max-width: 520px; margin: 10px auto; }
 .gate-icon { font-size: 36px; }
 @media (max-width: 640px) {
   .topbar { flex-wrap: wrap; }
@@ -539,3 +539,9 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .more-q { border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px 12px; display: grid; gap: 10px; background: #fafbfc; }
 .more-q summary { cursor: pointer; padding: 4px 0; }
 .more-q[open] summary { margin-bottom: 2px; }
+
+/* Gatekeeper summary: bigger bouncer and title */
+.gate { font-size: 15px; line-height: 1.5; padding: 14px 16px; border-left: 4px solid #12865b; }
+.gate .label { display: flex; align-items: center; gap: 14px; font-size: 17px; letter-spacing: .08em; color: var(--navy); margin-bottom: 6px; }
+.gate .label .bot { flex: none; }
+.req .gate:has(.conflict) { border-left-color: #d9a400; }

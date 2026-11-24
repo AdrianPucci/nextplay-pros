@@ -464,7 +464,7 @@ function askToSave(kind, name) {
     name, role: kind }), 1400);
 }
 function signInGate(what) {
-  return `<div class="gate card"><div class="gate-icon">🔒</div><h3>Sign in to see ${esc(what)}</h3>
+  return `<div class="signin-gate card"><div class="gate-icon">🔒</div><h3>Sign in to see ${esc(what)}</h3>
     <p class="sub">Your requests and bookings are private to your account.</p><button class="btn" data-signin>Sign in</button></div>`;
 }
 
@@ -671,7 +671,7 @@ async function drawInbox() {
   const open = list.filter((r) => r.status !== "blocked"), blocked = list.filter((r) => r.status === "blocked");
   const reqHtml = (r) => `<div class="req">
     <div class="req-top"><div><b>${esc(r.org)}</b> ${r.org_type ? `<span class="pill orgtype">${esc(ORG_LABEL[r.org_type] || r.org_type)}</span>` : ""} <span class="meta">· ${esc(r.booker_name)} · ${esc(r.city || "")} · ${esc(r.event_date || "date TBD")}</span></div><span>${r.screening.demo ? `<span class="status demo" title="Sample request so every inbox has something to try">demo</span> ` : ""}<span class="status ${r.status}">${r.status}</span></span></div>
-    <div class="gate"><div class="label">${bot("gatekeeper", r.status === "blocked" ? "classic" : "happy", 22)} Gatekeeper summary</div>${(r.screening.rider_conflicts || []).length ? `<div class="conflict">⚠️ Conflicts with your Event Rider: ${esc(r.screening.rider_conflicts.join("; "))}</div>` : ""}${esc(r.screening.summary)}<br><span class="meta">${esc(r.screening.fee_note)}</span>
+    <div class="gate"><div class="label">${bot("gatekeeper", r.status === "blocked" ? "classic" : "happy", 72)}<span>Gatekeeper summary</span></div>${(r.screening.rider_conflicts || []).length ? `<div class="conflict">⚠️ Conflicts with your Event Rider: ${esc(r.screening.rider_conflicts.join("; "))}</div>` : ""}${esc(r.screening.summary)}<br><span class="meta">${esc(r.screening.fee_note)}</span>
       ${(r.screening.risk_flags || []).length || (r.screening.rule_flags || []).length ? `<br><span class="meta">⚠️ ${esc([...(r.screening.risk_flags || []), ...(r.screening.rule_flags || [])].join(", "))}</span>` : ""}</div>
     <details><summary>Read full message</summary><p class="msg">${esc(r.message)}</p></details>
     ${prepPanel(r, "athlete")}
